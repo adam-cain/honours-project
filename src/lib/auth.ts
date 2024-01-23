@@ -4,6 +4,7 @@ import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
+// Check if we're running on Vercel or locally
 const DEPLOYED = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
