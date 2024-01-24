@@ -1,6 +1,7 @@
 import Image from "next/image";
 import LoginButton from "./login-button";
 import { Suspense } from "react";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -13,19 +14,19 @@ export default function LoginPage() {
         src="/logo.png"
       />
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
-        Platforms Starter Kit
+        Login
       </h1>
+      <Link href="/signup">
       <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
-        Build multi-tenant applications with custom domains. <br />
         <a
           className="font-medium text-black hover:text-stone-800 dark:text-stone-300 dark:hover:text-stone-100"
-          href="https://vercel.com/blog/platforms-starter-kit"
           rel="noreferrer"
           target="_blank"
         >
-          Read the announcement.
+          Sign up
         </a>
       </p>
+      </Link>
 
       <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
         <Suspense

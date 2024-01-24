@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+// Configuration for the middleware
 export const config = {
   matcher: [
     /*
@@ -14,6 +15,7 @@ export const config = {
   ],
 };
 
+// Middleware function that handles requests
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
@@ -42,19 +44,15 @@ export default async function middleware(req: NextRequest) {
   if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
     const session = await getToken({ req });
     if (!session && path !== "/login") {
+      // Redirect to login page if user is not authenticated
       return NextResponse.redirect(new URL("/login", req.url));
     } else if (session && path == "/login") {
+      // Redirect to home page if user is already authenticated and tries to access login page
       return NextResponse.redirect(new URL("/", req.url));
     }
+    // Rewrite the URL to the corresponding app page
     return NextResponse.rewrite(
       new URL(`/app${path === "/" ? "" : path}`, req.url),
-    );
-  }
-
-  // special case for `vercel.pub` domain
-  if (hostname === "vercel.pub") {
-    return NextResponse.redirect(
-      "https://vercel.com/blog/platforms-starter-kit",
     );
   }
 
@@ -63,6 +61,7 @@ export default async function middleware(req: NextRequest) {
     hostname === "localhost:3000" ||
     hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN
   ) {
+    // Rewrite the URL to the corresponding root application page
     return NextResponse.rewrite(
       new URL(`/home${path === "/" ? "" : path}`, req.url),
     );
