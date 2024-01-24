@@ -19,13 +19,13 @@ model User {
   username      String?
   gh_username   String?
   email         String?              @unique
-  emailVerified Boolean              @default(false)
+  emailVerified DateTime?            
   image         String?
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
   accounts      Account[]
   sessions      Session[]
-  organization  OrganizationMember[]
+  memberOfOrganization  OrganizationMember[]
 }
 
 model Organization {
