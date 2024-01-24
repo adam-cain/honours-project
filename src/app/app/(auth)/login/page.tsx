@@ -28,13 +28,13 @@ export default function LoginPage() {
       </p>
 
       <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
-        <Suspense
+        {/* <Suspense
           fallback={
             <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
           <LoginButton />
-        </Suspense>
+        </Suspense> */}
       </div>
     </div>
   );
