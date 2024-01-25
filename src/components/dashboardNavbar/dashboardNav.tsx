@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"

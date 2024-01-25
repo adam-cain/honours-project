@@ -1,6 +1,5 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
-
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
@@ -27,6 +26,7 @@ export const authOptions: NextAuthOptions = {
         signIn: `/login`,
         verifyRequest: `/login`,
         error: "/login", // Error code passed in query string as ?error=
+        signOut: "/"
       },
       adapter: PrismaAdapter(prisma),
       session: { strategy: "jwt" },
