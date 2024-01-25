@@ -4,11 +4,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
 import { BotIcon, HomeIcon, SettingsIcon, LineChartIcon, SearchIcon } from "@/components/icons/navIcons"
-import { LayoutProps }from "@/lib/types"
+import { LayoutProps } from "@/lib/types"
+import { signOut } from "next-auth/react"
+import LogoutButton from "./logout-button"
 
 export function DashboardNav({ children }: LayoutProps) {
   return (
-    <div className="grid min-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
+    <div className="grid min-h-screen max-h-screen w-full overflow-hidden lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-gray-100/40 lg:block dark:bg-gray-800/40">
         <div className="flex flex-col gap-2">
           <div className="flex h-[60px] items-center px-6">
@@ -52,7 +54,7 @@ export function DashboardNav({ children }: LayoutProps) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col h-screen">
         <header className="flex h-14 lg:h-[60px] items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
           <Link className="lg:hidden" href="#">
             <BotIcon className="h-6 w-6" />
@@ -90,17 +92,18 @@ export function DashboardNav({ children }: LayoutProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-              </DropdownMenuContent>
+                <DropdownMenuItem><LogoutButton></LogoutButton>
+                </DropdownMenuItem>
+                </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </header>
-        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 overflow-y-auto">
           {children}
         </main>
       </div>

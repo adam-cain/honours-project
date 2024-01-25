@@ -34,7 +34,9 @@ export default async function middleware(req: NextRequest) {
     }`;
   }
 
+  // Get the search parameters of the request as a string
   const searchParams = req.nextUrl.searchParams.toString();
+
   // Get the pathname of the request (e.g. /, /about, /blog/first-post)
   const path = `${url.pathname}${
     searchParams.length > 0 ? `?${searchParams}` : ""
@@ -45,7 +47,7 @@ export default async function middleware(req: NextRequest) {
     const session = await getToken({ req });
     if (!session && path !== "/login") {
       // Redirect to login page if user is not authenticated
-      return NextResponse.redirect(new URL("/login", req.url));
+      // return NextResponse.redirect(new URL("/login", req.url));
     } else if (session && path == "/login") {
       // Redirect to home page if user is already authenticated and tries to access login page
       return NextResponse.redirect(new URL("/", req.url));
