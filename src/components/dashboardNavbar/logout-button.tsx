@@ -1,15 +1,22 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { DropdownMenuItem } from "../ui/dropdown-menu";
+import { NextRouter, useRouter } from "next/router";
 
 export default function LogoutButton() {
+  const handleClick = async () => {
+    await signOut({ callbackUrl: "/"});
+  };
+
   return (
-    <button
-      onClick={() => signOut()}
-      className="rounded-lg p-1.5 text-stone-700 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800"
-    >
-      Logout <LogOut width={18} />
-    </button>
+<DropdownMenuItem onClick={handleClick}>
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+    <p>Logout</p>
+    <LogOut width={13} />
+  </div>
+</DropdownMenuItem>
   );
 }

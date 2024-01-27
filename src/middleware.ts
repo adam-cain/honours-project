@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { log } from "console";
 
 // Configuration for the middleware
 export const config = {
@@ -25,51 +26,44 @@ export default async function middleware(req: NextRequest) {
     .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
   // special case for Vercel preview deployment URLs
-  if (
-    hostname.includes("---") &&
-    hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
-  ) {
-    hostname = `${hostname.split("---")[0]}.${
-      process.env.NEXT_PUBLIC_ROOT_DOMAIN
-    }`;
-  }
+  // if (
+  //   hostname.includes("---") &&
+  //   hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
+  // ) {
+  //   hostname = `${hostname.split("---")[0]}.${
+  //     process.env.NEXT_PUBLIC_ROOT_DOMAIN
+  //   }`;
+  // }
 
   // Get the search parameters of the request as a string
   const searchParams = req.nextUrl.searchParams.toString();
 
   // Get the pathname of the request (e.g. /, /about, /blog/first-post)
-  const path = `${url.pathname}${
-    searchParams.length > 0 ? `?${searchParams}` : ""
-  }`;
+  const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""
+    }`;
 
-  // rewrites for app pages
-  if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+  // For root domain only
+  if (hostname == process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
     const session = await getToken({ req });
-    // if (!session && path !== "/login") {
-    //   // Redirect to login page if user is not authenticated
-    //   return NextResponse.redirect(new URL("/login", req.url));
-    // } else
-     if (session && path == "/login") {
-      // Redirect to home page if user is already authenticated and tries to access login page
-      return NextResponse.redirect(new URL("/", req.url));
+    if (!session) {
+      // rewrite / application to `/home` folder
+      if (path === "/") {
+        // Rewrite the URL to the corresponding root application page
+        return NextResponse.rewrite(
+          new URL(`/home${path === "/" ? "" : path}`, req.url),
+        );
+      }
+      else if (path != "/login" && path != "/signup") {
+          console.log("redirecting to login page");
+          return NextResponse.redirect(new URL("/login", req.url));
+      }
+    } else{
+      return NextResponse.rewrite(
+        new URL(`/core${path === "/" ? "" : path}`, req.url),
+      );
     }
-    // Rewrite the URL to the corresponding app page
-    return NextResponse.rewrite(
-      new URL(`/app${path === "/" ? "" : path}`, req.url),
-    );
+  } else {
+    console.log("rewriting to dynamic route");
+    return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
   }
-
-  // rewrite root application to `/home` folder
-  if (
-    hostname === "localhost:3000" ||
-    hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN
-  ) {
-    // Rewrite the URL to the corresponding root application page
-    return NextResponse.rewrite(
-      new URL(`/home${path === "/" ? "" : path}`, req.url),
-    );
-  }
-
-  // rewrite everything else to `/[domain]/[slug] dynamic route
-  return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
 }

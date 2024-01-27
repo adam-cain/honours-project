@@ -4,10 +4,9 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu } from "@/components/ui/dropdown-menu"
+import { DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuContent, DropdownMenu, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu"
 import { BotIcon, HomeIcon, SettingsIcon, LineChartIcon, SearchIcon } from "@/components/icons/navIcons"
 import { LayoutProps } from "@/lib/types"
-import { signOut } from "next-auth/react"
 import LogoutButton from "./logout-button"
 
 export function DashboardNav({ children }: LayoutProps) {
@@ -98,9 +97,8 @@ export function DashboardNav({ children }: LayoutProps) {
                 <DropdownMenuSeparator />
                   <DropdownMenuItem>Settings</DropdownMenuItem>
                   <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem><LogoutButton></LogoutButton>
-                </DropdownMenuItem>
+                <DropdownMenuSeparator />                  
+                  <LogoutButton></LogoutButton>
                 </DropdownMenuContent>
             </DropdownMenu>
           </div>

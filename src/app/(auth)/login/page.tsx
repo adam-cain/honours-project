@@ -1,5 +1,6 @@
 import Image from "next/image";
-import LoginButton from "./login-button";
+// import LoginButton from "./login-button";
+import LoginButton from "@/components/login/login-button";
 import { Suspense } from "react";
 import Link from "next/link";
 
@@ -27,8 +28,8 @@ export default function LoginPage() {
           </a>
         </p>
       </Link>
-
-      <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
+      <LoginButton/>
+      {/* <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
         <Suspense
           fallback={
             <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
@@ -36,7 +37,7 @@ export default function LoginPage() {
         >
           <LoginButton />
         </Suspense>
-      </div>
+      </div> */}
     </div>
   );
 }
