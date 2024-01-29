@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-import { log } from "console";
 
 // Configuration for the middleware
 export const config = {
@@ -25,45 +24,29 @@ export default async function middleware(req: NextRequest) {
     .get("host")!
     .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
 
-  // special case for Vercel preview deployment URLs
-  // if (
-  //   hostname.includes("---") &&
-  //   hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
-  // ) {
-  //   hostname = `${hostname.split("---")[0]}.${
-  //     process.env.NEXT_PUBLIC_ROOT_DOMAIN
-  //   }`;
-  // }
-
   // Get the search parameters of the request as a string
   const searchParams = req.nextUrl.searchParams.toString();
 
   // Get the pathname of the request (e.g. /, /about, /blog/first-post)
-  const path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""
-    }`;
-
+  const path = `${url.pathname}${searchParams.length > 0
+    ? `?${searchParams}` : ""}`;
+    console.log(`path: ${path}`);
   // For root domain only
   if (hostname == process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
     const session = await getToken({ req });
     if (!session) {
-      // rewrite / application to `/home` folder
-      if (path === "/") {
-        // Rewrite the URL to the corresponding root application page
-        return NextResponse.rewrite(
-          new URL(`/home${path === "/" ? "" : path}`, req.url),
-        );
+      if (path.startsWith("/core")) {
+        return NextResponse.redirect(new URL("/login", req.url));
       }
-      else if (path != "/login" && path != "/signup") {
-          console.log("redirecting to login page");
-          return NextResponse.redirect(new URL("/login", req.url));
-      }
-    } else{
+      return NextResponse.next();
+    } else {
       return NextResponse.rewrite(
         new URL(`/core${path === "/" ? "" : path}`, req.url),
       );
     }
   } else {
-    console.log("rewriting to dynamic route");
-    return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+    const subdomain = hostname.split(".")[0];
+    console.log(`rewriting to dynamic route ${subdomain}${path}`);
+    return NextResponse.rewrite(new URL(`/${subdomain}${path}`, req.url));
   }
 }
