@@ -1,34 +1,37 @@
 "use client";
 import LoadingDots from "@/components/icons/loading-dots";
-import LoginButton from "@/components/login/login-button";
+import LoginButton from "@/components/Auth/provider-login-button";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useState, FormEvent } from "react";
-import { validatePassword } from "@/lib/auth";
+import { validatePassword, validateEmail } from "@/lib/validation";
+import InputField from "@/components/Auth/input-field";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: '', password: '', emailError: '', passwordError: '' });
   const [loading, setLoading] = useState(false);
 
-  const validateEmail = (email: string) => {
-    const emailPattern = /\S+@\S+\.\S+/;
-    return emailPattern.test(email);
-  };
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-
-    if (name === 'email') {
-      setFormData(prev => ({ ...prev, emailError: validateEmail(value) ? '' : 'Please enter a valid email address.' }));
+    // setFormData(prev => ({ ...prev, [name]: value }));
+    if (value === '') {
+      if (name === 'email') {
+        setFormData(prev => ({ ...prev, emailError: '' }));
+      } else if (name === 'password') {
+        setFormData(prev => ({ ...prev, passwordError: '' }));
+      }
+    }
+    else if (name === 'email') {
+      setFormData(prev => ({ ...prev, emailError: validateEmail(value) ? '' : 'Enter a valid email address.' }));
     } else if (name === 'password') {
       setFormData(prev => ({ ...prev, passwordError: validatePassword(value) }));
     }
-    console.log(formData);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (formData.emailError !== '' || formData.passwordError !== '') return;
+    console.log(formData);
     setLoading(true);
     // Add additional validation before calling signIn
     const result = await signIn<'credentials'>('credentials', {
@@ -49,54 +52,25 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
 
+        <InputField
+          type="text"
+          name="email"
+          id="email_input"
+          placeholder=""
+          label="Email"
+          error={formData.emailError}
+          onChange={handleChange}
+        />
 
-
-
-        <div className="my-2">
-          <div className="relative">
-            <input onChange={handleChange}
-              type="text"
-              name="email"
-              id="email_input"
-              aria-describedby="email_error_help"
-              className={`block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border appearance-none dark:text-white focus:outline-none focus:ring-0 
-                ${formData.emailError === "" ? "" :
-                  "dark:border-red-400 border-red-600 dark:focus:border-red-400 focus:border-red-600"}`}
-              placeholder=""
-            />
-            <label htmlFor="email_input"
-              className={`absolute text-sm bg-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-2 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto
-              ${formData.emailError === "" ? "" :
-                  "text-red-600 dark:text-red-400"}`}>Email</label>
-          </div>
-          <p
-            id="email_error_help"
-            className="mt-2 text-xs text-red-600 dark:text-red-400"
-          >{formData.emailError}</p>
-        </div>
-
-        <div className="my-2">
-          <div className="relative">
-            <input onChange={handleChange}
-              type="password"
-              id="password"
-              name="password"
-              aria-describedby="outlined_error_help"
-              className={`block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border appearance-none dark:text-white focus:outline-none focus:ring-0 
-                ${formData.passwordError === "" ? "" :
-                  "dark:border-red-400 border-red-600 dark:focus:border-red-400 focus:border-red-600"}`}
-              placeholder=" "
-            />
-            <label htmlFor="password"
-              className={`absolute text-sm bg-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-2 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto
-              ${formData.passwordError === "" ? "" :
-                  "text-red-600 dark:text-red-400"}`}>Password</label>
-          </div>
-          <p
-            id="outlined_error_help"
-            className="mt-2 text-xs text-red-600 dark:text-red-400"
-          >{formData.passwordError}</p>
-        </div>
+        <InputField
+          type="password"
+          name="password"
+          id="password"
+          placeholder=""
+          label="Password"
+          error={formData.passwordError}
+          onChange={handleChange}
+        />
 
         <button
           type="submit"
