@@ -1,4 +1,9 @@
-export const validatePassword = (password: string) => {
+type PasswordValidationResult = {
+    isValid: boolean;
+    errorMessage: string;
+};
+
+export const validatePassword = (password: string): PasswordValidationResult => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
@@ -20,11 +25,15 @@ export const validatePassword = (password: string) => {
         errorMessage.push('a number');
     }
     if (!hasSpecialChar) {
-        errorMessage.push('a special char');
+        errorMessage.push('a special character');
     }
 
-    return errorMessage.length > 0 ? `Must include ${errorMessage.join(', ')}.` : '';
+    return {
+        isValid: errorMessage.length === 0,
+        errorMessage: errorMessage.length > 0 ? `Must include ${errorMessage.join(', ')}.` : '',
+    };
 };
+
 
 export const validateEmail = (email: string) => {
     const emailPattern = /\S+@\S+\.\S+/;

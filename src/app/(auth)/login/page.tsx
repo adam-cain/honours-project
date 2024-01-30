@@ -20,7 +20,7 @@ export default function LoginPage() {
     } else if (name === 'email') {
       setFormData(prev => ({ ...prev, emailError: validateEmail(value) ? '' : 'Enter a valid email address.' }));
     } else if (name === 'password') {
-      setFormData(prev => ({ ...prev, passwordError: validatePassword(value) }));
+      setFormData(prev => ({ ...prev, passwordError: validatePassword(value).errorMessage }));
     }
   };
 
