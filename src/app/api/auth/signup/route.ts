@@ -3,8 +3,7 @@ import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { } from "next-auth"
 import { validateEmail, validatePassword } from '@/lib/validation';
-
-const prisma = new PrismaClient();
+import  prisma from '@/lib/prisma';
 
 const signupHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
