@@ -6,8 +6,8 @@ import { } from "next-auth"
 const prisma = new PrismaClient();
 
 const signupHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-    const { email, password, username } = req.body;
-    
+  const { email, password, username } = req.body;
+
   try {
     // Check if the user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
