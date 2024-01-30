@@ -56,21 +56,21 @@ export default function LoginPage() {
           <div className="relative">
             <input onChange={handleChange}
               type="text"
-              id="email"
               name="email"
-              aria-describedby="outlined_error_help"
+              id="email_input"
+              aria-describedby="email_error_help"
               className={`block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border appearance-none dark:text-white focus:outline-none focus:ring-0 
                 ${formData.emailError === "" ? "" :
                   "dark:border-red-400 border-red-600 dark:focus:border-red-400 focus:border-red-600"}`}
-              placeholder=" "
+              placeholder=""
             />
-            <label htmlFor="email"
+            <label htmlFor="email_input"
               className={`absolute text-sm bg-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-2 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto
               ${formData.emailError === "" ? "" :
                   "text-red-600 dark:text-red-400"}`}>Email</label>
           </div>
           <p
-            id="outlined_error_help"
+            id="email_error_help"
             className="mt-2 text-xs text-red-600 dark:text-red-400"
           >{formData.emailError}</p>
         </div>

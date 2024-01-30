@@ -21,7 +21,7 @@ export const validatePassword = (password: string) => {
   let errorMessage = [];
 
   if (password.length < minLength) {
-    errorMessage.push('at least 8 chars');
+    errorMessage.push('at least 8 characters');
   }
   if (!hasUpperCase) {
     errorMessage.push('a uppercase letter');
