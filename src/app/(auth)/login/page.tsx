@@ -14,15 +14,10 @@ export default function LoginPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    // setFormData(prev => ({ ...prev, [name]: value }));
+
     if (value === '') {
-      if (name === 'email') {
-        setFormData(prev => ({ ...prev, emailError: '' }));
-      } else if (name === 'password') {
-        setFormData(prev => ({ ...prev, passwordError: '' }));
-      }
-    }
-    else if (name === 'email') {
+      setFormData(prev => ({ ...prev, [`${name}Error`]: '' }));
+    } else if (name === 'email') {
       setFormData(prev => ({ ...prev, emailError: validateEmail(value) ? '' : 'Enter a valid email address.' }));
     } else if (name === 'password') {
       setFormData(prev => ({ ...prev, passwordError: validatePassword(value) }));
@@ -40,7 +35,9 @@ export default function LoginPage() {
       email: formData.email,
       password: formData.password,
       callbackUrl: "/",
-    });
+    }).then((e) => {
+      console.log(e);
+  });
     setLoading(false);
     // Handle result
   };
@@ -57,7 +54,6 @@ export default function LoginPage() {
           type="text"
           name="email"
           id="email_input"
-          placeholder=""
           label="Email"
           error={formData.emailError}
           onChange={handleChange}
@@ -66,8 +62,7 @@ export default function LoginPage() {
         <InputField
           type="password"
           name="password"
-          id="password"
-          placeholder=""
+          id="password_input"
           label="Password"
           error={formData.passwordError}
           onChange={handleChange}
