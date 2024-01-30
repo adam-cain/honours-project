@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
-import { PrismaClient } from '@prisma/client';
-import { } from "next-auth"
 import { validateEmail, validatePassword } from '@/lib/validation';
 import  prisma from '@/lib/prisma';
 
@@ -41,9 +39,6 @@ const signupHandler = async (req: NextApiRequest, res: NextApiResponse) => {
         password: hashedPassword,
       },
     });
-
-    // Additional session logic can be added here
-    // ...
 
     //TODO: Send a session token to the user
 
