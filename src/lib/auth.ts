@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
             id: true,
             email: true,
             password: true,
-            // ... other fields you need
+            username: true,
           },
         });
     
@@ -71,7 +71,7 @@ export const authOptions: NextAuthOptions = {
     
         // If the user has a password, verify it
         if (user.password && credentials?.password && bcrypt.compareSync(credentials.password, user.password)) {
-          return { id: user.id, email: user.email, name: user.username || user.gh_username };
+          return { id: user.id, email: user.email, name: user.username };
         } else {
           throw new Error('Invalid email or password');
         }
@@ -95,7 +95,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: profile.id.toString(),
           name: profile.name || profile.login,
-          gh_username: profile.login,
+          username: profile.username,
           email: profile.email,
           image: profile.avatar_url,
         };

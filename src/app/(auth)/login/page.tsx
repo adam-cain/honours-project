@@ -22,8 +22,9 @@ export default function LoginPage() {
     if (name === 'email') {
       setFormData(prev => ({ ...prev, emailError: validateEmail(value) ? '' : 'Please enter a valid email address.' }));
     } else if (name === 'password') {
-      setFormData(prev => ({ ...prev, passwordError: validatePassword(value) ? '' : 'Password must be at least 8 characters long.' }));
+      setFormData(prev => ({ ...prev, passwordError: validatePassword(value) }));
     }
+    console.log(formData);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -47,30 +48,54 @@ export default function LoginPage() {
       </h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
-        <input type="email"
-          className=" border-collapse border border-stone-200 dark:border-stone-700 rounded-md px-3 py-2 my-2 w-full focus:outline-none dark:bg-stone-800 dark:text-stone-100"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="Email" />
 
-        <input type="password"
-          className=" border-collapse border border-stone-200 dark:border-stone-700 rounded-md px-3 py-2 my-2 w-full focus:outline-none dark:bg-stone-800 dark:text-stone-100"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Password" />
 
-        <div>
+
+
+        <div className="my-2">
           <div className="relative">
             <input onChange={handleChange}
-              type="text" id="outlined_error" aria-describedby="outlined_error_help" className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border-1 appearance-none dark:text-white dark:border-red-500 border-red-600 dark:focus:border-red-500 focus:outline-none focus:ring-0 focus:border-red-600 peer" placeholder=" " />
-            <label htmlFor="outlined_error"
-              className="absolute text-sm text-red-600 dark:text-red-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-1 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto">Email</label>
+              type="text"
+              id="email"
+              name="email"
+              aria-describedby="outlined_error_help"
+              className={`block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border appearance-none dark:text-white focus:outline-none focus:ring-0 
+                ${formData.emailError === "" ? "" :
+                  "dark:border-red-400 border-red-600 dark:focus:border-red-400 focus:border-red-600"}`}
+              placeholder=" "
+            />
+            <label htmlFor="email"
+              className={`absolute text-sm bg-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-2 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto
+              ${formData.emailError === "" ? "" :
+                  "text-red-600 dark:text-red-400"}`}>Email</label>
           </div>
           <p
             id="outlined_error_help"
             className="mt-2 text-xs text-red-600 dark:text-red-400"
-            hidden={emailErr}
-          >{emailError}</p>
+          >{formData.emailError}</p>
+        </div>
+
+        <div className="my-2">
+          <div className="relative">
+            <input onChange={handleChange}
+              type="password"
+              id="password"
+              name="password"
+              aria-describedby="outlined_error_help"
+              className={`block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-lg border appearance-none dark:text-white focus:outline-none focus:ring-0 
+                ${formData.passwordError === "" ? "" :
+                  "dark:border-red-400 border-red-600 dark:focus:border-red-400 focus:border-red-600"}`}
+              placeholder=" "
+            />
+            <label htmlFor="password"
+              className={`absolute text-sm bg-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-2 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto
+              ${formData.passwordError === "" ? "" :
+                  "text-red-600 dark:text-red-400"}`}>Password</label>
+          </div>
+          <p
+            id="outlined_error_help"
+            className="mt-2 text-xs text-red-600 dark:text-red-400"
+          >{formData.passwordError}</p>
         </div>
 
         <button
@@ -95,7 +120,7 @@ export default function LoginPage() {
       </form>
 
 
-      <div className="flex items-center justify-center mx-12">
+      <div className="flex items-center justify-center mx-12 my-4">
         <div className="flex-grow border-t border-gray-300"></div>
         <span className="flex-shrink mx-4 text-stone-600 dark:text-stone-300">
           Or
