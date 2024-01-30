@@ -56,14 +56,14 @@ export default function LoginButton() {
         }
       >
         {providers.map((provider) => (
-          <AbstractProviderButton key={provider.name} provider={provider} />
+          <AuthProviderLoginButton key={provider.name} provider={provider} />
         ))}
       </Suspense>
     </div>
   );
 }
 
-function AbstractProviderButton({ provider }: LoginButtonProps) {
+function AuthProviderLoginButton({ provider }: LoginButtonProps) {
   const [loading, setLoading] = useState(false);
 
   // Get error message added by next/auth in URL.

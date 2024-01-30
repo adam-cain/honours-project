@@ -14,3 +14,13 @@ export default function AuthLayout({ children }: LayoutProps) {
     </div>
   );
 }
+
+//using image as background
+{/* <div className="flex min-h-screen flex-col justify-center py-12 sm:px-6 lg:px-8 
+bg-cover bg-center h-64 w-full"
+style={{ backgroundImage: "url('/bg.svg')" }}
+>
+  <div className="mx-5 border bg-black border-stone-200 py-10 dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
+    {children}
+  </div>
+</div> */}

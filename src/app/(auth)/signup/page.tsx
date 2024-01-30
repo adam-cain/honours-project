@@ -49,7 +49,7 @@ export default function SignUpPage() {
       <button type="submit">Sign Up</button>
     </form>
 
-      <div className=" border-2 border-r-8 mx-14"></div>
+      <div className=" border-2 border-r-8 mx-18"></div>
 
       <LoginButton />
       <Link href="/login">

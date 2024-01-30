@@ -30,8 +30,8 @@ export default async function middleware(req: NextRequest) {
   // Get the pathname of the request (e.g. /, /about, /blog/first-post)
   const path = `${url.pathname}${searchParams.length > 0
     ? `?${searchParams}` : ""}`;
-    console.log(`path: ${path}`);
-  // For root domain only
+
+    // For root domain only
   if (hostname == process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
     const session = await getToken({ req });
     if (!session) {
@@ -46,7 +46,6 @@ export default async function middleware(req: NextRequest) {
     }
   } else {
     const subdomain = hostname.split(".")[0];
-    console.log(`rewriting to dynamic route ${subdomain}${path}`);
     return NextResponse.rewrite(new URL(`/${subdomain}${path}`, req.url));
   }
 }
