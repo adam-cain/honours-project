@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
+import BaseButton from '@/components/Auth/base-button';
 
 interface AuthProvider {
   name: string;
@@ -47,7 +48,7 @@ const providers: AuthProvider[] = [
   }
 ]
 
-export default function LoginButton() {
+export default function AuthProviderButtonGroup() {
   return (
     <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
       <Suspense
@@ -56,14 +57,14 @@ export default function LoginButton() {
         }
       >
         {providers.map((provider) => (
-          <AuthProviderLoginButton key={provider.name} provider={provider} />
+          <ProviderLoginButton key={provider.name} provider={provider} />
         ))}
       </Suspense>
     </div>
   );
 }
 
-function AuthProviderLoginButton({ provider }: LoginButtonProps) {
+const ProviderLoginButton: React.FC<LoginButtonProps> = ({ provider }) => {
   const [loading, setLoading] = useState(false);
 
   // Get error message added by next/auth in URL.
@@ -75,28 +76,19 @@ function AuthProviderLoginButton({ provider }: LoginButtonProps) {
     errorMessage && toast.error(errorMessage);
   }, [error]);
 
+  const handleLogin = () => {
+    setLoading(true);
+    signIn(provider.signInMethod, { callbackUrl: '/' });
+  };
+
   return (
-    <button
-      disabled={loading}
-      onClick={() => {
-        setLoading(true);
-        signIn(provider.signInMethod, { callbackUrl: '/' });
-      }}
-      className={`${loading
-        ? "cursor-not-allowed bg-stone-50 dark:bg-stone-800"
-        : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:border-white dark:hover:bg-black"
-        } group my-2 flex h-10 w-full items-center justify-center space-x-2 rounded-md border border-stone-200 transition-colors duration-75 focus:outline-none dark:border-stone-700`}
-    >
-      {loading ? (
-        <LoadingDots color="#A8A29E" />
-      ) : (
-        <>
-          {provider.logo}
-          <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-            Login with {provider.name}
-          </p>
-        </>
-      )}
-    </button>
+    <BaseButton onClick={handleLogin} loading={loading}>
+      <>
+        {provider.logo}
+        <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+          Login with {provider.name}
+        </p>
+      </>
+    </BaseButton>
   );
-}
+};

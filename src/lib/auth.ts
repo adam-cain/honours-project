@@ -66,10 +66,9 @@ export const authOptions: NextAuthOptions = {
       profile(profile) {
         return {
           id: profile.id.toString(),
-          name: profile.name || profile.login,
-          username: profile.username,
           email: profile.email,
           image: profile.avatar_url,
+          username: profile.login,
         };
       },
     }),
@@ -109,7 +108,7 @@ export const authOptions: NextAuthOptions = {
         // @ts-expect-error
         id: token.sub,
         // @ts-expect-error
-        username: token?.user?.username || token?.user?.gh_username,
+        username: token?.user?.username,
       };
       return session;
     },
@@ -120,7 +119,6 @@ export function getSession() {
   return getServerSession(authOptions) as Promise<{
     user: {
       id: string;
-      name: string;
       username: string;
       email: string;
       image: string;
