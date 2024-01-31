@@ -3,3 +3,5 @@ remove app folder as codebase should run off main app
 [domain] should then contain all deployed chats, where [domain] is the organisation
 then create protected routes for main app
 
+a@email.com
+Swimming.55

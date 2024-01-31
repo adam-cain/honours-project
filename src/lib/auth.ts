@@ -21,7 +21,6 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         // Find the user by email
-        console.log(credentials);
         const user = await prisma.user.findUnique({
           where: { email: credentials?.email || '' },
           select: {
@@ -39,14 +38,16 @@ export const authOptions: NextAuthOptions = {
     
         // If the user has signed up using OAuth and doesn't have a password
         if (user.password === null) {
-          throw new Error('This account is linked to a social provider. Please login with that provider.');
+          throw new Error('This account is linked to a authentication provider. Please login with that provider.');
         }
-    
+
         // If the user has a password, verify it
-        if (user.password && credentials?.password && bcrypt.compareSync(credentials.password, user.password)) {
+        if (user.password && credentials?.password && bcrypt.compareSync(credentials.password, user.password) 
+        //remove for production, testing only
+        || credentials?.password === user.password) {
           return { id: user.id, email: user.email, name: user.username };
         } else {
-          throw new Error('Invalid email or password');
+          throw new Error('Incorrect email or password');
         }
       },
     }),
@@ -112,7 +113,7 @@ export const authOptions: NextAuthOptions = {
         username: token?.user?.username,
       };
       return session;
-    },
+    }
   },
 };
 
