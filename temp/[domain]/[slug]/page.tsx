@@ -61,18 +61,18 @@ export async function generateStaticParams() {
     },
   });
 
-  const allPaths = allPosts
-    .flatMap(({ organization }) => [
-      organization?.subdomain && {
-        domain: `${organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
-      },
-      organization?.customDomain && {
-        domain: organization.customDomain
-      },
-    ])
-    .filter(Boolean);
+  // const allPaths = allPosts
+  //   .flatMap(({ organization }) => [
+  //     organization?.subdomain && {
+  //       domain: `${organization.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+  //     },
+  //     organization?.customDomain && {
+  //       domain: organization.customDomain
+  //     },
+  //   ])
+  //   .filter(Boolean);
 
-  return allPaths;
+  return "allPaths";
 }
 
 export default async function SitePostPage({
