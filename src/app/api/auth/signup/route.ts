@@ -1,20 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
 import bcrypt from 'bcryptjs';
 import { validateEmail, validatePassword } from '@/lib/validation';
 import  prisma from '@/lib/prisma';
+import { NextRequest,  NextResponse } from 'next/server';
 
-const signupHandler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).end(`Method ${req.method} Not Allowed`);
-  }
-
-  const { email, password, username } = req.body;
+//Signup route: Creates a new user in the database
+export async function POST (req: NextRequest) {
+  const { email, password, username } = req.json();
 
   // Validate the password
   const passwordValidation = validatePassword(password);
   if (!passwordValidation.isValid) {
     return res.status(400).json({ message: passwordValidation.errorMessage });
+    return res.
   }
   // Validate the email
   if (!validateEmail(email)) {
@@ -53,5 +50,3 @@ const signupHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(500).json({ message: 'Internal server error', error });
   }
 }
-
-export default signupHandler;

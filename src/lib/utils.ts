@@ -22,13 +22,13 @@ export const capitalize = (s: string) => {
 export const truncate = (str: string, num: number) => {
     if (!str) return "";
     if (str.length <= num) {
-      return str;
+        return str;
     }
     return str.slice(0, num) + "...";
-  };
+};
 
 export const toDateString = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
+    return new Date(date).toLocaleDateString("en-UK", {
         month: "short",
         day: "numeric",
         year: "numeric",
