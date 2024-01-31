@@ -5,24 +5,25 @@ import { NextRequest,  NextResponse } from 'next/server';
 
 //Signup route: Creates a new user in the database
 export async function POST (req: NextRequest) {
-  const { email, password, username } = req.json();
+
+  const requestBody = await req.json();
+  const { email, password, username } = requestBody;
 
   // Validate the password
   const passwordValidation = validatePassword(password);
   if (!passwordValidation.isValid) {
-    return res.status(400).json({ message: passwordValidation.errorMessage });
-    return res.
+    return NextResponse.json({ message: passwordValidation.errorMessage }, { status: 400 });
   }
   // Validate the email
   if (!validateEmail(email)) {
-    return res.status(400).json({ message: 'Invalid email address' });
+    return NextResponse.json({ message: 'Invalid email address' }, { status: 400 });
   }
 
   try {
     // Check if the user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      return NextResponse.json({ message: 'User already exists' }, { status: 400 });
     }
 
     // Hash the password
@@ -39,7 +40,7 @@ export async function POST (req: NextRequest) {
 
     //TODO: Send a session token to the user
 
-    return res.status(201).json({ 
+    return NextResponse.json({ 
       message: 'User created successfully',
       user : {
         id: user.id,
@@ -47,6 +48,6 @@ export async function POST (req: NextRequest) {
         username: user.username,
       }});
   } catch (error) {
-    return res.status(500).json({ message: 'Internal server error', error });
+    return NextResponse.json({ message: 'Internal server error', error });
   }
 }
