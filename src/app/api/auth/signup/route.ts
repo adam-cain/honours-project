@@ -4,22 +4,28 @@ import  prisma from '@/lib/prisma';
 import { NextRequest,  NextResponse } from 'next/server';
 
 //Signup route: Creates a new user in the database
+
+interface SignupRequestBody {
+  email: string;
+  password: string;
+  username: string;
+}
+
 export async function POST (req: NextRequest) {
-
-  const requestBody = await req.json();
-  const { email, password, username } = requestBody;
-
-  // Validate the password
-  const passwordValidation = validatePassword(password);
-  if (!passwordValidation.isValid) {
-    return NextResponse.json({ message: passwordValidation.errorMessage }, { status: 400 });
-  }
-  // Validate the email
-  if (!validateEmail(email)) {
-    return NextResponse.json({ message: 'Invalid email address' }, { status: 400 });
-  }
-
   try {
+    const requestBody = await req.json() as SignupRequestBody;
+    const { email, password, username } = requestBody;
+  
+    // Validate the password
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      return NextResponse.json({ message: passwordValidation.errorMessage }, { status: 400 });
+    }
+    // Validate the email
+    if (!validateEmail(email)) {
+      return NextResponse.json({ message: 'Invalid email address' }, { status: 400 });
+    }
+
     // Check if the user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
