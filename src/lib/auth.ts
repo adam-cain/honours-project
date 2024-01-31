@@ -76,9 +76,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   pages: {
-    signIn: `/auth/login`,
-    verifyRequest: `/auth/login`,
-    error: "/auth/login", // Error code passed in query string as ?error=
+    signIn: `/login`,
+    verifyRequest: `/login`,
+    error: "/login", // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
