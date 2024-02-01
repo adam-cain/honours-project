@@ -3,13 +3,13 @@ import AuthProviderButtonGroup from "@/components/Auth/provider-login-button";
 import FormSubmitButton from "@/components/Auth/form-submit-button";
 import Link from "next/link";
 import InputField from "@/components/Auth/input-field";
-import { SignInResponse } from "next-auth/react";
+import { ValidationResult } from "@/lib/types";
 
 interface Field {
     name: string; 
     type: string; 
     label: string; 
-    validator: (value: string) => string;
+    validator: (value: string) => ValidationResult;
 }
 
 interface AuthFormProps {
@@ -33,7 +33,7 @@ export default function AuthForm({ title, fields, onSubmit, alternateLink }: Aut
             setFormData((prev: object) => ({ ...prev, [name]: value, [errorKey]: "" }));
             return;
         }
-        const errorMessage = fields.find(field => field.name === name)?.validator(value);
+        const errorMessage = fields.find(field => field.name === name)?.validator(value).errorMessage;
 
         setFormData((prev: object) => ({ ...prev, [name]: value, [errorKey]: errorMessage }));
 

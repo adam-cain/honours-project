@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
-import { validateEmail, validatePassword } from '@/lib/validation';
+import { validateEmail, validatePassword, validateUsername } from '@/lib/validation';
 import  prisma from '@/lib/prisma';
-import { NextRequest,  NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 //Signup route: Creates a new user in the database
 
@@ -11,25 +11,41 @@ interface SignupRequestBody {
   username: string;
 }
 
-export async function POST (req: NextRequest) {
+export async function POST (req: Request) {
   try {
     const requestBody = await req.json() as SignupRequestBody;
     const { email, password, username } = requestBody;
-  
-    // Validate the password
+    console.log('Request body:', requestBody);
+    console.log("body", email, password, username);
+    {
+    // Validate the username
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
       return NextResponse.json({ message: passwordValidation.errorMessage }, { status: 400 });
     }
     // Validate the email
-    if (!validateEmail(email)) {
-      return NextResponse.json({ message: 'Invalid email address' }, { status: 400 });
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      return NextResponse.json({ message: emailValidation.errorMessage }, { status: 400 });
     }
 
-    // Check if the user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return NextResponse.json({ message: 'User already exists' }, { status: 400 });
+    // Validate the username
+    const usernameValidation = validateUsername(username);
+    if (!usernameValidation.isValid) {
+      return NextResponse.json({ message: usernameValidation.errorMessage }, { status: 400 });
+    }
+  }
+
+    // Check if the email already exists
+    const existingEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingEmail) {
+      return NextResponse.json({ message: 'Email already exists' }, { status: 400 });
+    }
+
+    //check if the username already exists
+    const existingUsername = await prisma.user.findUnique({ where: { username } });
+    if (existingUsername) {
+      return NextResponse.json({ message: 'Username already exists' }, { status: 400 });
     }
 
     // Hash the password
@@ -44,16 +60,9 @@ export async function POST (req: NextRequest) {
       },
     });
 
-    //TODO: Send a session token to the user
-
-    return NextResponse.json({ 
-      message: 'User created successfully',
-      user : {
-        id: user.id,
-        email: user.email,
-        username: user.username,
-      }});
+    return NextResponse.json(
+      { message: 'User created successfully',}, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ message: 'Internal server error', error });
+    return NextResponse.json({ message: 'Internal server error: ' + error}, { status: 500});
   }
 }

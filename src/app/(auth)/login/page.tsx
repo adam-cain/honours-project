@@ -13,10 +13,10 @@ export default function LoginPage() {
                 redirect: false,
                 email: formData.email,
                 password: formData.password,
-                callbackUrl: "/",
             })
             if(result?.ok) {
                 router.push("/")
+                return "";
             }
             return result?.error ?? "Unknown error";
         } catch (error) {
@@ -31,13 +31,13 @@ export default function LoginPage() {
             name: "email",
             type: "text",
             label: "Email",
-            validator: (e) => validateEmail(e) ? "" : "Enter a valid email address."
+            validator: (e) => validateEmail(e)
         },
         {
             name: "password",
             type: "password",
             label: "Password",
-            validator: (e) => validatePassword(e).errorMessage
+            validator: (e) => validatePassword(e)
         }
     ]} 
     onSubmit={login} 

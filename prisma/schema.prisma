@@ -13,18 +13,18 @@ datasource db {
 
 // Model Definitions
 model User {
-  id            String               @id @default(cuid())
+  id                   String               @id @default(cuid())
   // if you are using Github OAuth, you can get rid of the username attribute (that is for Twitter OAuth)
-  username      String
-  email         String?              @unique
-  emailVerified DateTime?            
-  password      String?
-  image         String?
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  memberOfOrganization  OrganizationMember[]
+  username             String               @unique
+  email                String?              @unique
+  emailVerified        DateTime?
+  password             String?
+  image                String?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  accounts             Account[]
+  sessions             Session[]
+  memberOfOrganization OrganizationMember[]
 }
 
 model Organization {
@@ -106,18 +106,17 @@ model VerificationToken {
 }
 
 model Chat {
-  id             String        @id @default(cuid())
+  id             String       @id @default(cuid())
   name           String
-  description    String?       @db.Text
+  description    String?      @db.Text
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId String
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  deployed       Boolean       @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deployed       Boolean      @default(false)
 
   @@unique([name, organizationId])
 }
-
 
 // model Site {
 //   id           String   @id @default(cuid())
