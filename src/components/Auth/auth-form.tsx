@@ -3,6 +3,7 @@ import AuthProviderButtonGroup from "@/components/Auth/provider-login-button";
 import FormSubmitButton from "@/components/Auth/form-submit-button";
 import Link from "next/link";
 import InputField from "@/components/Auth/input-field";
+import { SignInResponse } from "next-auth/react";
 
 interface Field {
     name: string; 
@@ -44,10 +45,12 @@ export default function AuthForm({ title, fields, onSubmit, alternateLink }: Aut
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setLoading(true);
+        let error : string = "";
         if (hasError) {
             setCredentialError("Error in form fields");
         } else {
-            await onSubmit(formData);
+            error = await onSubmit(formData);
+            setCredentialError(error)
         }
         setLoading(false);
     };

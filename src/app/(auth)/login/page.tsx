@@ -2,19 +2,26 @@
 import { signIn } from "next-auth/react";
 import { validatePassword, validateEmail } from "@/lib/validation";
 import AuthForm from "@/components/Auth/auth-form";
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-
+    const router = useRouter()
     const login = async (formData: any): Promise<string> => {
         console.log(formData);
-        const result = await signIn<'credentials'>('credentials', {
-            redirect: true,
-            email: formData.email,
-            password: formData.password,
-            callbackUrl: "/",
-        })
-        console.log(result);
-        return ""
+        try {
+            const result = await signIn('credentials', {
+                redirect: false,
+                email: formData.email,
+                password: formData.password,
+                callbackUrl: "/",
+            })
+            if(result?.ok) {
+                router.push("/")
+            }
+            return result?.error ?? "Unknown error";
+        } catch (error) {
+            return "Unknown error";
+        }
     }
 
     return (<AuthForm 
