@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation'
 export default function LoginPage() {
     const router = useRouter()
     const login = async (formData: any): Promise<string> => {
-        console.log(formData);
         try {
             const result = await signIn('credentials', {
                 redirect: false,

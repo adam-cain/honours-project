@@ -22,7 +22,6 @@ export default function SignupPage() {
                     password: formData.password,
                 }),
             });
-            console.log(result);
             
             if (result?.ok) {
                 try {
@@ -32,7 +31,6 @@ export default function SignupPage() {
                         password: formData.password,
                     })
                     if(result?.ok) {
-                        console.log("Logged in");
                         router.push("/")
                         return "";
                     }

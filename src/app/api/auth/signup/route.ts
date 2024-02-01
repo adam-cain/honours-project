@@ -15,9 +15,8 @@ export async function POST (req: Request) {
   try {
     const requestBody = await req.json() as SignupRequestBody;
     const { email, password, username } = requestBody;
-    console.log('Request body:', requestBody);
-    console.log("body", email, password, username);
-    {
+
+
     // Validate the username
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
@@ -34,7 +33,7 @@ export async function POST (req: Request) {
     if (!usernameValidation.isValid) {
       return NextResponse.json({ message: usernameValidation.errorMessage }, { status: 400 });
     }
-  }
+
 
     // Check if the email already exists
     const existingEmail = await prisma.user.findUnique({ where: { email } });
@@ -48,6 +47,7 @@ export async function POST (req: Request) {
       return NextResponse.json({ message: 'Username already exists' }, { status: 400 });
     }
 
+    
     // Hash the password
     const hashedPassword = bcrypt.hashSync(password, 10);
 
