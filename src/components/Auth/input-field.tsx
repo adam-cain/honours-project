@@ -25,6 +25,7 @@ const InputField: React.FC<InputFieldProps> = ({ type, name, id, label, error, o
         />
         <label htmlFor={id}
           className={`absolute text-sm bg-black duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] px-2 peer-focus:px-2 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 start-2
+          hover:cursor-text peer-focus:hover:cursor-auto
             ${!error ? "" : "text-red-600 dark:text-red-400"}`}>{label}</label>
       </div>
       <p id={`${id}_error_help`} className="mt-2 text-xs text-red-600 dark:text-red-400">{error}</p>
