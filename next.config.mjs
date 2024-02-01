@@ -4,7 +4,6 @@ const nextConfig = {
     serverActions: {
       allowedOrigins: ["localhost:3000"],
     },
-    nftTracing: true
   },
   images: {
     remotePatterns: [
