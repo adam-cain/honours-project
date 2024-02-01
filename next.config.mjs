@@ -2,8 +2,9 @@
 const nextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ["app.localhost:3000"],
+      allowedOrigins: ["localhost:3000"],
     },
+    nftTracing: true
   },
   images: {
     remotePatterns: [
