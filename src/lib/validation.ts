@@ -1,5 +1,9 @@
 import { ValidationResult } from "@/lib/types";
 
+function errorBuilder(errors: string[]) {
+    return `Must include ${errors.join(", ")}.`;
+}
+
 export const validatePassword = (password: string): ValidationResult => {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
@@ -58,7 +62,3 @@ export const validateUsername = (username: string): ValidationResult => {
         errorMessage: errorMessage.length > 0 ? errorBuilder(errorMessage) : "",
     };
 };
-
-function errorBuilder(errors: string[]) {
-    return `Must include ${errors.join(", ")}.`;
-}

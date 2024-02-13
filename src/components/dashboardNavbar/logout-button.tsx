@@ -1,10 +1,7 @@
 "use client";
-
-import { useEffect, useState } from 'react';
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { DropdownMenuItem } from "../ui/dropdown-menu";
-import { NextRouter, useRouter } from "next/router";
 
 export default function LogoutButton() {
   const handleClick = async () => {

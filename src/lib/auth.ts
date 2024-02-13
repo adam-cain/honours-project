@@ -2,14 +2,19 @@ import { getServerSession, type NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from 'bcryptjs';
+import { User } from "@/lib/types";
 
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
-// Check if we're running on Vercel or locally
+// Check if we're deployed or running locally
 const DEPLOYED = !!process.env.VERCEL_URL;
+
+export function getSession(): Promise<User> {
+  return getServerSession(authOptions) as Promise<User>;
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,7 +22,7 @@ export const authOptions: NextAuthOptions = {
       name: 'Credentials',
       credentials: {
         email: { label: "Email", type: "email" },
-        password:  {  label: "Password" }
+        password:  {  label: "Password", type: "password"}
       },
       async authorize(credentials, req) {
         // Find the user by email
@@ -65,12 +70,19 @@ export const authOptions: NextAuthOptions = {
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
+      authorization: {
+        params: {
+          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/github`,
+        },
+        // https://ratemyuniaccom.tech/api/auth/callback/github
+        // http://localhost:3000/api/auth/callback/github 
+      },
       profile(profile) {
         return {
           id: profile.id.toString(),
           email: profile.email,
           image: profile.avatar_url,
-          username: profile.login,
+          username: profile.name ?? profile.login,
         };
       },
     }),
@@ -117,13 +129,48 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export function getSession() {
-  return getServerSession(authOptions) as Promise<{
-    user: {
-      id: string;
-      username: string;
-      email: string;
-      image: string;
-    };
-  } | null>;
+export function withOrgAuth(action: any) {
+  return async (
+    formData: FormData | null,
+    orgId: string,
+    key: string | null,
+  ) => {
+    const session = await getSession();
+    if (!session) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+
+    // Fetch organization and check if the session user is a member
+    const organization = await prisma.organization.findUnique({
+      where: {
+        id: orgId,
+      },
+      include: {
+        members: {
+          where: {
+            userId: session.user.id,
+          },
+          select: {
+            id: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    // Check if the user is a member of the organization
+    if (!organization || organization.members.length === 0) {
+      return {
+        error: "Not authorized or organization does not exist",
+      };
+    }
+    // Optional: Check for specific roles, e.g., OWNER or ADMIN
+    // This is where you'd enforce role-based checks if necessary
+
+    
+    // Proceed with the action if authorized
+    return action(formData, organization, key);
+  };
 }

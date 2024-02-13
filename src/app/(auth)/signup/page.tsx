@@ -9,8 +9,6 @@ export default function SignupPage() {
 
     const signup = async (formData: any): Promise<string> => {
         try {
-            // This is a placeholder for whatever signup mechanism you have.
-            // It might be an API call or something else.
             const result = await fetch("/api/auth/signup", {
                 method: "POST",
                 headers: {
