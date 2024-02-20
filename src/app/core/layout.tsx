@@ -1,14 +1,13 @@
-import { DashboardNav } from "@/components/dashboardNavbar/dashboardNav";
 import { getSession } from "@/lib/auth"
 import { LayoutProps } from "@/lib/types";
+import NavBar from "@/components/dashboardNavbar";
 
 const Layout = async ({ children }: LayoutProps) => {
     const session = await getSession();
-
     return (
-        <DashboardNav>
+        <NavBar userData={session}>
             {children}
-        </DashboardNav>
+        </NavBar>
     );
 }
 

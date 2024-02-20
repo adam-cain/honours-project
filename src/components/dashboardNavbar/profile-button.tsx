@@ -4,8 +4,10 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import UserAvatar from "./avatar";
 import LogoutButton from "./logout-button";
 import { User } from "@/lib/types";
+import { useRouter } from "next/navigation";
 
 export default function Profile({ data, isCollapsed }: { data: User, isCollapsed: { hideText: boolean, navCollapsed: boolean } }) {
+    const router = useRouter();
     return (
         <DropdownMenu >
             <DropdownMenuTrigger asChild>
@@ -19,7 +21,7 @@ export default function Profile({ data, isCollapsed }: { data: User, isCollapsed
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-full">
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={() =>router.push("/profile/settings")}>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <LogoutButton />

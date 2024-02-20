@@ -14,14 +14,12 @@ export const createOrganisation = async (formData: FormData) => {
     const name = formData.get("name") as string;
     const subdomain = formData.get("subdomain") as string;
     const description = formData.get("description") as string;
-    
+
     if (!name || !subdomain) {
         return {
             error: "Required fields are missing",
         };
     }
-
-    console.log(name, subdomain, description, session.user.id);
 
 
     const subdomainRegex = /^[a-zA-Z0-9-]+$/;
@@ -51,7 +49,7 @@ export const createOrganisation = async (formData: FormData) => {
         return org;
     } catch (error) {
         console.log(error);
-        
+
         return {
             error: "An error occurred while creating the organization",
         };
@@ -77,4 +75,42 @@ export const getUserOrganisations = async () => {
     });
 
     return orgs;
+}
+
+export const getOrganisation = async (orgName: string) => {
+    const org = await prisma.organization.findUnique({
+        where: {
+            name: orgName,
+        },
+    });
+    console.log(org);
+    
+    return org;
+}
+
+export const hasOrgPermission = async (orgName: string) => {
+    const session = await getSession();
+    if (session) {
+        const org = await prisma.organization.findUnique({
+            where: {
+                name: orgName,
+            },
+            include: {
+                members: {
+                    where: {
+                        userId: session?.user.id,
+                    },
+                    select: {
+                        id: true,
+                        role: true,
+                    },
+                },
+            },
+        });
+
+        if (org && org.members.length > 0) {
+            return true;
+        }
+    }
+    return false
 }

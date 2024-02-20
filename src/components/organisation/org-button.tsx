@@ -14,11 +14,10 @@ const imageSize = 12;
 const imageMargin = 4;
 
 export default function Card({ name, logo }: CardProps) {
-
     const router = useRouter();
 
     return (
-        <CardBase onclick={() => router.push("/"+name)}>
+        <CardBase onclick={() => router.push("/organisation/"+name)}>
             <div className={`w-${imageSize} h-${imageSize} rounded-full object-cover border flex items-center justify-center`}>
             {logo ? (
                 // If there's an logo, render the Image component

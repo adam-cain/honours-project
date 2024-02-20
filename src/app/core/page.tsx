@@ -1,3 +1,4 @@
+"use server"
 import { Suspense } from "react";
 import Card from "@/components/organisation/org-button";
 import NewOrgButton from "@/components/organisation/new-org-button";
@@ -8,6 +9,7 @@ export default async function Overview() {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
+      {/* <div className="p-4"> */}
       <h1 className=" text-3xl font-bold" >Organisation</h1>
       <div className="grid grid-cols-3 gap-4">
         {orgs.map((org: { name: string; logo: string; }, index: number) => (
@@ -15,6 +17,7 @@ export default async function Overview() {
         ))}
        <NewOrgButton/>
       </div>
+      {/* </div> */}
     </Suspense>
   );
 }

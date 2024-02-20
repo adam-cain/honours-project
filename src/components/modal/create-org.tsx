@@ -39,7 +39,7 @@ export default function CreateSiteModal() {
           } else {
             const { name } = res;
             router.refresh();
-            router.push(`/${name}`);
+            router.push(`/organisation/${name}`);
             modal?.hide();
             toast.success(`Successfully created ${name}`);
           }

@@ -18,10 +18,10 @@ export interface NavBarStructure {
 
 const navItems: NavItem[] = [
     { icon: <HomeIcon className="h-4 w-4" />, title: 'Home', href: '/' },
-    { icon: <SettingsIcon className="h-4 w-4" />, title: 'Settings', href: '/settings' },
+    { icon: <SettingsIcon className="h-4 w-4" />, title: 'Settings', href: '/profile/settings' },
 ];
 
-export default function NavBar({ data, children }: { data: User, children: React.ReactNode }) {
+export default function NavBar({ userData, children }: { userData: User, children: React.ReactNode }) {
     const [isNavCollapsed, setIsNavCollapsed] = useState(false);
     const [hideText, setHideText] = useState(false);
     const path = usePathname();
@@ -69,7 +69,7 @@ export default function NavBar({ data, children }: { data: User, children: React
                     </div>
                     {/* Profile */}
                     <div className="flex">
-                        <Profile isCollapsed={{ hideText, navCollapsed: isNavCollapsed }} data={data} />
+                        <Profile isCollapsed={{ hideText, navCollapsed: isNavCollapsed }} data={userData} />
                     </div>
                 </div>
             </div>

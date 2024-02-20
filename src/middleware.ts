@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-
+// import {userHasOrgPermission} from "@/lib/auth";
+import { hasOrgPermission } from "@/lib/actions/organisation";
 // Configuration for the middleware
 export const config = {
   matcher: [
@@ -31,21 +32,24 @@ export default async function middleware(req: NextRequest) {
   const path = `${url.pathname}${searchParams.length > 0
     ? `?${searchParams}` : ""}`;
 
-    // For root domain only
+  // For root domain only
   if (hostname == process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
     const session = await getToken({ req });
-    if (!session) {
+    if (session) {
+      return coreRedirect(req, path);
+    } else {
       if (path.startsWith("/core")) {
         return NextResponse.redirect(new URL("/login", req.url));
       }
       return NextResponse.next();
-    } else {
-      return NextResponse.rewrite(
-        new URL(`/core${path === "/" ? "" : path}`, req.url),
-      );
     }
   } else {
     const subdomain = hostname.split(".")[0];
-    return NextResponse.rewrite(new URL(`/${subdomain}${path}`, req.url));
+    return NextResponse.rewrite(new URL(`/external/${subdomain}${path}`, req.url));
   }
+}
+
+function coreRedirect(req: NextRequest, path: string) {
+  // console.log(`/_core${path === "/" ? "" : path}`,"->",req.url);
+  return NextResponse.rewrite(new URL(`/core${path === "/" ? "" : path}`, req.url));
 }
