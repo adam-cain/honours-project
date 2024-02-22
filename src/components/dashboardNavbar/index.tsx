@@ -1,30 +1,102 @@
 "use client"
-import { LucideArrowLeft, LucideArrowRight, BotIcon, HomeIcon, SettingsIcon } from "lucide-react"
-import Profile from "./profile-button"
-import { User } from "@/lib/types"
-import { useState } from "react";
-import Link from "next/link";
-import { usePathname  } from "next/navigation";
+import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { HomeIcon, SettingsIcon, BotIcon, LineChartIcon, UserIcon, LucideArrowLeft, LucideArrowRight } from 'lucide-react';
 
-interface NavItem {
-    icon: React.ReactNode;
+// Custom components and types
+import Profile from './profile-button';
+import NavItem from './nav-item';
+import BackButton from './back-button';
+import { User } from '@/lib/types';
+
+export interface NavItem {
     title: string;
     href: string;
+    icon: React.ReactNode;
 }
 
-export interface NavBarStructure {
-    items: NavItem[];
+export interface BackButtonConfig {
+    title: string;
+    href: string;
+    dynamic: boolean;
 }
 
-const navItems: NavItem[] = [
-    { icon: <HomeIcon className="h-4 w-4" />, title: 'Home', href: '/' },
-    { icon: <SettingsIcon className="h-4 w-4" />, title: 'Settings', href: '/profile/settings' },
-];
+interface NavBarGroup {
+    navItems: NavItem[];
+    showOn: RegExp | RegExp[];
+    dynamic: boolean;
+    backButtonConfig?: BackButtonConfig;
+}
+
+export interface NavConfig {
+    navGroup: NavBarGroup[];
+}
+
+const navConfig: NavConfig = {
+    navGroup: [
+        {
+            navItems: [
+                { title: 'Home', href: '/', icon: <HomeIcon className="h-4 w-4" /> },
+                { title: 'Settings', href: '/profile/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+            ],
+            showOn: [/\/[^\/]*/, /\/profile\/.*/],
+            dynamic: false
+        },
+        {
+            navItems: [
+                { title: 'Overview', href: '/organisation/[org]', icon: <HomeIcon className="h-4 w-4" /> },
+                { title: 'Chatbots', href: '/organisation/[org]/chat', icon: <BotIcon className="h-4 w-4" />, },
+                { title: 'Analytics', href: '/organisation/[org]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
+                { title: 'Members', href: '/organisation/[org]/members', icon: <UserIcon className="h-4 w-4" />, },
+                { title: 'Settings', href: '/organisation/[org]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+            ],
+            showOn: /\/organisation\/.*/,
+            dynamic: true,
+            backButtonConfig: { title: 'Home', href: '/', dynamic: false}
+        },
+        {
+            navItems: [
+                { title: 'Overview', href: '/organisation/[org]/chat/[chat]', icon: <HomeIcon className="h-4 w-4" /> },
+                { title: 'Analytics', href: '/organisation/[org]/chat/[chat]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
+                { title: 'Settings', href: '/organisation/[org]/chat/[chat]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+            ],
+            showOn: /\/organisation\/.*\/chat\/.*/,
+            dynamic: true,
+            backButtonConfig: { title: '[org]', href: '/organisation/[org]', dynamic: true}
+        }
+    ]
+}
+
+const replaceDynamicSegments = (href: string, org: string | undefined, chat: string | undefined) => {
+    return href.replace(/\[org\]/g, org || "").replace(/\[chat\]/g, chat || "");
+};
 
 export default function NavBar({ userData, children }: { userData: User, children: React.ReactNode }) {
     const [isNavCollapsed, setIsNavCollapsed] = useState(false);
     const [hideText, setHideText] = useState(false);
     const path = usePathname();
+
+    const { org, chat } = useMemo(() => {
+        const orgMatch = path.match(/\/organisation\/([^\/]+)(\/.*)?/);
+        const chatMatch = path.match(/\/organisation\/[^\/]+\/chat\/([^\/]+)/);
+        return { org: orgMatch?.[1], chat: chatMatch?.[1] };
+      }, [path]);
+
+    const dynamicNavConfig = useMemo(() => navConfig.navGroup.filter(group => 
+        Array.isArray(group.showOn) ? group.showOn.some(regex => regex.test(path)) : group.showOn.test(path)
+      ).map(group => ({
+        ...group,
+        backButtonConfig: group.backButtonConfig && {
+          ...group.backButtonConfig,
+          href: replaceDynamicSegments(group.backButtonConfig.href, org, chat),
+          title: replaceDynamicSegments(group.backButtonConfig.title, org, chat)
+        },
+        navItems: group.navItems.map(item => ({
+          ...item,
+          href: replaceDynamicSegments(item.href, org, chat)
+        }))
+      })), [path, org, chat]);
 
     const toggleNavbar = () => {
         if (!isNavCollapsed) {
@@ -32,7 +104,6 @@ export default function NavBar({ userData, children }: { userData: User, childre
             setTimeout(() => setHideText(true), 200);
         } else {
             setIsNavCollapsed(false);
-            // setTimeout(() => setHideText(false), 300);
             setHideText(false);
         }
     };
@@ -57,13 +128,14 @@ export default function NavBar({ userData, children }: { userData: User, childre
                     {/* Nav Links */}
                     <div className="flex-grow overflow-auto overflow-x-hidden">
                         <nav className=" flex-col gap-2 px-4 py-2 text-sm font-medium">
-                            {navItems.map((item, index) => (
-                                <Link key={index} className={`${item.href === path? "hover:text-gray-900 dark:bg-gray-800 ":""} h-10 flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-50`} href={item.href}>
-                                    <div>{item.icon}</div>
-                                    <span className={`whitespace-nowrap overflow-hidden text-collapse-transition ${hideText ? 'hidden' : ''}`} style={{ opacity: isNavCollapsed ? 0 : 1 }}>
-                                        {item.title}
-                                    </span>
-                                </Link>
+                            {dynamicNavConfig.map((group, groupIndex) => (
+                                <div className=" border-t" key={groupIndex}>
+                                    {
+                                    group.backButtonConfig ? <BackButton backButtonConfig={group.backButtonConfig} isNavCollapsed={isNavCollapsed} hideText={hideText} /> : ""}
+                                    {group.navItems.map((item, itemIndex) => (
+                                        <NavItem key={itemIndex} navData={item} active={item.href === path} isNavCollapsed={isNavCollapsed} hideText={hideText} />
+                                    ))}
+                                </div>
                             ))}
                         </nav>
                     </div>

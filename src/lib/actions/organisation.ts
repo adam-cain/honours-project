@@ -83,8 +83,6 @@ export const getOrganisation = async (orgName: string) => {
             name: orgName,
         },
     });
-    console.log(org);
-    
     return org;
 }
 

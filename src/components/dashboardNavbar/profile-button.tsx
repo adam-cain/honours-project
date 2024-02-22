@@ -7,7 +7,7 @@ import { User } from "@/lib/types";
 import { useRouter } from "next/navigation";
 
 export default function Profile({ data, isCollapsed }: { data: User, isCollapsed: { hideText: boolean, navCollapsed: boolean } }) {
-    const router = useRouter();
+    const router = useRouter();    
     return (
         <DropdownMenu >
             <DropdownMenuTrigger asChild>
@@ -17,7 +17,8 @@ export default function Profile({ data, isCollapsed }: { data: User, isCollapsed
                     className={`whitespace-nowrap overflow-hidden text-collapse-transition 
                     ${isCollapsed.hideText ? 'hidden' : ''}`} 
                     style={{ opacity: isCollapsed.navCollapsed ? 0 : 1 }}>
-                    {data?.user.name || data?.user.email || "No Username Found"}</p>
+                    
+                    {data?.user?.name || data?.user?.username || data?.user?.email || "No Username Found"}</p>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-full">
