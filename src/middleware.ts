@@ -20,7 +20,7 @@ export const config = {
 export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
 
-  // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
+  // Get hostname of request (e.g. demo.localhost:3000)
   let hostname = req.headers
     .get("host")!
     .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
@@ -28,7 +28,7 @@ export default async function middleware(req: NextRequest) {
   // Get the search parameters of the request as a string
   const searchParams = req.nextUrl.searchParams.toString();
 
-  // Get the pathname of the request (e.g. /, /about, /blog/first-post)
+  // Get the pathname of the request
   const path = `${url.pathname}${searchParams.length > 0
     ? `?${searchParams}` : ""}`;
 

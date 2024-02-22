@@ -47,9 +47,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         // If the user has a password, verify it
-        if (user.password && credentials?.password && bcrypt.compareSync(credentials.password, user.password) 
-        //remove for production, testing only
-        || credentials?.password === user.password) {
+        if (user.password && credentials?.password && bcrypt.compareSync(credentials.password, user.password)) {
           return { id: user.id, email: user.email, name: user.username };
         } else {
           throw new Error('Incorrect email or password');
