@@ -52,6 +52,8 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
     }
 );
 
+SelectItem.displayName = 'SelectItem';
+
 const SelectButton = ({ role }: { role: string }) => {
     return (
         <Select.Root>
@@ -74,7 +76,7 @@ const SelectButton = ({ role }: { role: string }) => {
                             {/* <Select.Label className="px-[25px] text-xs leading-[25px] text-mauve11">
                                 Role
                             </Select.Label> */}
-                            <SelectItem className='hover:bg-white' value="OWNER">Owner</SelectItem>
+                            <SelectItem value="OWNER">Owner</SelectItem>
                             <SelectItem value="ADMIN">Admin</SelectItem>
                             <SelectItem value="MEMBER">Member</SelectItem>
                             <SelectItem value="VIEW ONLY">View only</SelectItem>
