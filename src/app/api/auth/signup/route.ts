@@ -16,7 +16,6 @@ export async function POST (req: Request) {
     const requestBody = await req.json() as SignupRequestBody;
     const { email, password, username } = requestBody;
 
-
     // Validate the username
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {

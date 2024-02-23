@@ -10,9 +10,9 @@ export default function LogoutButton() {
 
   return (
 <DropdownMenuItem onClick={handleClick}>
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+  <div className="flex justify-between items-center w-full">
     <p>Logout</p>
-    <LogOut width={13} />
+    <LogOut width={13} height={13} />
   </div>
 </DropdownMenuItem>
   );

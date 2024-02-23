@@ -1,7 +1,7 @@
 "use client"
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname,useParams } from 'next/navigation';
 import { HomeIcon, SettingsIcon, BotIcon, LineChartIcon, UserIcon, LucideArrowLeft, LucideArrowRight } from 'lucide-react';
 
 // Custom components and types
@@ -72,16 +72,12 @@ const replaceDynamicSegments = (href: string, org: string | undefined, chat: str
     return href.replace(/\[org\]/g, org || "").replace(/\[chat\]/g, chat || "");
 };
 
-export default function NavBar({ userData, children }: { userData: User, children: React.ReactNode }) {
+export default function NavBar({ userData, children }: { userData: User, children: ReactNode }) {
     const [isNavCollapsed, setIsNavCollapsed] = useState(false);
     const [hideText, setHideText] = useState(false);
     const path = usePathname();
 
-    const { org, chat } = useMemo(() => {
-        const orgMatch = path.match(/\/organisation\/([^\/]+)(\/.*)?/);
-        const chatMatch = path.match(/\/organisation\/[^\/]+\/chat\/([^\/]+)/);
-        return { org: orgMatch?.[1], chat: chatMatch?.[1] };
-      }, [path]);
+    const { org, chat } = useParams() as {  org?: string, chat?: string};
 
     const dynamicNavConfig = useMemo(() => navConfig.navGroup.filter(group => 
         Array.isArray(group.showOn) ? group.showOn.some(regex => regex.test(path)) : group.showOn.test(path)
@@ -111,9 +107,9 @@ export default function NavBar({ userData, children }: { userData: User, childre
     return (<>
         <div className="grid min-h-screen max-h-screen w-full overflow-hidden grid-animate" style={{ gridTemplateColumns: isNavCollapsed ? '72px 1fr' : '220px 1fr' }}>
             {/* Wrapper */}
-            <div className=" border-r bg-gray-100/40 block dark:bg-gray-800/40 relative">
+            <div className=" border-r border-stone-700 block bg-secondary relative">
                 {/* Collapse button */}
-                <div onClick={toggleNavbar} className="cursor-pointer absolute left-full top-1/2 transform -translate-y-1/2 -translate-x-1/2 size-8 border bg rounded-full bg-gray-800 flex items-center justify-center">
+                <div onClick={toggleNavbar} className="cursor-pointer absolute left-full top-1/2 transform -translate-y-1/2 -translate-x-1/2 size-8 border bg-secondary rounded-full flex items-center justify-center">
                     {isNavCollapsed ? <LucideArrowRight className="w-6 h-6" /> : <LucideArrowLeft className="w-6 h-6" />}
                 </div>
                 {/* Side Nav */}
@@ -125,11 +121,12 @@ export default function NavBar({ userData, children }: { userData: User, childre
                             <span className={`whitespace-nowrap overflow-hidden text-collapse-transition ${hideText ? 'hidden' : ''}`} style={{ opacity: isNavCollapsed ? 0 : 1 }}>Platform Name</span>
                         </Link>
                     </div>
+                    <div className=" mx-2 border-t border-stone-200 dark:border-stone-700" />
                     {/* Nav Links */}
                     <div className="flex-grow overflow-auto overflow-x-hidden">
                         <nav className=" flex-col gap-2 px-4 py-2 text-sm font-medium">
                             {dynamicNavConfig.map((group, groupIndex) => (
-                                <div className=" border-t" key={groupIndex}>
+                                <div className="flex flex-col gap-1" key={groupIndex}>
                                     {
                                     group.backButtonConfig ? <BackButton backButtonConfig={group.backButtonConfig} isNavCollapsed={isNavCollapsed} hideText={hideText} /> : ""}
                                     {group.navItems.map((item, itemIndex) => (
@@ -140,6 +137,7 @@ export default function NavBar({ userData, children }: { userData: User, childre
                         </nav>
                     </div>
                     {/* Profile */}
+                    <div className=" mx-2 border-t border-stone-200 dark:border-stone-700" />
                     <div className="flex">
                         <Profile isCollapsed={{ hideText, navCollapsed: isNavCollapsed }} data={userData} />
                     </div>

@@ -1,7 +1,10 @@
-refactor code structure:
-remove app folder as codebase should run off main app
-[domain] should then contain all deployed chats, where [domain] is the organisation
-then create protected routes for main app
+BG Main - Black
+BG Secondary - bg-stone-900
+Border - border-stone-700
 
-a@email.com
-Swimming.55
+rgb(19, 21, 22)
+
+dark:border-stone-700 dark:bg-stone-900
+
+wanted secondary colour
+#131516

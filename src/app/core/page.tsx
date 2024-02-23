@@ -1,23 +1,22 @@
 "use server"
 import { Suspense } from "react";
-import Card from "@/components/organisation/org-button";
-import NewOrgButton from "@/components/organisation/new-org-button";
+import Card from "@/components/Card/organisation/org-button";
+import NewOrgButton from "@/components/Card/organisation/new-org-button";
 import { getUserOrganisations } from "@/lib/actions/organisation";
+import {Title} from "@/components/PageComponents";
 
 export default async function Overview() {
   const orgs = await getUserOrganisations();
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      {/* <div className="p-4"> */}
-      <h1 className=" text-3xl font-bold" >Organisation</h1>
+      <Title>Home</Title>
       <div className="grid grid-cols-3 gap-4">
         {orgs.map((org: { name: string; logo: string; }, index: number) => (
           <Card key={index} name={org.name} logo={org.logo} />
         ))}
        <NewOrgButton/>
       </div>
-      {/* </div> */}
     </Suspense>
   );
 }

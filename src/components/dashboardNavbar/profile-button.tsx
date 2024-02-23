@@ -11,7 +11,7 @@ export default function Profile({ data, isCollapsed }: { data: User, isCollapsed
     return (
         <DropdownMenu >
             <DropdownMenuTrigger asChild>
-                <Button className={`${isCollapsed.navCollapsed ? " bg-none" : "bg-slate-900"} w-full m-2 p-3 flex items-center justify-start space-x-3 mb-3`}  variant="ghost">
+                <Button className={`${isCollapsed.navCollapsed ? "" : " bg-tertiary"} w-full m-2 p-3 flex items-center justify-start space-x-3 mb-3`}  variant="ghost">
                     <UserAvatar data={data} />
                     <p 
                     className={`whitespace-nowrap overflow-hidden text-collapse-transition 
@@ -21,7 +21,7 @@ export default function Profile({ data, isCollapsed }: { data: User, isCollapsed
                     {data?.user?.name || data?.user?.username || data?.user?.email || "No Username Found"}</p>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-full">
+            <DropdownMenuContent align="center" className="w-full bg-tertiary">
                 <DropdownMenuItem onClick={() =>router.push("/profile/settings")}>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />

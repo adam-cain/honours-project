@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import bcrypt from 'bcryptjs';
 import { User } from "@/lib/types";
+import { Role } from "@prisma/client";
 
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -127,7 +128,32 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export function withOrgAuth(action: any) {
+function roleValue(role: Role): number {
+  const roleHierarchy = {
+    VIEW_ONLY: 1,
+    MEMBER: 2,
+    ADMIN: 3,
+    OWNER: 4,
+  };
+
+  return roleHierarchy[role];
+}
+
+export async function withOrgAuth(arg1: Role | Function, arg2?: Function) {
+  "use server"
+  let requiredRole: Role;
+  let action: Function;
+
+  if (typeof arg1 === "function") {
+    // If the first argument is a function, assume no role was provided and use the default role
+    requiredRole = Role.VIEW_ONLY;
+    action = arg1;
+  } else {
+    // If the first argument is not a function, assume it's a role and the second argument is the action
+    requiredRole = arg1;
+    action = arg2!;
+  }
+
   return async (
     formData: FormData | null,
     orgId: string,
@@ -164,9 +190,13 @@ export function withOrgAuth(action: any) {
         error: "Not authorized or organization does not exist",
       };
     }
-    // Optional: Check for specific roles, e.g., OWNER or ADMIN
-    // This is where you'd enforce role-based checks if necessary
 
+    const memberRole = organization.members[0].role;
+    if (roleValue(memberRole) < roleValue(requiredRole)) {
+      return {
+        error: `Your current role(${memberRole}) does not grant you the necessary permissions(${requiredRole}) to perform this action`,
+      };
+    }
     
     // Proceed with the action if authorized
     return action(formData, organization, key);

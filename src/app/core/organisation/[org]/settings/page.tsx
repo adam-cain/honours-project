@@ -1,7 +1,7 @@
-import { getOrganisation } from "@/lib/actions/organisation";
+import { Title } from "@/components/PageComponents";
 
 export default function Page({ params }: { params: { org: string } }) {
-    const organisation = getOrganisation(params.org);
-    
-    return <h1>{params.org}: {JSON.stringify(organisation)}</h1>
+    return(
+        <Title>Settings</Title>
+    )
 }

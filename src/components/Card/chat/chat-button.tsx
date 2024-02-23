@@ -2,7 +2,7 @@
 
 import { BuildingIcon } from 'lucide-react';
 import Image from 'next/image'
-import CardBase from './card-base';
+import CardBase from '../card-base';
 import { useRouter } from 'next/navigation';
 
 interface CardProps {

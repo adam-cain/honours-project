@@ -1,5 +1,6 @@
 "use server"
 
+import { Organization } from "@prisma/client";
 import { getSession } from "../auth";
 import prisma from "@/lib/prisma";
 
@@ -111,4 +112,62 @@ export const hasOrgPermission = async (orgName: string) => {
         }
     }
     return false
+}
+
+export const getOrgChats = async (organization: Organization) => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
+
+    const chats = await prisma.chat.findMany({
+        where: {
+            organizationId: organization.id,
+        },
+    });
+
+    return chats;
+}
+
+export const getOrgMembers = async (organization: Organization) => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
+
+    const members = await prisma.organization.findFirst({
+        where: {
+            id: organization.id,
+        },
+        select: {
+            members: {
+                select: {
+                    role: true, 
+                    user: {
+                        select: {
+                            username: true, 
+                            image: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    if (members) {
+        const restructure = members.members.map((member: { role: any; user: { username: any; image: any; }; }) => ({
+            role: member.role,
+            username: member.user.username,
+            image: member.user.image,
+        }));
+        console.log(members);
+        return restructure ; 
+    }
+    
+
+    return { members: [] };
 }
