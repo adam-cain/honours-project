@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
-// import {userHasOrgPermission} from "@/lib/auth";
-import { hasOrgPermission } from "@/lib/actions/organisation";
 // Configuration for the middleware
 export const config = {
   matcher: [

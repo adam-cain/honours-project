@@ -1,25 +1,23 @@
 "use client"
-
 import * as Select from '@radix-ui/react-select';
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState } from 'react';
 import classnames from 'classnames';
-import { OrganizationMember } from "@prisma/client";
-import Image from "next/image";
+import { OrganizationMember, Role } from "@prisma/client";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
+import { useParams } from 'next/navigation';
+import { updateOrgMemberRole } from '@/lib/actions/organisation';
+import { toast } from "sonner";
+import Avatar from '@/components/dashboardNavbar/avatar';
 
-function toCapitalCase(word: string) {
-    word = word.toLowerCase();
-    return word[0].toUpperCase() + word.slice(1);
-}
-
-export const MemberRow = ({ member }: { member: OrganizationMember }) => {
+export const MemberRow = ({ member, hasPerm }: { member: OrganizationMember, hasPerm:boolean }) => {
+    
     return (
         <div className="grid w-full grid-cols-[55px_1fr_120px] items-center p-4 border-t">
-            <Image className="border rounded-full aspect-square object-cover" src={"/logo.png"} alt={""} width={40} height={40} />
+            <Avatar image={member.image} username={member.username}/>
             <div>{member.username}</div>
             <div className="flex justify-between items-center">
                 <span className="w-full">
-                    <SelectButton role={member.role} />
+                    <SelectButton member={member} hasPerm={hasPerm} />
                 </span>
             </div>
         </div>
@@ -31,6 +29,7 @@ type SelectItemProps = {
     className?: string;
     value?: string;
 };
+
 const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
     ({ children, className, ...props }, ref) => {
         return (
@@ -54,14 +53,52 @@ const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
 
 SelectItem.displayName = 'SelectItem';
 
-const SelectButton = ({ role }: { role: string }) => {
+const roleDisplayMap: Record<Role, string> = {
+    OWNER: "Owner",
+    ADMIN: "Admin",
+    MEMBER: "Member",
+    VIEW_ONLY: "View Only",
+};
+
+const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, hasPerm: boolean }) => {
+    const [selectedRole, setSelectedRole] = useState<Role>(member.role);
+    const { org } = useParams() as { org?: string };
+
+    const handleRoleChange = async (newDisplayValue: string) => {
+        // Find the Role key that matches the newDisplayValue
+        const newRole = (Object.keys(roleDisplayMap) as Role[]).find(key => roleDisplayMap[key] === newDisplayValue);
+
+        if (newRole) {
+            toast.loading("Updating role");
+            if (org) {
+                const formData: FormData = new FormData();
+                formData.append("userId", member.userId);
+                formData.append("role", newRole);
+                const result = await updateOrgMemberRole(org,formData, null);
+                toast.dismiss();
+                if(result.error){
+                    toast.error(result.error);
+                }else if(result.success){
+                    toast.success("Role updated successfully");
+                    setSelectedRole(newRole);
+                }
+            } else {
+                console.error("Invalid organization:", org);
+            }
+        } else {
+            console.error("Invalid role selection:", newDisplayValue);
+        }
+    };
+
     return (
-        <Select.Root>
+        <Select.Root disabled={hasPerm ? false : true} onValueChange={handleRoleChange}>
             <Select.Trigger
-                className="inline-flex items-center justify-center rounded px-[15px] text-[13px] leading-none h-[35px] gap-[5px]  bg-tertiary  shadow-[0_2px_10px] shadow-black/10 hover:bg-secondary focus:shadow-[0_0_0_2px] focus:shadow-black  outline-none w-full"
+                className={` ${hasPerm ? "" : "cursor-not-allowed"} 
+                inline-flex items-center justify-center rounded px-[15px] text-[13px] leading-none h-[35px] gap-[5px]  bg-tertiary  shadow-[0_2px_10px] shadow-black/10 hover:bg-secondary focus:shadow-[0_0_0_2px] focus:shadow-black  outline-none w-full
+                `}
                 aria-label="Role Selector"
             >
-                <Select.Value placeholder={toCapitalCase(role)} />
+                <Select.Value placeholder={roleDisplayMap[selectedRole as Role]} />
                 <Select.Icon className="">
                     <ChevronDownIcon />
                 </Select.Icon>
@@ -73,15 +110,11 @@ const SelectButton = ({ role }: { role: string }) => {
                     </Select.ScrollUpButton>
                     <Select.Viewport className="p-[5px]">
                         <Select.Group >
-                            {/* <Select.Label className="px-[25px] text-xs leading-[25px] text-mauve11">
-                                Role
-                            </Select.Label> */}
-                            <SelectItem value="OWNER">Owner</SelectItem>
-                            <SelectItem value="ADMIN">Admin</SelectItem>
-                            <SelectItem value="MEMBER">Member</SelectItem>
-                            <SelectItem value="VIEW ONLY">View only</SelectItem>
+                            <SelectItem value="Owner">Owner</SelectItem>
+                            <SelectItem value="Admin">Admin</SelectItem>
+                            <SelectItem value="Member">Member</SelectItem>
+                            <SelectItem value="View Only">View Only</SelectItem>
                         </Select.Group>
-
                     </Select.Viewport>
                     <Select.ScrollDownButton className="flex items-center justify-center h-[25px] bg-tertiary  cursor-default">
                         <ChevronDownIcon />
@@ -89,5 +122,5 @@ const SelectButton = ({ role }: { role: string }) => {
                 </Select.Content>
             </Select.Portal>
         </Select.Root>
-        );
-    }
+    );
+}

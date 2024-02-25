@@ -67,13 +67,3 @@ export type ValidationResult = {
   isValid: boolean;
   errorMessage: string;
 };
-
-export type User = {
-  user: {
-    id: string;
-    name: string;
-    username: string;
-    email: string;
-    image: string;
-  };
-} | null;

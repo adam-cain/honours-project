@@ -1,8 +1,6 @@
 import { Title } from "@/components/PageComponents";
-import { getOrgMembers } from "@/lib/actions/organisation";
-import { OrganizationMember } from "@prisma/client";
-import Image from 'next/image';
-import { CircleEllipsisIcon } from "lucide-react";
+import { userHasAdminPerm, getOrgMembers } from "@/lib/actions/organisation";
+import { OrganizationMember, Role } from "@prisma/client";
 import React from 'react';
 import { MemberRow } from "./select-button";
 
@@ -10,6 +8,9 @@ export default async function Page({ params }: { params: { org: string } }) {
 
     const members: OrganizationMember[] = await getOrgMembers(params.org);
 
+    const userHasAdmin = (await userHasAdminPerm(params.org,null,null));
+    
+    
     return (<>
         <Title>Members</Title>
         <div className="">
@@ -24,7 +25,7 @@ export default async function Page({ params }: { params: { org: string } }) {
                     <div className="font-semibold">Role</div>
                 </div>
                 {members.map((member: OrganizationMember, index: number) => (
-                    <MemberRow key={index} member={member} />
+                    <MemberRow key={index} member={member} hasPerm={userHasAdmin.success} />
                 ))}
             </div>
         </div>

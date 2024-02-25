@@ -1,4 +1,3 @@
-"use server"
 import { Suspense } from "react";
 import Card from "@/components/Card/organisation/org-button";
 import NewOrgButton from "@/components/Card/organisation/new-org-button";
