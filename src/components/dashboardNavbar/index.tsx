@@ -8,7 +8,7 @@ import { HomeIcon, SettingsIcon, BotIcon, LineChartIcon, UserIcon, LucideArrowLe
 import Profile from './profile-button';
 import NavItem from './nav-item';
 import BackButton from './back-button';
-import { User } from '@/lib/types';
+import { User } from '@prisma/client';
 
 export interface NavItem {
     title: string;
