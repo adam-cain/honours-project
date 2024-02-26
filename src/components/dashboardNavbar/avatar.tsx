@@ -1,6 +1,6 @@
 import  Image from 'next/image';
 
-export default function UserAvatar({ image, username }: { image: string, username: string } ) {
+export default function UserAvatar({ image, username }: { image?: string, username: string } ) {
     
     const getInitials = (name: string) => {
     const names = name.split(/[ _]/);
