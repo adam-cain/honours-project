@@ -57,7 +57,7 @@ export default function AuthForm({ title, fields, onSubmit, alternateLink }: Aut
 
     return (
         <>
-            <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
+            <h1 className="mt-6 text-center font-cal text-3xl text-white">
                 {title}
             </h1>
 
@@ -79,7 +79,7 @@ export default function AuthForm({ title, fields, onSubmit, alternateLink }: Aut
 
             <div className="flex items-center justify-center mx-12 my-4">
                 <div className="flex-grow border-t border-gray-300"></div>
-                <span className="flex-shrink mx-4 text-stone-600 dark:text-stone-300">
+                <span className="flex-shrink mx-4 text-stone-300">
                     Or
                 </span>
                 <div className="flex-grow border-t border-gray-300"></div>
@@ -87,8 +87,8 @@ export default function AuthForm({ title, fields, onSubmit, alternateLink }: Aut
 
             <AuthProviderButtonGroup />
 
-            <p className="mt-3 text-center text-sm text-stone-600 dark:text-stone-300 font-medium">
-                <Link href={alternateLink.href} className="hover:text-stone-800 dark:hover:text-stone-100">
+            <p className="mt-3 text-center text-sm text-stone-300 font-medium">
+                <Link href={alternateLink.href} className="hover:text-stone-100">
                     {alternateLink.text}
                 </Link>
             </p>

@@ -11,8 +11,8 @@ interface BaseButtonProps {
 
 const BaseButton: React.FC<BaseButtonProps> = ({ children, onClick, loading, className }) => {
   const baseClasses = "my-2 flex h-10 w-full items-center justify-center space-x-2 rounded-md border transition-colors duration-75 focus:outline-none";
-  const loadingClasses = "cursor-not-allowed bg-stone-50 dark:bg-stone-800";
-  const defaultClasses = "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:border-white dark:hover:bg-black";
+  const loadingClasses = "cursor-not-allowed bg-stone-800";
+  const defaultClasses = "active:bg-stone-100 bg-black hover:border-white";
 
   return (
     <button
