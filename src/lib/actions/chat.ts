@@ -20,7 +20,6 @@ export const createChat = async (formData: FormData, orgName: string) => {
         };
     }
 
-    console.log(name, description, orgName);
     try {
         const chat = await prisma.chat.create({
             data: {
@@ -57,7 +56,7 @@ export const getChat = async (orgName: string, chatName: string) => {
         console.log(error);
 
         return {
-            error: "An error occurred while creating the chat. Please try again later.",
+            error: "An error occurred while getting the chat. Please try again later.",
         };
     }
 }

@@ -114,7 +114,7 @@ export const hasOrgPermission = async (orgName: string) => {
     return false
 }
 
-export const getOrgChats = async (organization: Organization) => {
+export const getOrgChats = async (orgName: string) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -124,7 +124,9 @@ export const getOrgChats = async (organization: Organization) => {
 
     const chats = await prisma.chat.findMany({
         where: {
-            organizationId: organization.id,
+            organization: {
+                name: orgName,
+            },
         },
     });
 
