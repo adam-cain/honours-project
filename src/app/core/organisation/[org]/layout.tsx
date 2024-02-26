@@ -1,6 +1,5 @@
-import { LayoutProps } from "@/lib/types";
 import { hasOrgPermission } from "@/lib/actions/organisation";
-import Unauthorized from "@/components/unauthorised";
+import { Unauthorized } from "@/components/unauthorised";
 import { ReactNode } from "react";
 
 const Layout = async ({ children, params }: { children: ReactNode, params: { org: string } }) => {

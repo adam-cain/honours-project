@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NavItem } from ".";
+import { NavItem } from "./types";
 
 export default function NavItem({ navData, active, isNavCollapsed, hideText }: { navData: NavItem, active: boolean, isNavCollapsed: boolean, hideText: boolean }) {
     return (

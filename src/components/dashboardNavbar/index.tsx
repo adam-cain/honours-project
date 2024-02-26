@@ -1,37 +1,15 @@
 "use client"
-import React, { useState, useMemo, ReactNode } from 'react';
+import { BotIcon, HomeIcon, LineChartIcon, LucideArrowLeft, LucideArrowRight, SettingsIcon, UserIcon } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname,useParams } from 'next/navigation';
-import { HomeIcon, SettingsIcon, BotIcon, LineChartIcon, UserIcon, LucideArrowLeft, LucideArrowRight } from 'lucide-react';
+import { useParams, usePathname } from 'next/navigation';
+import React, { ReactNode, useMemo, useState } from 'react';
 
 // Custom components and types
-import Profile from './profile-button';
-import NavItem from './nav-item';
-import BackButton from './back-button';
 import { User } from '@prisma/client';
-
-export interface NavItem {
-    title: string;
-    href: string;
-    icon: React.ReactNode;
-}
-
-export interface BackButtonConfig {
-    title: string;
-    href: string;
-    dynamic: boolean;
-}
-
-interface NavBarGroup {
-    navItems: NavItem[];
-    showOn: RegExp | RegExp[];
-    dynamic: boolean;
-    backButtonConfig?: BackButtonConfig;
-}
-
-export interface NavConfig {
-    navGroup: NavBarGroup[];
-}
+import BackButton from './back-button';
+import NavItem from './nav-item';
+import Profile from './profile-button';
+import { NavConfig } from './types';
 
 const navConfig: NavConfig = {
     navGroup: [
@@ -60,6 +38,7 @@ const navConfig: NavConfig = {
                 { title: 'Overview', href: '/organisation/[org]/chat/[chat]', icon: <HomeIcon className="h-4 w-4" /> },
                 { title: 'Analytics', href: '/organisation/[org]/chat/[chat]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
                 { title: 'Settings', href: '/organisation/[org]/chat/[chat]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+                { title: 'Preview', href: '/organisation/[org]/chat/[chat]/preview', icon: <BotIcon className="h-4 w-4" />,}
             ],
             showOn: /\/organisation\/.*\/chat\/.*/,
             dynamic: true,

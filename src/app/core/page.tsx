@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import Card from "@/components/Card/organisation/org-button";
-import NewOrgButton from "@/components/Card/organisation/new-org-button";
+import Card from "@/components/organisation/org-button";
+import NewOrgButton from "@/components/organisation/new-org-button";
 import { getUserOrganisations } from "@/lib/actions/organisation";
 import {Title} from "@/components/PageComponents";
 

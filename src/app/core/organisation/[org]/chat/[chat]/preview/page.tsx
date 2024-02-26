@@ -2,7 +2,7 @@ import { Title } from "@/components/PageComponents";
 
 export default function Page({ params }: { params: { org: string, chat: string } }) {
     return (<>
-        <Title>{params.chat} Overview</Title>
+        <Title>{params.chat} Preview</Title>
     </>
     )
 }

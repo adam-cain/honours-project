@@ -3,14 +3,12 @@
 import { toast } from "sonner";
 import { createOrganisation } from "@/lib/actions/organisation";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
-import { cn } from "@/lib/utils";
-import LoadingDots from "@/components/icons/loading-dots";
 import { useModal } from "./provider";
 import { useEffect, useState } from "react";
 import { XIcon } from "lucide-react"
+import ModalSubmitButton  from "./modal-button";
 
-export default function CreateSiteModal() {
+export default function CreateOrganisationModal() {
   const router = useRouter();
   const modal = useModal();
 
@@ -69,7 +67,7 @@ export default function CreateSiteModal() {
           <input
             name="name"
             type="text"
-            placeholder="My Awesome Site"
+            placeholder="Organisation Name"
             autoFocus
             value={data.name}
             onChange={(e) => setData({ ...data, name: e.target.value })}
@@ -114,7 +112,7 @@ export default function CreateSiteModal() {
           </label>
           <textarea
             name="description"
-            placeholder="Description about why my site is so awesome"
+            placeholder="Description for the organisation"
             value={data.description}
             onChange={(e) => setData({ ...data, description: e.target.value })}
             maxLength={140}
@@ -124,25 +122,8 @@ export default function CreateSiteModal() {
         </div>
       </div>
       <div className="flex items-center justify-end rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 md:px-10">
-        <CreateSiteFormButton />
+        <ModalSubmitButton>Create Organisation</ModalSubmitButton>
       </div>
     </form>
-  );
-}
-
-function CreateSiteFormButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      className={cn(
-        "flex h-10 w-full items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none",
-        pending
-          ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
-          : "border-black bg-black text-white hover:bg-white hover:text-black dark:border-stone-700 dark:hover:border-stone-200 dark:hover:bg-black dark:hover:text-white dark:active:bg-stone-800",
-      )}
-      disabled={pending}
-    >
-      {pending ? <LoadingDots color="#808080" /> : <p>Create Organisation</p>}
-    </button>
   );
 }

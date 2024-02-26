@@ -1,39 +1,63 @@
-// "use s"
-// import { getSession } from "next-auth/react";
-// import { withOrgAuth } from "@/lib/auth";
-// import { Organization } from "@prisma/client";
-// import prisma from "../prisma";
+"use server"
 
-// export const getOrgChats = withOrgAuth(async (_: FormData, organization: Organization) => {
-//     const session = await getSession();
-//     if (!session) {
-//         return {
-//             error: "Not authenticated",
-//         };
-//     }
+import { getSession } from "../auth";
+import prisma from "../prisma";
 
-//     const chats = await prisma.chat.findMany({
-//         where: {
-//             organizationId: organization.id,
-//         },
-//     });
+export const createChat = async (formData: FormData, orgName: string) => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
 
-//     return orgs;
-// })
+    const name = formData.get("name") as string;
+    const description = formData.get("description") as string;
 
-// export const getOrgChats = async (organization: Organization) => {
-//     const session = await getSession();
-//     if (!session) {
-//         return {
-//             error: "Not authenticated",
-//         };
-//     }
+    if (!name) {
+        return {
+            error: "Required fields are missing",
+        };
+    }
 
-//     const chats = await prisma.chat.findMany({
-//         where: {
-//             organizationId: organization.id,
-//         },
-//     });
+    console.log(name, description, orgName);
+    try {
+        const chat = await prisma.chat.create({
+            data: {
+                name: name,
+                description: description,
+                organization: {
+                    connect: { name: orgName },
+                },
+            },
+        })
+        return chat;
+    } catch (error) {
+        console.log(error);
 
-//     return chats;
-// }
+        return {
+            error: "An error occurred while creating the chat. Please try again later.",
+        };
+    }
+}
+
+export const getChat = async (orgName: string, chatName: string) => {
+    try {
+        const chat = await prisma.chat.findFirst({
+            where: {
+                name: chatName,
+                organization: {
+                    name: orgName,
+                },
+            },
+        });
+
+        return chat;
+    } catch (error) {
+        console.log(error);
+
+        return {
+            error: "An error occurred while creating the chat. Please try again later.",
+        };
+    }
+}
