@@ -13,17 +13,19 @@ datasource db {
 
 // Model Definitions
 model User {
-  id                   String               @id @default(cuid())
-  username             String               @unique
-  email                String?              @unique
-  emailVerified        DateTime?
-  password             String?
-  image                String?
-  createdAt            DateTime             @default(now())
-  updatedAt            DateTime             @updatedAt
-  accounts             Account[]
-  sessions             Session[]
-  memberOfOrganization OrganizationMember[]
+  id                        String                      @id @default(cuid())
+  username                  String                      @unique
+  email                     String?                     @unique
+  emailVerified             DateTime?
+  password                  String?
+  image                     String?
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  accounts                  Account[]
+  sessions                  Session[]
+  memberOfOrganization      OrganizationMember[]
+  OrganizationAccessRequest OrganizationAccessRequest[]
+  OrganizationInvitation    OrganizationInvitation[]
 }
 
 model Organization {
@@ -36,8 +38,10 @@ model Organization {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  members OrganizationMember[]
-  chat    Chat[]
+  members                   OrganizationMember[]
+  chat                      Chat[]
+  OrganizationInvitation    OrganizationInvitation[]
+  OrganizationAccessRequest OrganizationAccessRequest[]
 }
 
 model OrganizationMember {
@@ -114,41 +118,44 @@ model Chat {
   @@unique([name, organizationId])
 }
 
-// model Site {
-//   id           String   @id @default(cuid())
-//   name         String?
-//   description  String?  @db.Text
-//   logo         String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/JRajRyC-PhBHEinQkupt02jqfKacBVHLWJq7Iy.png") @db.Text
-//   font         String   @default("font-cal")
-//   image        String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
-//   subdomain    String?  @unique
-//   customDomain String?  @unique
-//   message404   String?  @default("Blimey! You've found a page that doesn't exist.") @db.Text
-//   createdAt    DateTime @default(now())
-//   updatedAt    DateTime @updatedAt
-//   user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   userId       String?
+model OrganizationInvitation {
+  id              String           @id @default(cuid())
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+  invitedUser     User             @relation(fields: [invitedUserId], references: [id])
+  invitedUserId   String
+  email           String?
+  username        String?
+  invitedByUserId String
+  status          InvitationStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
-//   @@index([userId])
-// }
+  @@unique([organizationId, email])
+  @@unique([organizationId, username])
+}
 
-// model Post {
-//   id            String   @id @default(cuid())
-//   title         String?  @db.Text
-//   description   String?  @db.Text
-//   content       String?  @db.Text
-//   slug          String   @default(cuid())
-//   image         String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
-//   imageBlurhash String?  @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
-//   createdAt     DateTime @default(now())
-//   updatedAt     DateTime @updatedAt
-//   published     Boolean  @default(false)
-//   site          Site?    @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   siteId        String?
-//   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-//   userId        String?
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
 
-//   @@unique([slug, siteId])
-//   @@index([siteId])
-//   @@index([userId])
-// }
+model OrganizationAccessRequest {
+  id                String        @id @default(cuid())
+  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    String
+  requestedByUser   User          @relation(fields: [requestedByUserId], references: [id], onDelete: Cascade)
+  requestedByUserId String
+  status            RequestStatus @default(PENDING)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@unique([organizationId, requestedByUserId])
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}

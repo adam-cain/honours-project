@@ -1,57 +1,12 @@
 "use client"
-import * as Select from '@radix-ui/react-select';
-import React, { forwardRef, useState } from 'react';
-import classnames from 'classnames';
+import { updateOrgMemberRole } from "@/lib/actions/members";
 import { OrganizationMember, Role } from "@prisma/client";
-import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons';
-import { useParams } from 'next/navigation';
-import { updateOrgMemberRole } from '@/lib/actions/organisation';
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
-import Avatar from '@/components/dashboardNavbar/avatar';
-
-export const MemberRow = ({ member, hasPerm }: { member: OrganizationMember, hasPerm:boolean }) => {
-    
-    return (
-        <div className="grid w-full grid-cols-[55px_1fr_120px] items-center p-4 border-t">
-            <Avatar image={member.image} username={member.username}/>
-            <div>{member.username}</div>
-            <div className="flex justify-between items-center">
-                <span className="w-full">
-                    <SelectButton member={member} hasPerm={hasPerm} />
-                </span>
-            </div>
-        </div>
-    )
-}
-
-type SelectItemProps = {
-    children: React.ReactNode;
-    className?: string;
-    value?: string;
-};
-
-const SelectItem = forwardRef<HTMLDivElement, SelectItemProps>(
-    ({ children, className, ...props }, ref) => {
-        return (
-            <Select.Item
-                className={classnames(
-                    'text-[13px] leading-none  rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-white data-[highlighted]:text-black',
-                    className
-                )}
-                {...props}
-                ref={ref}
-                value={props.value || ''}
-            >
-                <Select.ItemText>{children}</Select.ItemText>
-                <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
-                    <CheckIcon />
-                </Select.ItemIndicator>
-            </Select.Item>
-        );
-    }
-);
-
-SelectItem.displayName = 'SelectItem';
+import * as Select from '@radix-ui/react-select';
+import { SelectItem } from "./select-item";
 
 const roleDisplayMap: Record<Role, string> = {
     OWNER: "Owner",
@@ -60,7 +15,8 @@ const roleDisplayMap: Record<Role, string> = {
     VIEW_ONLY: "View Only",
 };
 
-const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, hasPerm: boolean }) => {
+export const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, hasPerm: boolean }) => {
+    const router = useRouter();
     const [selectedRole, setSelectedRole] = useState<Role>(member.role);
     const { org } = useParams() as { org?: string };
 
@@ -75,7 +31,9 @@ const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, hasPerm
                 formData.append("userId", member.userId);
                 formData.append("role", newRole);
                 const result = await updateOrgMemberRole(org,formData, null);
+                
                 toast.dismiss();
+                router.refresh();
                 if(result.error){
                     toast.error(result.error);
                 }else if(result.success){

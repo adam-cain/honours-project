@@ -15,7 +15,7 @@ export default async function Page({ params }: { params: { org: string } }) {
                     className="rounded-full object-cover border flex items-center justify-center my-2"
                     style={{ width: imageSize, height: imageSize, minWidth: imageSize, minHeight: imageSize }}
                 >
-                    {organisation.logo ? (
+                    {organisation?.logo ? (
                         <Image
                             className="rounded-full object-cover"
                             style={{ width: imageSize, height: imageSize }}

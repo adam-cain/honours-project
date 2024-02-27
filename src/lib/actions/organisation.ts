@@ -133,79 +133,6 @@ export const getOrgChats = async (orgName: string) => {
     return chats;
 }
 
-export const getOrgMembers = async (organization: Organization) => {
-    const session = await getSession();
-    if (!session) {
-        return {
-            error: "Not authenticated",
-        };
-    }
-
-    prisma.user
-    const members = await prisma.organization.findFirst({
-        where: {
-            id: organization.id,
-        },
-        select: {
-            members: {
-                select: {
-                    role: true,
-                    user: {
-                        select: {
-                            username: true,
-                            image: true,
-                            id: true,
-                        },
-                    },
-                },
-            },
-        },
-    });
-
-    if (members) {
-        const restructure = members.members.map((member: { role: any; user: { username: any; image: any; id: any }; }) => ({
-            role: member.role,
-            username: member.user.username,
-            image: member.user.image,
-            userId: member.user.id,
-        }));
-        return restructure;
-    }
-
-
-    return { members: [] };
-}
-
-export const updateOrgMemberRole =
-    withOrgAuth(Role.ADMIN,
-        async (organization, formData) => {
-            const userId = formData?.get('userId') as string;
-            const role = formData?.get('role') as string;
-
-            if (!userId || !role) {
-                throw new Error("Missing userId or role");
-            }
-
-            try {
-                const member = await prisma.organizationMember.update({
-                    where: {
-                        organizationId_userId: {
-                            organizationId: organization.id,
-                            userId: userId,
-                        },
-                    },
-                    data: {
-                        role: role as Role,
-                    },
-                });
-                return { success: true, member: member };
-            } catch (error) {
-                console.error("Failed to update organization member role:", error);
-                throw new Error("Failed to update organization member role");
-            }
-        }
-    )
-
 export const userHasViewOnlyPerm = withOrgAuth(Role.VIEW_ONLY, async () => {
     return { success: true };
 });
@@ -221,3 +148,45 @@ export const userHasAdminPerm = withOrgAuth(Role.ADMIN, async () => {
 export const userHasOwnerPerm = withOrgAuth(Role.OWNER, async () => {
     return { success: true };
 });
+
+export const orgAccessRequest = async (orgName: string) => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
+    
+    try{
+        const request = await prisma.organizationAccessRequest.create({
+            data: {
+                organization: {
+                    connect: {
+                        name: orgName,
+                    },
+                },
+                requestedByUser: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+            },
+        });
+
+        return request;
+    } catch (error) {
+        console.log(error);
+        if ((error as { code: string }).code === "P2025") {
+            return {
+                error: "This organisation does not exist.",
+            };
+        } else if ((error as { code: string }).code === "P2002") {
+            return {
+                error: "You have already requested access to this organisation.",
+            };
+        }
+        return {
+            error: "An error occurred while requesting access the request",
+        };
+    }
+}
