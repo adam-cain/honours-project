@@ -117,12 +117,15 @@ export const getRequestForAccess = async (orgName: string) => {
 }
 
 export const approveOrgAccessRequest = withOrgAuth(Role.ADMIN, async (organization, formData) => {
-    const requestId = formData?.get('requestId') as string;
+    console.log(formData);
+    
+    const requestId = formData?.get('id') as string;
     if (!requestId) {
         throw new Error("Missing requestId");
     }
     try {
         prisma.$transaction(async () => {
+            throw new Error("Transaction failed");
             await prisma.organizationAccessRequest.delete({
                 where: {
                     id: requestId,
