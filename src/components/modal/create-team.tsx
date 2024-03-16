@@ -1,14 +1,14 @@
 "use client";
 
 import { toast } from "sonner";
-import { createOrganisation } from "@/lib/actions/organisation";
+import { createTeam } from "@/lib/actions/team";
 import { useRouter } from "next/navigation";
 import { useModal } from "./provider";
 import { useEffect, useState } from "react";
 import { XIcon } from "lucide-react"
 import ModalSubmitButton  from "./modal-button";
 
-export default function CreateOrganisationModal() {
+export default function CreateTeamModal() {
   const router = useRouter();
   const modal = useModal();
 
@@ -31,13 +31,13 @@ export default function CreateOrganisationModal() {
   return (
     <form
       action={async (data: FormData) =>
-        createOrganisation(data).then((res: any) => {
+        createTeam(data).then((res: any) => {
           if (res.error) {
             toast.error(res.error);
           } else {
             const { name } = res;
             router.refresh();
-            router.push(`/organisation/${name}`);
+            router.push(`/team/${name}`);
             modal?.hide();
             toast.success(`Successfully created ${name}`);
           }
@@ -47,7 +47,7 @@ export default function CreateOrganisationModal() {
     >
       <div className="relative flex flex-col space-y-4 p-5 md:p-10">
       <div className="flex justify-between items-center">
-    <h2 className="font-cal text-2xl dark:text-white">Create a new organisation</h2>
+    <h2 className="font-cal text-2xl dark:text-white">Create a new Team</h2>
     <button 
       className="flex justify-end" 
       onClick={() => modal?.hide()}
@@ -62,12 +62,12 @@ export default function CreateOrganisationModal() {
             htmlFor="name"
             className="text-sm font-medium text-stone-500 dark:text-stone-400"
           >
-            Organisation Name
+            Team Name
           </label>
           <input
             name="name"
             type="text"
-            placeholder="Organisation Name"
+            placeholder="Team Name"
             autoFocus
             value={data.name}
             onChange={(e) => setData({ ...data, name: e.target.value })}
@@ -112,7 +112,7 @@ export default function CreateOrganisationModal() {
           </label>
           <textarea
             name="description"
-            placeholder="Description for the organisation"
+            placeholder="Description for the Team"
             value={data.description}
             onChange={(e) => setData({ ...data, description: e.target.value })}
             maxLength={140}
@@ -122,7 +122,7 @@ export default function CreateOrganisationModal() {
         </div>
       </div>
       <div className="flex items-center justify-end rounded-b-lg border-t border-stone-200 bg-stone-50 p-3 dark:border-stone-700 dark:bg-stone-800 md:px-10">
-        <ModalSubmitButton>Create Organisation</ModalSubmitButton>
+        <ModalSubmitButton>Create Team</ModalSubmitButton>
       </div>
     </form>
   );

@@ -4,10 +4,10 @@ import Base from './base'
 import { FileQuestion } from "lucide-react"
 import CreateChatModal from "../modal/create-chat";
 
-export default function NonExistantChat({chat, org}: {chat: string, org: string}) {
+export default function NonExistantChat({chat, team}: {chat: string, team: string}) {
     const modal = useModal();
 
-    const handleClick = () => modal?.show(<CreateChatModal org={org} chat={chat} />);
+    const handleClick = () => modal?.show(<CreateChatModal team={team} chat={chat} />);
 
     return (
         <Base>

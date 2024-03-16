@@ -17,7 +17,7 @@ export default function Card({ name, logo }: CardProps) {
     const router = useRouter();
 
     return (
-        <CardBase onclick={() => router.push("/organisation/"+name)}>
+        <CardBase onclick={() => router.push("/team/"+name)}>
             <div className={`w-${imageSize} h-${imageSize} rounded-full object-cover border flex items-center justify-center`}>
             {logo ? (
                 // If there's an logo, render the Image component

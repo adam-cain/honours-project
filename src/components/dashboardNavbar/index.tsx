@@ -23,32 +23,32 @@ const navConfig: NavConfig = {
         },
         {
             navItems: [
-                { title: 'Overview', href: '/organisation/[org]', icon: <HomeIcon className="h-4 w-4" /> },
-                { title: 'Chatbots', href: '/organisation/[org]/chat', icon: <BotIcon className="h-4 w-4" />, },
-                { title: 'Analytics', href: '/organisation/[org]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
-                { title: 'Members', href: '/organisation/[org]/members', icon: <UserIcon className="h-4 w-4" />, },
-                { title: 'Settings', href: '/organisation/[org]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+                { title: 'Overview', href: '/team/[team]', icon: <HomeIcon className="h-4 w-4" /> },
+                { title: 'Chatbots', href: '/team/[team]/chat', icon: <BotIcon className="h-4 w-4" />, },
+                { title: 'Analytics', href: '/team/[team]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
+                { title: 'Members', href: '/team/[team]/members', icon: <UserIcon className="h-4 w-4" />, },
+                { title: 'Settings', href: '/team/[team]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
             ],
-            showOn: /\/organisation\/.*/,
+            showOn: /\/team\/.*/,
             dynamic: true,
             backButtonConfig: { title: 'Home', href: '/', dynamic: false}
         },
         {
             navItems: [
-                { title: 'Overview', href: '/organisation/[org]/chat/[chat]', icon: <HomeIcon className="h-4 w-4" /> },
-                { title: 'Analytics', href: '/organisation/[org]/chat/[chat]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
-                { title: 'Settings', href: '/organisation/[org]/chat/[chat]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
-                { title: 'Preview', href: '/organisation/[org]/chat/[chat]/preview', icon: <BotIcon className="h-4 w-4" />,}
+                { title: 'Overview', href: '/team/[team]/chat/[chat]', icon: <HomeIcon className="h-4 w-4" /> },
+                { title: 'Analytics', href: '/team/[team]/chat/[chat]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
+                { title: 'Settings', href: '/team/[team]/chat/[chat]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+                { title: 'Preview', href: '/team/[team]/chat/[chat]/preview', icon: <BotIcon className="h-4 w-4" />,}
             ],
-            showOn: /\/organisation\/.*\/chat\/.*/,
+            showOn: /\/team\/.*\/chat\/.*/,
             dynamic: true,
-            backButtonConfig: { title: '[org]', href: '/organisation/[org]', dynamic: true}
+            backButtonConfig: { title: '[team]', href: '/team/[team]', dynamic: true}
         }
     ]
 }
 
-const replaceDynamicSegments = (href: string, org: string | undefined, chat: string | undefined) => {
-    return href.replace(/\[org\]/g, org || "").replace(/\[chat\]/g, chat || "");
+const replaceDynamicSegments = (href: string, team: string | undefined, chat: string | undefined) => {
+    return href.replace(/\[team\]/g, team || "").replace(/\[chat\]/g, chat || "");
 };
 
 export default function NavBar({ userData, children }: { userData: User, children: ReactNode }) {
@@ -56,7 +56,7 @@ export default function NavBar({ userData, children }: { userData: User, childre
     const [hideText, setHideText] = useState(false);
     const path = usePathname();
 
-    const { org, chat } = useParams() as {  org?: string, chat?: string};
+    const { team, chat } = useParams() as { team?: string, chat?: string };
 
     const dynamicNavConfig = useMemo(() => navConfig.navGroup.filter(group => 
         Array.isArray(group.showOn) ? group.showOn.some(regex => regex.test(path)) : group.showOn.test(path)
@@ -64,14 +64,14 @@ export default function NavBar({ userData, children }: { userData: User, childre
         ...group,
         backButtonConfig: group.backButtonConfig && {
           ...group.backButtonConfig,
-          href: replaceDynamicSegments(group.backButtonConfig.href, org, chat),
-          title: replaceDynamicSegments(group.backButtonConfig.title, org, chat)
+          href: replaceDynamicSegments(group.backButtonConfig.href, team, chat),
+          title: replaceDynamicSegments(group.backButtonConfig.title, team, chat)
         },
         navItems: group.navItems.map(item => ({
           ...item,
-          href: replaceDynamicSegments(item.href, org, chat)
+          href: replaceDynamicSegments(item.href, team, chat)
         }))
-      })), [path, org, chat]);
+      })), [path, team, chat]);
 
     const toggleNavbar = () => {
         if (!isNavCollapsed) {

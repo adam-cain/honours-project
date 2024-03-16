@@ -4,7 +4,7 @@ import  UserAvatar  from "@/components/dashboardNavbar/avatar";
 import { ArrowUp } from "lucide-react";
 import { useState } from "react";
 
-export default function Page({ params }: { params: { org: string, chat: string } }) {
+export default function Page({ params }: { params: { team: string, chat: string } }) {
     return (<>
         <Title>{params.chat} Preview</Title>
         <ChatWindow name={params.chat} />

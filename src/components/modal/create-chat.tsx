@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { XIcon } from "lucide-react"
 import ModalSubmitButton  from "./modal-button";
 
-export default function CreateChatModal({ org, chat }: { org: string, chat?: string | undefined}) {
+export default function CreateChatModal({ team, chat }: { team: string, chat?: string | undefined}) {
   const router = useRouter();
   const modal = useModal();
 
@@ -30,12 +30,12 @@ export default function CreateChatModal({ org, chat }: { org: string, chat?: str
   return (
     <form
       action={async (data: FormData) =>
-        createChat(data,org).then((res: any) => {
+        createChat(data,team).then((res: any) => {
           if (res.error) {
             toast.error(res.error);
           } else {
             const { name } = res;
-            router.push(`/organisation/${org}/chat/${name}`);
+            router.push(`/team/${team}/chat/${name}`);
             modal?.hide();
             toast.success(`Successfully created ${name}`);
             router.refresh();

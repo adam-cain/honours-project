@@ -1,6 +1,6 @@
 "use client"
-import { updateOrgMemberRole } from "@/lib/actions/members";
-import { OrganizationMember, Role } from "@prisma/client";
+import { updateTeamMemberRole } from "@/lib/actions/members";
+import { TeamMember, Role } from "@prisma/client";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -15,10 +15,10 @@ const roleDisplayMap: Record<Role, string> = {
     VIEW_ONLY: "View Only",
 };
 
-export const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, hasPerm: boolean }) => {
+export const SelectButton = ({ member, hasPerm }: { member: TeamMember, hasPerm: boolean }) => {
     const router = useRouter();
     const [selectedRole, setSelectedRole] = useState<Role>(member.role);
-    const { org } = useParams() as { org?: string };
+    const { team } = useParams() as { team?: string };
 
     const handleRoleChange = async (newDisplayValue: string) => {
         // Find the Role key that matches the newDisplayValue
@@ -26,11 +26,11 @@ export const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, 
 
         if (newRole) {
             toast.loading("Updating role");
-            if (org) {
+            if (team) {
                 const formData: FormData = new FormData();
                 formData.append("userId", member.userId);
                 formData.append("role", newRole);
-                const result = await updateOrgMemberRole(org,formData, null);
+                const result = await updateTeamMemberRole(team,formData, null);
                 
                 toast.dismiss();
                 router.refresh();
@@ -41,7 +41,7 @@ export const SelectButton = ({ member, hasPerm }: { member: OrganizationMember, 
                     setSelectedRole(newRole);
                 }
             } else {
-                console.error("Invalid organization:", org);
+                console.error("Invalid team:", team);
             }
         } else {
             console.error("Invalid role selection:", newDisplayValue);

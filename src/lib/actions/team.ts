@@ -1,10 +1,10 @@
 "use server"
-import { Organization, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getSession } from "../auth";
 import prisma from "@/lib/prisma";
-import { withOrgAuth } from "./middleware";
+import { withTeamAuth } from "./middleware";
 
-export const createOrganisation = async (formData: FormData) => {
+export const createTeam = async (formData: FormData) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -31,7 +31,7 @@ export const createOrganisation = async (formData: FormData) => {
     }
 
     try {
-        const org = await prisma.organization.create({
+        const team = await prisma.team.create({
             data: {
                 name: name,
                 subDomain: subdomain,
@@ -47,17 +47,17 @@ export const createOrganisation = async (formData: FormData) => {
             },
         });
 
-        return org;
+        return team;
     } catch (error) {
         console.log(error);
 
         return {
-            error: "An error occurred while creating the organization",
+            error: "An error occurred while creating the team",
         };
     }
 }
 
-export const getUserOrganisations = async () => {
+export const getUserTeams = async () => {
     const session = await getSession();
     if (!session) {
         return {
@@ -65,7 +65,7 @@ export const getUserOrganisations = async () => {
         };
     }
 
-    const orgs = await prisma.organization.findMany({
+    const teams = await prisma.team.findMany({
         where: {
             members: {
                 some: {
@@ -75,24 +75,26 @@ export const getUserOrganisations = async () => {
         },
     });
 
-    return orgs;
+    return teams;
 }
 
-export const getOrganisation = async (orgName: string) => {
-    const org = await prisma.organization.findUnique({
+export const getTeam = async (teamName: string) => {
+    teamName = decodeURIComponent(teamName);
+    const teams = await prisma.team.findUnique({
         where: {
-            name: orgName,
+            name: teamName,
         },
     });
-    return org;
+    return teams;
 }
 
-export const hasOrgPermission = async (orgName: string) => {
+export const hasTeamPermission = async (teamName: string) => {
     const session = await getSession();
     if (session) {
-        const org = await prisma.organization.findUnique({
+        teamName = decodeURIComponent(teamName);
+        const team = await prisma.team.findUnique({
             where: {
-                name: orgName,
+                name: teamName,
             },
             include: {
                 members: {
@@ -107,14 +109,14 @@ export const hasOrgPermission = async (orgName: string) => {
             },
         });
 
-        if (org && org.members.length > 0) {
+        if (team && team.members.length > 0) {
             return true;
         }
     }
     return false
 }
 
-export const getOrgChats = async (orgName: string) => {
+export const getTeamChats = async (teamName: string) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -122,10 +124,12 @@ export const getOrgChats = async (orgName: string) => {
         };
     }
 
+    teamName = decodeURIComponent(teamName);
+
     const chats = await prisma.chat.findMany({
         where: {
-            organization: {
-                name: orgName,
+            team: {
+                name: teamName,
             },
         },
     });
@@ -133,23 +137,23 @@ export const getOrgChats = async (orgName: string) => {
     return chats;
 }
 
-export const userHasViewOnlyPerm = withOrgAuth(Role.VIEW_ONLY, async () => {
+export const userHasViewOnlyPerm = withTeamAuth(Role.VIEW_ONLY, async () => {
     return { success: true };
 });
 
-export const userHasMemberPerm = withOrgAuth(Role.MEMBER, async () => {
+export const userHasMemberPerm = withTeamAuth(Role.MEMBER, async () => {
     return { success: true };
 });
 
-export const userHasAdminPerm = withOrgAuth(Role.ADMIN, async () => {
+export const userHasAdminPerm = withTeamAuth(Role.ADMIN, async () => {
     return { success: true };
 });
 
-export const userHasOwnerPerm = withOrgAuth(Role.OWNER, async () => {
+export const userHasOwnerPerm = withTeamAuth(Role.OWNER, async () => {
     return { success: true };
 });
 
-export const orgAccessRequest = async (orgName: string) => {
+export const teamAccessRequest = async (teamName: string) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -157,12 +161,14 @@ export const orgAccessRequest = async (orgName: string) => {
         };
     }
     
+    teamName = decodeURIComponent(teamName);
+
     try{
-        const request = await prisma.organizationAccessRequest.create({
+        const request = await prisma.teamAccessRequest.create({
             data: {
-                organization: {
+                team: {
                     connect: {
-                        name: orgName,
+                        name: teamName,
                     },
                 },
                 requestedByUser: {
@@ -178,11 +184,11 @@ export const orgAccessRequest = async (orgName: string) => {
         console.log(error);
         if ((error as { code: string }).code === "P2025") {
             return {
-                error: "This organisation does not exist.",
+                error: "This team does not exist.",
             };
         } else if ((error as { code: string }).code === "P2002") {
             return {
-                error: "You have already requested access to this organisation.",
+                error: "You have already requested access to this team.",
             };
         }
         return {

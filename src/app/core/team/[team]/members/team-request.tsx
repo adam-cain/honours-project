@@ -1,14 +1,14 @@
 "use client"
 import Avatar from "@/components/dashboardNavbar/avatar";
-import { approveOrgAccessRequest } from "@/lib/actions/members";
+import { approveTeamAccessRequest } from "@/lib/actions/members";
 
-export function RequestsForAccessRow({ requestsforAccess, orgName }: { requestsforAccess: any, orgName: string}) {
+export function RequestsForAccessRow({ requestsforAccess, teamName }: { requestsforAccess: any, teamName: string}) {
 
     const handleAccept = async (request: any) => {       
         const formData = new FormData(); 
         formData.append('userId', request.requestedByUser.id);
         formData.append('requestId', request.id);
-        const res = await approveOrgAccessRequest(orgName, formData, null);
+        const res = await approveTeamAccessRequest(teamName, formData, null);
         if (res.success) {
             // Remove the request from the list
             // setRequestsForAccess(requestsforAccess.filter((req: any) => req.requestedByUser.username !== request.requestedByUser.username));
@@ -25,7 +25,7 @@ export function RequestsForAccessRow({ requestsforAccess, orgName }: { requestsf
                     </div>
                     <div className="gap-x-4 flex">
                         <button onClick={() => handleAccept(request)}>Accept</button>
-                        {/* Add the user to the organisation and delete the request */}
+                        {/* Add the user to the team and delete the request */}
                         <button>Reject</button>
                         {/* Delete the request */}
                     </div>

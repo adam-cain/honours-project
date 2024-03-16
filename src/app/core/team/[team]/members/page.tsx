@@ -1,20 +1,19 @@
 import { Title } from "@/components/PageComponents";
-import { userHasAdminPerm } from "@/lib/actions/organisation";
-import { getOrgMembers, getRequestForAccess } from "@/lib/actions/members";
-import { OrganizationMember } from "@prisma/client";
+import { userHasAdminPerm } from "@/lib/actions/team";
+import { getTeamMembers, getRequestForAccess } from "@/lib/actions/members";
+import { TeamMember } from "@prisma/client";
 import React from 'react';
 import { MemberRow } from "@/components/members/member-row";
 import { InfoIcon } from "lucide-react"
-import { RequestsForAccessRow } from "./org-request";
+import { RequestsForAccessRow } from "./team-request";
 
-export default async function Page({ params }: { params: { org: string } }) {
+export default async function Page({ params }: { params: { team: string } }) {
 
-    const members: OrganizationMember[] = await getOrgMembers(params.org);
+    const members: TeamMember[] = await getTeamMembers(params.team);
 
+    const userHasAdmin = (await userHasAdminPerm(params.team, null, null));
 
-    const userHasAdmin = (await userHasAdminPerm(params.org, null, null));
-
-    const requestsforAccess = await getRequestForAccess(params.org);
+    const requestsforAccess = await getRequestForAccess(params.team);
 
     return (<>
         <Title>Members</Title>
@@ -22,7 +21,7 @@ export default async function Page({ params }: { params: { org: string } }) {
         <div className="">
             Way of inviting a member here
             {JSON.stringify(requestsforAccess)}
-            <RequestsForAccessRow requestsforAccess={requestsforAccess} orgName={params.org}/>
+            <RequestsForAccessRow requestsforAccess={requestsforAccess} teamName={params.team}/>
         </div>
         {/* List of Members */}
         <div className="container grid gap-4 mx-auto">
@@ -34,9 +33,9 @@ export default async function Page({ params }: { params: { org: string } }) {
                 </div>
                 {members.length == 0 ? <div className=" flex text-center m-8 items-center align-middle justify-center gap-x-2">
                     <InfoIcon size={24} />
-                    <p>Failed to get organization members</p></div>
+                    <p>Failed to get team members</p></div>
                     :
-                    members.map((member: OrganizationMember, index: number) => (
+                    members.map((member: TeamMember, index: number) => (
                         <MemberRow key={index} member={member} hasPerm={userHasAdmin.success} />
                     ))}
             </div>

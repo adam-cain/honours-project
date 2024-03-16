@@ -13,22 +13,22 @@ datasource db {
 
 // Model Definitions
 model User {
-  id                        String                      @id @default(cuid())
-  username                  String                      @unique
-  email                     String?                     @unique
-  emailVerified             DateTime?
-  password                  String?
-  image                     String?
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  accounts                  Account[]
-  sessions                  Session[]
-  memberOfOrganization      OrganizationMember[]
-  OrganizationAccessRequest OrganizationAccessRequest[]
-  OrganizationInvitation    OrganizationInvitation[]
+  id                String              @id @default(cuid())
+  username          String              @unique
+  email             String?             @unique
+  emailVerified     DateTime?
+  password          String?
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  accounts          Account[]
+  sessions          Session[]
+  memberOfTeam      TeamMember[]
+  teamAccessRequest TeamAccessRequest[]
+  teamInvitation    TeamInvitation[]
 }
 
-model Organization {
+model Team {
   id           String   @id @default(cuid())
   name         String   @unique
   description  String?  @db.Text
@@ -38,23 +38,23 @@ model Organization {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  members                   OrganizationMember[]
-  chat                      Chat[]
-  OrganizationInvitation    OrganizationInvitation[]
-  OrganizationAccessRequest OrganizationAccessRequest[]
+  members           TeamMember[]
+  chat              Chat[]
+  teamInvitation    TeamInvitation[]
+  teamAccessRequest TeamAccessRequest[]
 }
 
-model OrganizationMember {
-  id             String       @id @default(cuid())
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId         String
-  role           Role         @default(MEMBER)
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+model TeamMember {
+  id        String   @id @default(cuid())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@unique([organizationId, userId])
+  @@unique([teamId, userId])
 }
 
 enum Role {
@@ -106,56 +106,51 @@ model VerificationToken {
 }
 
 model Chat {
-  id             String       @id @default(cuid())
-  name           String
-  description    String?      @db.Text
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  organizationId String
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  deployed       Boolean      @default(false)
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  team        Team     @relation(fields: [teamId], references: [id])
+  teamId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deployed    Boolean  @default(false)
 
-  @@unique([name, organizationId])
-}
-
-model OrganizationInvitation {
-  id              String           @id @default(cuid())
-  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId  String
-  invitedUser     User             @relation(fields: [invitedUserId], references: [id])
-  invitedUserId   String
-  email           String?
-  username        String?
-  invitedByUserId String
-  status          InvitationStatus @default(PENDING)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-
-  @@unique([organizationId, email])
-  @@unique([organizationId, username])
-}
-
-enum InvitationStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
-}
-
-model OrganizationAccessRequest {
-  id                String        @id @default(cuid())
-  organization      Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  organizationId    String
-  requestedByUser   User          @relation(fields: [requestedByUserId], references: [id], onDelete: Cascade)
-  requestedByUserId String
-  status            RequestStatus @default(PENDING)
-  createdAt         DateTime      @default(now())
-  updatedAt         DateTime      @updatedAt
-
-  @@unique([organizationId, requestedByUserId])
+  @@unique([name, teamId])
 }
 
 enum RequestStatus {
   PENDING
   APPROVED
   DECLINED
+}
+
+
+model TeamInvitation {
+  id              String           @id @default(cuid())
+  team            Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId          String
+  invitedUser     User             @relation(fields: [invitedUserId], references: [id])
+  invitedUserId   String
+  email           String?
+  username        String?
+  invitedByUserId String
+  status          RequestStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  @@unique([teamId, email])
+  @@unique([teamId, username])
+}
+
+model TeamAccessRequest {
+  id                String        @id @default(cuid())
+  team              Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId            String
+  requestedByUser   User          @relation(fields: [requestedByUserId], references: [id], onDelete: Cascade)
+  requestedByUserId String
+  status            RequestStatus @default(PENDING)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  @@unique([teamId, requestedByUserId])
 }

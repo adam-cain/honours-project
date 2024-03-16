@@ -1,15 +1,13 @@
 "use client";
 
-import { ArrowRight, BuildingIcon } from 'lucide-react';
-import Image from 'next/image'
-import CardBase from '../organisation/card-base';
+import { ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import BaseCard from './chat-card-base';
 
-export default function ChatCard({ title, active, org }: { org: string, title: string, active: boolean }) {
+export default function ChatCard({ title, active, team }: { team: string, title: string, active: boolean }) {
     "use client"
     const router = useRouter();
-    const navigate = () => router.push(`/organisation/${org}/chat/${title}`);
+    const navigate = () => router.push(`/team/${team}/chat/${title}`);
 
     return (
         <BaseCard className="group" onClick={navigate}>

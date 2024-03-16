@@ -1,23 +1,24 @@
-import { getOrgChats } from "@/lib/actions/organisation";
+import { getTeamChats } from "@/lib/actions/team";
 import { Chat } from "@prisma/client";
 import { Title } from "@/components/PageComponents"
 import { NewChatCard, ChatCard } from "@/components/chat";
-export default async function Page({ params }: { params: { org: string } }) {
-    const { org } = params;
-    const chats: Chat[] = await getOrgChats(org);
+
+export default async function Page({ params }: { params: { team: string } }) {
+    const { team } = params;
+    const chats: Chat[] = await getTeamChats(team);
     
     return (<>
         <Title>All Chats</Title>
-        <NewChatCard org={org} />
-        {chats.map((chat, key) => <ChatCard key={key} title={chat.name} active={chat.deployed} org={org} />)}
+        <NewChatCard team={team} />
+        {chats.map((chat, key) => <ChatCard key={key} title={chat.name} active={chat.deployed} team={team} />)}
     </>
     )
 }
 
-// function ChatCard({ title, active, org }: { org: string, title: string, active: boolean }) {
+// function ChatCard({ title, active, team }: { team: string, title: string, active: boolean }) {
 //     "use client"
 //     const router = useRouter();
-//     const navigate = () => router.push(`/organisation/${org}/chat/${title}`);
+//     const navigate = () => router.push(`/team/${team}/chat/${title}`);
 
 //     return (
 //         <BaseCard className="group" onClick={navigate}>

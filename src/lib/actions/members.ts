@@ -1,10 +1,10 @@
 "use server";
-import { Prisma, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { getSession } from "../auth";
-import { withOrgAuth } from "./middleware";
+import { withTeamAuth } from "./middleware";
 import prisma from "../prisma";
 
-export const getOrgMembers = async (orgName: string) => {
+export const getTeamMembers = async (teamName: string) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -13,9 +13,9 @@ export const getOrgMembers = async (orgName: string) => {
     }
 
     try {
-        const members = await prisma.organization.findFirst({
+        const members = await prisma.team.findFirst({
             where: {
-                name: orgName,
+                name: teamName,
             },
             select: {
                 members: {
@@ -43,16 +43,16 @@ export const getOrgMembers = async (orgName: string) => {
             return restructure;
         }
     } catch (error) {
-        console.error("Failed to get organization members:", error);
+        console.error("Failed to get team members:", error);
         return {
-            error: "Failed to get organization members",
+            error: "Failed to get team members",
         };
     }
 }
 
-export const updateOrgMemberRole =
-    withOrgAuth(Role.ADMIN,
-        async (organization, formData) => {
+export const updateTeamMemberRole =
+withTeamAuth(Role.ADMIN,
+        async (team, formData) => {
             const userId = formData?.get('userId') as string;
             const role = formData?.get('role') as string;
 
@@ -61,10 +61,10 @@ export const updateOrgMemberRole =
             }
 
             try {
-                const member = await prisma.organizationMember.update({
+                const member = await prisma.teamMember.update({
                     where: {
-                        organizationId_userId: {
-                            organizationId: organization.id,
+                        teamId_userId: {
+                            teamId: team.id,
                             userId: userId,
                         },
                     },
@@ -74,13 +74,13 @@ export const updateOrgMemberRole =
                 });
                 return { success: true, member: member };
             } catch (error) {
-                console.error("Failed to update organization member role:", error);
-                return { error: "Failed to update organization member role" };
+                console.error("Failed to update team member role:", error);
+                return { error: "Failed to update team member role" };
             }
         }
     )
 
-export const getRequestForAccess = async (orgName: string) => {
+export const getRequestForAccess = async (teamName: string) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -89,15 +89,15 @@ export const getRequestForAccess = async (orgName: string) => {
     }
     try {
 
-        const requests = await prisma.organizationAccessRequest.findMany({
+        const requests = await prisma.teamAccessRequest.findMany({
             where: {
-                organization: {
-                    name: orgName,
+                team: {
+                    name: teamName,
                 }
             },
             select: {
                 id: true,
-                requestedByUser: { // Updated to use the correct relation name
+                requestedByUser: {
                     select: {
                         username: true,
                         image: true,
@@ -109,14 +109,14 @@ export const getRequestForAccess = async (orgName: string) => {
 
         return requests;
     } catch (error) {
-        console.error("Failed to get organization access requests:", error);
+        console.error("Failed to get team access requests:", error);
         return {
-            error: "Failed to get organization access requests",
+            error: "Failed to get team access requests",
         };
     }
 }
 
-export const approveOrgAccessRequest = withOrgAuth(Role.ADMIN, async (organization, formData) => {
+export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {
     console.log(formData);
     
     const requestId = formData?.get('id') as string;
@@ -125,22 +125,21 @@ export const approveOrgAccessRequest = withOrgAuth(Role.ADMIN, async (organizati
     }
     try {
         prisma.$transaction(async () => {
-            throw new Error("Transaction failed");
-            await prisma.organizationAccessRequest.delete({
+            await prisma.teamAccessRequest.delete({
                 where: {
                     id: requestId,
                 },
             })
-            await prisma.organizationMember.create({
+            await prisma.teamMember.create({
                 data: {
-                    organization: {
+                    team: {
                         connect: {
-                            id: organization.id,
+                            id: team.id,
                         },
                     },
                     user: {
                         connect: {
-                            id: organization.id,
+                            id: team.id,
                         },
                     },
                     role: "MEMBER",
@@ -149,7 +148,7 @@ export const approveOrgAccessRequest = withOrgAuth(Role.ADMIN, async (organizati
         });
         return { success: true };
     } catch (error) {
-    console.error("Failed to approve organization access request:", error);
-    return { error: "Failed to approve organization access request" };
+    console.error("Failed to approve team access request:", error);
+    return { error: "Failed to approve team access request" };
 }
 });

@@ -2,9 +2,9 @@ import { Role } from "@prisma/client";
 import { getSession } from "../auth";
 import prisma from "@/lib/prisma";
 import { roleValue } from "./lib";
-import { ActionFunction, WithOrgAuthReturnType } from "./types";
+import { ActionFunction, WithTeamAuthReturnType } from "./types";
   
-export function withOrgAuth(arg1: Role | ActionFunction, arg2?: ActionFunction): (org: string, formData: FormData | null, key: string | null) => Promise<WithOrgAuthReturnType> {
+export function withTeamAuth(arg1: Role | ActionFunction, arg2?: ActionFunction): (team: string, formData: FormData | null, key: string | null) => Promise<WithTeamAuthReturnType> {
   let requiredRole: Role;
   let action: ActionFunction;
 
@@ -16,14 +16,14 @@ export function withOrgAuth(arg1: Role | ActionFunction, arg2?: ActionFunction):
     action = arg2!;
   }
 
-  return async (orgName: string, formData: FormData | null, key: string | null): Promise<WithOrgAuthReturnType> => {
+  return async (teamName: string, formData: FormData | null, key: string | null): Promise<WithTeamAuthReturnType> => {
     const session = await getSession();
     if (!session) {
       return { error: "Not authenticated" };
     }
     
-    const organization = await prisma.organization.findUnique({
-      where: { name: orgName },
+    const team = await prisma.team.findUnique({
+      where: { name: teamName },
       include: {
         members: {
           where: { userId: session.user.id },
@@ -31,18 +31,18 @@ export function withOrgAuth(arg1: Role | ActionFunction, arg2?: ActionFunction):
       },
     });
 
-    if (!organization || organization.members.length === 0) {
-      return { error: "Not authorized or organization does not exist" };
+    if (!team || team.members.length === 0) {
+      return { error: "Not authorized or team does not exist" };
     }
 
-    const memberRole = organization.members[0].role;
+    const memberRole = team.members[0].role;
     
     if (roleValue(memberRole) < roleValue(requiredRole)) {
       return { error: `Your current role (${memberRole}) does not grant you the necessary permissions (${requiredRole}) to perform this action` };
     }
     
-    console.log("# Action permitted by org auth middleware");
+    console.log("# Action permitted by team auth middleware");
     
-    return action(organization, formData, key);
+    return action(team, formData, key);
   };
 }

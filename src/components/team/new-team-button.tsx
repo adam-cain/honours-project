@@ -3,16 +3,16 @@
 import { PlusSquare } from "lucide-react"
 import CardBase from './card-base';
 import { useModal } from "@/components/modal/provider";
-import CreateOrganisationModal from "@/components/modal/create-org";
+import CreateTeamModal from "@/components/modal/create-team";
 
-export default function NewOrgButton() {
+export default function NewTeamButton() {
     const modal = useModal();
     return (
-        <CardBase onclick={() => modal?.show(<CreateOrganisationModal />)}>
+        <CardBase onclick={() => modal?.show(<CreateTeamModal />)}>
             <div className="flex items-center space-x-2 flex-col space-y-2">
                 <PlusSquare className="w-12 h-12" />
             </div>
-            <h3 className="text-2xl font-bold text-center">Create Organisation</h3>
+            <h3 className="text-2xl font-bold text-center">Create Team</h3>
         </CardBase>
     )
 }

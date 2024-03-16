@@ -3,7 +3,7 @@
 import { getSession } from "../auth";
 import prisma from "../prisma";
 
-export const createChat = async (formData: FormData, orgName: string) => {
+export const createChat = async (formData: FormData, teamName: string) => {
     const session = await getSession();
     if (!session) {
         return {
@@ -25,8 +25,8 @@ export const createChat = async (formData: FormData, orgName: string) => {
             data: {
                 name: name,
                 description: description,
-                organization: {
-                    connect: { name: orgName },
+                team: {
+                    connect: { name: teamName },
                 },
             },
         })
@@ -40,13 +40,13 @@ export const createChat = async (formData: FormData, orgName: string) => {
     }
 }
 
-export const getChat = async (orgName: string, chatName: string) => {
+export const getChat = async (teamName: string, chatName: string) => {
     try {
         const chat = await prisma.chat.findFirst({
             where: {
                 name: chatName,
-                organization: {
-                    name: orgName,
+                team: {
+                    name: teamName,
                 },
             },
         });

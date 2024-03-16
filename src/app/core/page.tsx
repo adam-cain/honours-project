@@ -1,20 +1,20 @@
 import { Suspense } from "react";
-import Card from "@/components/organisation/org-button";
-import NewOrgButton from "@/components/organisation/new-org-button";
-import { getUserOrganisations } from "@/lib/actions/organisation";
+import Card from "@/components/team/team-button";
+import NewTeamButton from "@/components/team/new-team-button";
+import { getUserTeams } from "@/lib/actions/team";
 import {Title} from "@/components/PageComponents";
 
 export default async function Overview() {
-  const orgs = await getUserOrganisations();
+  const teams = await getUserTeams();
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Title>Home</Title>
       <div className="grid grid-cols-3 gap-4">
-        {orgs.map((org: { name: string; logo: string; }, index: number) => (
-          <Card key={index} name={org.name} logo={org.logo} />
+        {teams.map((team: { name: string; logo: string; }, index: number) => (
+          <Card key={index} name={team.name} logo={team.logo} />
         ))}
-       <NewOrgButton/>
+       <NewTeamButton/>
       </div>
     </Suspense>
   );

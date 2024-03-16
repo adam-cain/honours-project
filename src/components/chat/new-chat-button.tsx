@@ -5,9 +5,9 @@ import { useModal } from "@/components/modal/provider";
 import CreateChatModal from "@/components/modal/create-chat";
 import BaseCard from "./chat-card-base";
 
-export default function NewChatCard({org}: {org: string}) {
+export default function NewChatCard({team}: {team: string}) {
     const modal = useModal();
-    const handleClick = () => modal?.show(<CreateChatModal org={org} />);
+    const handleClick = () => modal?.show(<CreateChatModal team={team} />);
     return (
         <BaseCard className="group" onClick={handleClick}>
             <div className="flex items-center">

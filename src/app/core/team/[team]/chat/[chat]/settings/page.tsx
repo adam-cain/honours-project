@@ -1,6 +1,6 @@
 import { Title } from "@/components/PageComponents";
 
-export default function Page({ params }: { params: { org: string, chat: string } }) {
+export default function Page({ params }: { params: { team: string, chat: string } }) {
     return (<>
         <Title>{params.chat} Settings</Title>
     </>
