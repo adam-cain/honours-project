@@ -11,7 +11,7 @@ export const getTeamMembers = async (teamName: string) => {
             error: "Not authenticated",
         };
     }
-
+    teamName = decodeURIComponent(teamName);
     try {
         const members = await prisma.team.findFirst({
             where: {
@@ -32,7 +32,7 @@ export const getTeamMembers = async (teamName: string) => {
                 },
             },
         });
-
+        console.log(members);
         if (members) {
             const restructure = members.members.map((member: { role: any; user: { username: any; image: any; id: any }; }) => ({
                 role: member.role,
@@ -116,9 +116,7 @@ export const getRequestForAccess = async (teamName: string) => {
     }
 }
 
-export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {
-    console.log(formData);
-    
+export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {    
     const requestId = formData?.get('id') as string;
     if (!requestId) {
         throw new Error("Missing requestId");

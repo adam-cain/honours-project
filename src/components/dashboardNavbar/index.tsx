@@ -56,7 +56,9 @@ export default function NavBar({ userData, children }: { userData: User, childre
     const [hideText, setHideText] = useState(false);
     const path = usePathname();
 
-    const { team, chat } = useParams() as { team?: string, chat?: string };
+    let { team, chat } = useParams() as { team?: string, chat?: string };
+    team = decodeURIComponent(team || "");
+    chat = decodeURIComponent(chat || "");
 
     const dynamicNavConfig = useMemo(() => navConfig.navGroup.filter(group => 
         Array.isArray(group.showOn) ? group.showOn.some(regex => regex.test(path)) : group.showOn.test(path)
@@ -71,7 +73,7 @@ export default function NavBar({ userData, children }: { userData: User, childre
           ...item,
           href: replaceDynamicSegments(item.href, team, chat)
         }))
-      })), [path, team, chat]);
+      })), [team, chat]);
 
     const toggleNavbar = () => {
         if (!isNavCollapsed) {

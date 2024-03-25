@@ -21,7 +21,7 @@ export function withTeamAuth(arg1: Role | ActionFunction, arg2?: ActionFunction)
     if (!session) {
       return { error: "Not authenticated" };
     }
-    
+    teamName = decodeURIComponent(teamName);
     const team = await prisma.team.findUnique({
       where: { name: teamName },
       include: {

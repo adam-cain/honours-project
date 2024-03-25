@@ -30,6 +30,12 @@ const nextConfig = {
       { hostname: "illustrations.popsy.co" },
     ]
   },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+        config.externals = [...config.externals, 'isolated-vm'];
+    }
+    return config;
+},
 };
 
 export default nextConfig;

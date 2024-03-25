@@ -13,7 +13,8 @@ export const createChat = async (formData: FormData, teamName: string) => {
 
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
-
+    teamName = decodeURIComponent(teamName);
+    
     if (!name) {
         return {
             error: "Required fields are missing",
@@ -41,6 +42,8 @@ export const createChat = async (formData: FormData, teamName: string) => {
 }
 
 export const getChat = async (teamName: string, chatName: string) => {
+    teamName = decodeURIComponent(teamName);
+    chatName = decodeURIComponent(chatName);
     try {
         const chat = await prisma.chat.findFirst({
             where: {

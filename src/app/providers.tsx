@@ -8,7 +8,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <Toaster theme="dark" />
-      <ModalProvider>{children}</ModalProvider>
+      <ModalProvider>
+          {children}
+      </ModalProvider>
     </SessionProvider>
   );
 }

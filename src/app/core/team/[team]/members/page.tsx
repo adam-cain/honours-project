@@ -6,11 +6,12 @@ import React from 'react';
 import { MemberRow } from "@/components/members/member-row";
 import { InfoIcon } from "lucide-react"
 import { RequestsForAccessRow } from "./team-request";
+import { log } from "console";
 
 export default async function Page({ params }: { params: { team: string } }) {
 
     const members: TeamMember[] = await getTeamMembers(params.team);
-
+    log(members);
     const userHasAdmin = (await userHasAdminPerm(params.team, null, null));
 
     const requestsforAccess = await getRequestForAccess(params.team);
@@ -20,7 +21,6 @@ export default async function Page({ params }: { params: { team: string } }) {
 
         <div className="">
             Way of inviting a member here
-            {JSON.stringify(requestsforAccess)}
             <RequestsForAccessRow requestsforAccess={requestsforAccess} teamName={params.team}/>
         </div>
         {/* List of Members */}
