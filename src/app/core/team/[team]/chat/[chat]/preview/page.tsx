@@ -8,15 +8,13 @@ export default function Page({ params }: { params: { team: string, chat: string 
     const session = getSession();
     return (<>
         <Title>{params.chat} Preview</Title>
-        <CodeBlock code={`async function getFlightInfo(flightNumber: string) {
-  return {\n
-
-    \n\n\n\n\n
+        {/* <CodeBlock code={`async function getFlightInfo(flightNumber: string) {
+  return {
     flightNumber,
     departure: 'New York',
     arrival: 'San Francisco',
   };
-}`} language={"JS"} result="21" />
+}`} language={"JS"} result="21" /> */}
          <AI>
             <ChatBotPage name={params.chat} session={session} />
         </AI>
