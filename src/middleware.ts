@@ -42,7 +42,7 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
   } else {
-    const subdomain = hostname.split(".")[0];
+    const subdomain = hostname.split(".")[0];    
     return NextResponse.rewrite(new URL(`/external/${subdomain}${path}`, req.url));
   }
 }

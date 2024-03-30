@@ -3,18 +3,19 @@
 import { OpenAI } from "openai";
 import { createAI, getMutableAIState, render } from "ai/rsc";
 import { z } from "zod";
-import { AIChat } from "@/components/ChatBot/page";
+import { AIChat } from "@/components/ChatBot/components/chat-bubbles";
 import { runCode } from "./plugin";
 import { CodeBlock } from "@/components/ChatBot/components/codeBlock";
+import LoadingDots from "@/components/icons/loading-dots";
  
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
- 
-// An example of a spinner component. You can also import your own components,
-// or 3rd party component libraries.
-function Spinner() {
-  return <div>Loading...</div>;
+
+function Loading(){
+  return <div className=" items-center w-full flex justify-center p-4">
+    <LoadingDots color="#FFF"/>
+  </div>
 }
  
 // An example of a flight card component.
@@ -69,7 +70,7 @@ async function submitUserMessage(userInput: string) {
     model: 'gpt-4-0125-preview',
     provider: openai,
     messages: [
-      { role: 'system', content: 'You are a flight assistant' },
+      { role: 'system', content: 'You are an ai assitant' },
       { role: 'user', content: userInput }
     ],
     // `text` is called when an AI returns a text response (as opposed to a tool call).
@@ -77,7 +78,7 @@ async function submitUserMessage(userInput: string) {
     // multiple times with `content` being incremental.
     text: ({ content, done }) => {
       // When it's the final content, mark the state as done and ready for the client to access.
-      if (done) {
+      if (done) {        
         aiState.done([
           ...aiState.get(),
           {
@@ -90,15 +91,14 @@ async function submitUserMessage(userInput: string) {
       return <AIChat content={content} />
     },
     tools: {
-      get_flight_info: {
+      get_food_info: {
         description: 'Get the information for a flight',
         parameters: z.object({
           flightNumber: z.string().describe('the number of the flight')
         }).required(),
         render: async function* ({ flightNumber }) {
           // Show a spinner on the client while we wait for the response.
-          yield <Spinner/>
- 
+          yield <Loading/>
           // Fetch the flight information from an external API.
           const flightInfo = await getFlightInfo(flightNumber)
  
@@ -125,7 +125,7 @@ async function submitUserMessage(userInput: string) {
         ,
         render: async function* ({ code }) {
           // Show a spinner on the client while we wait for the response.
-          yield <Spinner/>
+          yield <Loading/>
           console.log("Code: ", code);
           
           // Execute the code.
@@ -153,7 +153,7 @@ async function submitUserMessage(userInput: string) {
       //   }).required(),
       //   render: async function* ({ flightNumber }) {
       //     // Show a spinner on the client while we wait for the response.
-      //     yield <Spinner/>
+      //     yield <Loading/>
  
       //     // Fetch the flight information from an external API.
       //     const flightInfo = await getFlightInfo(flightNumber)
@@ -175,6 +175,10 @@ async function submitUserMessage(userInput: string) {
       // }
     }
   })
+
+
+  // Debug AI Response
+  // const ui = <AIChat content={"Test ".repeat(900)} />;
  
   return {
     id: Date.now(),
