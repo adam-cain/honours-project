@@ -1,6 +1,4 @@
 import Image from 'next/image';
-
-
 import React from 'react'
 
 type Props = {
@@ -42,7 +40,7 @@ export default function UserAvatar({ image, username, size = 8, textSize="text-s
           height={size*4}
         />
       ) : (
-        <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-gray-500 text-white min-w-[32px] min-h-[32px] ${"h"+size} ${"w"+size} ${textSize}`}>
+        <div className={`flex items-center justify-center rounded-full bg-gray-500 text-white min-w-[32px] h- min-h-[32px] ${"h-"+size} ${"w-"+size} ${textSize}`}>
           {getInitials(username || 'Err')}
         </div>
       )}
