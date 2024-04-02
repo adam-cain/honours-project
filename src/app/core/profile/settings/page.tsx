@@ -9,10 +9,9 @@ export default async function Page() {
 
   return (
     <>
-      <Title>Settings</Title>
       <div className="flex flex-col gap-4">
         <div className="">
-          <h2 className="text-2xl font-semibold">User Profile</h2>
+          <h2 className="text-2xl font-semibold">User Settings</h2>
           <p className="text-gray-300 text-base ">Add or update your information</p>
         </div>
 
