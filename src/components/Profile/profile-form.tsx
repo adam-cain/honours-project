@@ -15,7 +15,6 @@ type Props = {
 }
 
 const EditUserProfileSchema = z.object({
-    image: z.string().optional().nullable(),
     name: z.string().min(1, "Required"),
     email: z.string().email("Required"),
 })
@@ -36,7 +35,6 @@ export default function ProfileForm({ session, onUpdate }: Props) {
         mode: "onChange",
         resolver: zodResolver(EditUserProfileSchema),
         defaultValues: {
-            image: user.image,
             name: user.name,
             email: user.email,
         },
@@ -57,23 +55,6 @@ export default function ProfileForm({ session, onUpdate }: Props) {
     return (
         <Form {...form}>
             <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
-                <FormField
-                        disabled={isLoading}
-                        control={form.control}
-                        name="image"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="text-lg">Profile Picture</FormLabel>
-                                <FormControl>
-                                    <div className="w-full flex justify-center items-center">
-                                        <UserAvatar image={user.image} username={user.name}
-                                        className=" h-32 w-32" textSize="text-6xl"/>
-                                    </div>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                 <FormField
                     disabled={isLoading}
                     control={form.control}

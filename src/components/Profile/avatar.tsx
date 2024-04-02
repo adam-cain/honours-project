@@ -6,12 +6,12 @@ import React from 'react'
 type Props = {
   image?: string;
   username: string;
-  className?: string;
+  size?: number;
   textSize?: "text-xs" | "text-sm" | "text-base" | "text-lg" | "text-xl" | "text-2xl" | "text-3xl" | "text-4xl" | "text-5xl" | "text-6xl";
 }
 
 
-export default function UserAvatar({ image, username, className = "", textSize="text-sm" }: Props) {
+export default function UserAvatar({ image, username, size = 8, textSize="text-sm" }: Props) {
 
   const getInitials = (name: string) => {
     const names = name.split(/[ _]/);
@@ -35,14 +35,14 @@ export default function UserAvatar({ image, username, className = "", textSize="
       {image ? (
         // If there's an image, render the Image component
         <Image
-          className={`rounded-full aspect-square object-cover ${className}`}
+          className={`rounded-full aspect-square object-cover ${"h"+size} ${"w"+size}`}
           src={image}
           alt=""
-          width={32}
-          height={32}
+          width={size*4}
+          height={size*4}
         />
       ) : (
-        <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-gray-500 text-white min-w-[32px] min-h-[32px] ${className} ${textSize}`}>
+        <div className={`flex items-center justify-center h-8 w-8 rounded-full bg-gray-500 text-white min-w-[32px] min-h-[32px] ${"h"+size} ${"w"+size} ${textSize}`}>
           {getInitials(username || 'Err')}
         </div>
       )}
