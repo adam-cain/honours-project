@@ -1,5 +1,5 @@
 "use client"
-import Avatar from "@/components/dashboardNavbar/avatar";
+import Avatar from "@/components/Profile/avatar";
 import { approveTeamAccessRequest } from "@/lib/actions/members";
 
 export function RequestsForAccessRow({ requestsforAccess, teamName }: { requestsforAccess: any, teamName: string}) {

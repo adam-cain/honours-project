@@ -51,4 +51,6 @@ const AutoResizeTextArea = forwardRef(({ maxLines = 8, ...props }: AutoResizeTex
     );
 });
 
+AutoResizeTextArea.displayName = 'AutoResizeTextArea';
+
 export default AutoResizeTextArea;

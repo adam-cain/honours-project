@@ -1,4 +1,4 @@
-import UserAvatar from "@/components/dashboardNavbar/avatar";
+import UserAvatar from "@/components/Profile/avatar";
 import React from "react";
 import MarkdownRenderer from "./MarkdownRenderer";
 

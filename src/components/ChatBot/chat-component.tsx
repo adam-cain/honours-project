@@ -2,25 +2,28 @@
 import { ArrowRight } from "lucide-react";
 import React, { useState, useRef } from 'react';
 import { useUIState, useActions } from "ai/rsc";
-import { AI } from '@/lib/actions/ai';
+import { createConfiguredAI } from '@/components/ChatBot/ai';
 import AutoResizeTextArea from "./components/resizeable-text-area";
 import { UserChat } from "./components/chat-bubbles";
 
-export default function Page({ name, session }: { name: string; session: any }) {
+export default function ChatComponent({ name, session }: { name: string; session: any }) {
     const [inputValue, setInputValue] = useState('');
-    const [messages, setMessages] = useUIState<typeof AI>();
-    const { submitUserMessage } = useActions<typeof AI>();
+    const [messages, setMessages] = useUIState<ReturnType<typeof createConfiguredAI>>();
+    const { submitUserMessage } = useActions<ReturnType<typeof createConfiguredAI>>();
     const textAreaRef = useRef<{ resetSize: () => void }>(null);
 
     return (
         <div className="flex flex-col h-screen">
             <div className="flex-grow overflow-y-auto">
                 <div className="size-full lg:mx-auto lg:max-w-3xl xl:max-w-3xl mx-auto flex-grow">
-                    {messages.length === 0 ? <div className="flex justify-center items-center h-full">No messages yet</div> :
-
-                        messages.map((message) => (
-                            <div key={message.id}>{message.display}</div>
-                        ))}
+                    {
+                        messages.length === 0 ?
+                            (<div className="flex justify-center items-center h-full">No messages yet</div>)
+                            :
+                            (messages.map((message) => (
+                                <div key={message.id}>{message.display}</div>
+                            )))
+                    }
                 </div>
             </div>
             <div className="w-full lg:mx-auto lg:max-w-3xl xl:max-w-3xl mx-auto my-2">

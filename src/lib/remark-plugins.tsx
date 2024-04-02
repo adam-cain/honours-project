@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { visit } from "unist-util-visit";
-import type { PrismaClient } from "@prisma/client";
 import { ReactNode } from "react";
 
 export function replaceLinks({

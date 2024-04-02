@@ -4,6 +4,7 @@ import FormSubmitButton from "@/components/Auth/form-submit-button";
 import Link from "next/link";
 import InputField from "@/components/Auth/input-field";
 import { ValidationResult } from "@/lib/types";
+import { Logo } from "@/components/PageComponents";
 
 interface Field {
     name: string; 
@@ -57,7 +58,8 @@ export default function AuthForm({ title, fields, onSubmit, alternateLink }: Aut
 
     return (
         <>
-            <h1 className="mt-6 text-center font-cal text-3xl text-white">
+            <h1 className="mt-4 flex items-center flex-col text-center font-semibold text-2xl text-white gap-y-2">
+            <Logo/>
                 {title}
             </h1>
 

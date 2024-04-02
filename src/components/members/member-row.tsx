@@ -1,6 +1,6 @@
 import React from 'react';
 import { TeamMember } from "@prisma/client";
-import Avatar from '@/components/dashboardNavbar/avatar';
+import Avatar from '@/components/Profile/avatar';
 import {SelectButton} from './select-button';
 
 export const MemberRow = ({ member, hasPerm }: { member: TeamMember, hasPerm:boolean }) => {

@@ -23,7 +23,8 @@ export default function LoginPage() {
         }
     }
 
-    return (<AuthForm 
+    return (
+    <AuthForm 
     title={"Login"} 
     fields={[
         {
@@ -43,5 +44,6 @@ export default function LoginPage() {
     alternateLink={{
         href: "/signup",
         text: <>Dont Have an Account? <span className="underline underline-offset-2">Signup</span></>
-    }} />)
+    }} />
+    )
 }

@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
-import BaseButton from '@/components/Auth/base-button';
+import BaseButton from '@/components/ui/submit-button';
 
 interface AuthProvider {
   name: string;
@@ -23,7 +23,7 @@ const providers: AuthProvider[] = [
     signInMethod: "github",
     logo: (
       <svg
-        className="h-4 w-4 text-black dark:text-white"
+        className="h-4 w-4text-white"
         aria-hidden="true"
         fill="currentColor"
         viewBox="0 0 24 24"
@@ -37,7 +37,7 @@ const providers: AuthProvider[] = [
     signInMethod: "google",
     logo: (
       <svg
-        className="h-4 w-4 text-black dark:text-white"
+        className="h-4 w-4text-white"
         aria-hidden="true"
         fill="currentColor"
         viewBox="0 0 24 24"
@@ -53,7 +53,7 @@ export default function AuthProviderButtonGroup() {
     <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
       <Suspense
         fallback={
-          <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
+          <div className="my-2 h-10 w-full rounded-md border border-stone-700 bg-stone-800" />
         }
       >
         {providers.map((provider) => (
@@ -85,7 +85,7 @@ const ProviderLoginButton: React.FC<LoginButtonProps> = ({ provider }) => {
     <BaseButton onClick={handleLogin} loading={loading}>
       <>
         {provider.logo}
-        <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+        <p className="text-sm font-medium text-stone-400">
           Login with {provider.name}
         </p>
       </>

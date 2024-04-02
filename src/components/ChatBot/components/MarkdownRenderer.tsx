@@ -36,7 +36,6 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ markdown }) => {
     ol: ({ node, ...props }) => <ol className="list-decimal pl-5 my-2" {...props} />,
     li: ({ node, ...props }) => <li className="my-1" {...props} />,
     blockquote: ({ node, ...props }) => <blockquote className="pl-4 border-l-4 border-gray-500 italic my-4" {...props} />,
-    img: ({ node, ...props }) => <img className="mx-auto my-4" {...props} />,
     hr: ({ node, ...props }) => <hr className="my-4 border-gray-300" {...props} />,
     table: ({ node, ...props }) => <table className="min-w-full border-collapse border border-gray-400 my-4" {...props} />,
     thead: ({ node, ...props }) => <thead className="bg-gray-200" {...props} />,

@@ -1,6 +1,6 @@
 // components/FormSubmitButton.tsx
 import React from 'react';
-import BaseButton from '@/components/Auth/base-button';
+import BaseButton from '@/components/ui/submit-button';
 
 interface FormSubmitButtonProps {
   loading: boolean;

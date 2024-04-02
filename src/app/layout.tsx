@@ -21,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={cn(cal.variable, inter.variable)}>
+    <html lang="en" suppressHydrationWarning className=" max-h-screen">
+      <body className={ cn(cal.variable, inter.variable)}>
         <Providers>
           {children}
           {/* <Analytics /> */}

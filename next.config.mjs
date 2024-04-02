@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
+import NextBundleAnalyzer from '@next/bundle-analyzer';
+
+const withBundleAnalyzer = NextBundleAnalyzer({
+  enabled: process.env.BUNDLE_ANALYZER === "true",
+});
+
 const nextConfig = {
   experimental: {
+    urlImports: ["https://cdn.skypack.dev","https://umgn7lure7vaypuk.public.blob.vercel-storage.com"],
     serverActions: {
       serverActions: true,
       allowedOrigins: ["localhost:3000"],
@@ -32,10 +39,10 @@ const nextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
-        config.externals = [...config.externals, 'isolated-vm'];
+        config.externals = [...config.externals, 'isolated-vm', 'esbuild'];
     }
     return config;
 },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
