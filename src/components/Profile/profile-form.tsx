@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -7,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
 import  SubmitButton from "../ui/submit-button"
-import UserAvatar from "./avatar"
+import { useRouter } from "next/router"
 
 type Props = {
     session: any
@@ -22,14 +21,8 @@ const EditUserProfileSchema = z.object({
 export default function ProfileForm({ session, onUpdate }: Props) {
     const [isLoading, setIsLoading] = useState(false)
     const { user } = session;
-    
-    // user: {
-    //     name: 'adam_cain',
-    //     email: '03adamcain@gmail.com',
-    //     image: undefined,
-    //     id: 'cltuidbuv000211qu795x6lsr',
-    //     username: undefined
-    //   }
+    //WIP: reload when data is updated
+    // const router = useRouter()
 
     const form = useForm<z.infer<typeof EditUserProfileSchema>>({
         mode: "onChange",
@@ -46,11 +39,12 @@ export default function ProfileForm({ session, onUpdate }: Props) {
         setIsLoading(true)
         await onUpdate(values.name)
         setIsLoading(false)
+        // router.reload()
     }
 
     useEffect(() => {
         form.reset({ name: user.name, email: user.email })
-    }, [user])
+    }, [user, form])
 
     return (
         <Form {...form}>

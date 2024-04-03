@@ -1,3 +1,5 @@
+"use client";
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import React from 'react'
 
@@ -11,21 +13,12 @@ type Props = {
 
 export default function UserAvatar({ image, username, size = 8, textSize="text-sm" }: Props) {
 
+  const sizeClasses = `${"h-"+size} ${"w-"+size} ${textSize}`
+
   const getInitials = (name: string) => {
     const names = name.split(/[ _]/);
     const initials = names.map((n) => n[0]).join('');
     return initials.toUpperCase();
-  };
-  const initialsStyle = {
-    // Adjust the font size dynamically based on the container's width
-    // This example uses a combination of viewport width (vw) and min/max for scaling
-    // You might need to adjust the values based on your design needs
-    fontSize: `calc(10px + 2vw)`, // Scales with the viewport, adjust as needed
-    // fontSize: `calc(min(max(32px, 4vw), 16px))`, // Scales with the viewport, adjust as needed
-
-    // Ensure the font size does not get too small or too large
-    // You might need to adjust min and max values based on your container size
-    // fontSize: `calc(min(max(12px, 4vw), 16px))`
   };
 
   return (
@@ -40,7 +33,7 @@ export default function UserAvatar({ image, username, size = 8, textSize="text-s
           height={size*4}
         />
       ) : (
-        <div className={`flex items-center justify-center rounded-full bg-gray-500 text-white min-w-[32px] h- min-h-[32px] ${"h-"+size} ${"w-"+size} ${textSize}`}>
+        <div className={cn(" h-32 w-32 flex items-center justify-center rounded-full bg-gray-500 text-white min-w-[32px] min-h-[32px]", sizeClasses)} style={{height: `${"h-"+size}`}}>
           {getInitials(username || 'Err')}
         </div>
       )}
