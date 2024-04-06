@@ -23,7 +23,7 @@ export default function Profile({ data, isCollapsed }: { data: User, isCollapsed
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-full bg-secondary border border-stone-700">
-                <DropdownMenuItem onClick={() =>router.push("/profile/settings")}>
+                <DropdownMenuItem onClick={() =>router.push("/usersettings")}>
                     Settings
                 </DropdownMenuItem>
                 {/* <DropdownMenuItem>

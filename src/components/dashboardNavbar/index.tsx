@@ -19,7 +19,7 @@ const navConfig: NavConfig = {
         {
             navItems: [
                 { title: 'Home', href: '/', icon: <HomeIcon className="h-4 w-4" /> },
-                { title: 'User Settings', href: '/profile/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+                { title: 'User Settings', href: '/usersettings', icon: <SettingsIcon className="h-4 w-4" />, },
             ],
             showOn: [/\/[^\/]*/, /\/profile\/.*/],
             dynamic: false
