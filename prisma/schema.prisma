@@ -39,9 +39,11 @@ model Team {
   updatedAt    DateTime @updatedAt
 
   members           TeamMember[]
-  chat              Chat[]
   teamInvitation    TeamInvitation[]
   teamAccessRequest TeamAccessRequest[]
+
+  chat  Chat[]
+  flows Flow[]
 }
 
 model TeamMember {
@@ -109,11 +111,30 @@ model Chat {
   id          String   @id @default(cuid())
   name        String
   description String?  @db.Text
-  team        Team     @relation(fields: [teamId], references: [id])
-  teamId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deployed    Boolean  @default(false)
+  publish     Boolean? @default(false)
+
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deployed  Boolean  @default(false)
+
+  @@unique([name, teamId])
+}
+
+model Flow {
+  id          String @id @default(cuid())
+  name        String
+  description String
+
+  nodes String?
+  edges String?
+
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deployed  Boolean  @default(false)
 
   @@unique([name, teamId])
 }
@@ -124,19 +145,18 @@ enum RequestStatus {
   DECLINED
 }
 
-
 model TeamInvitation {
-  id              String           @id @default(cuid())
-  team            Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  id              String        @id @default(cuid())
+  team            Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
   teamId          String
-  invitedUser     User             @relation(fields: [invitedUserId], references: [id])
+  invitedUser     User          @relation(fields: [invitedUserId], references: [id])
   invitedUserId   String
   email           String?
   username        String?
   invitedByUserId String
   status          RequestStatus @default(PENDING)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@unique([teamId, email])
   @@unique([teamId, username])

@@ -2,6 +2,6 @@ import { ReactNode } from "react";
 
 export default function Title({ children }: { children: ReactNode }) {
     return (
-        <h1 className="text-3xl font-bold">{children}</h1>
+        <h1 className="text-2xl font-semibold">{children}</h1>
     )
 }

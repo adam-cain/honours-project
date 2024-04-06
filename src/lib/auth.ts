@@ -8,6 +8,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import { JWT } from "next-auth/jwt";
+import { AdapterUser } from "next-auth/adapters";
 
 // Check if we're deployed or running locally
 const DEPLOYED = !!process.env.VERCEL_URL;
@@ -33,6 +35,7 @@ export const authOptions: NextAuthOptions = {
             email: true,
             password: true,
             username: true,
+            image: true,
           },
         });
 
@@ -48,7 +51,13 @@ export const authOptions: NextAuthOptions = {
 
         // If the user has a password, verify it
         if (user.password && credentials?.password && bcrypt.compareSync(credentials.password, user.password)) {
-          return { id: user.id, email: user.email, name: user.username };
+          return { 
+            id: user.id, 
+            email: user.email, 
+            name: user.username, 
+            username: user.username,
+            image: user.image
+          };
         } else {
           throw new Error('Incorrect email or password');
         }
@@ -63,6 +72,15 @@ export const authOptions: NextAuthOptions = {
           access_type: "offline",
           response_type: "code"
         }
+      },
+      profile(profile,) {
+        return {
+          id: profile.sub,
+          email: profile.email,
+          image: profile.picture,
+          username: profile.name,
+          name: profile.name,
+        };
       }
     }),
     GitHubProvider({
@@ -81,6 +99,7 @@ export const authOptions: NextAuthOptions = {
           email: profile.email,
           image: profile.avatar_url,
           username: profile.name ?? profile.login,
+          name: profile.name ?? profile.login,
         };
       },
     }),
@@ -108,21 +127,44 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user) {
+    jwt: async ({ token, user, trigger }:{token:JWT, user:User | AdapterUser, trigger?:"signIn" | "update" | "signUp" | undefined}) => {
+      
+      if (trigger === "update") {
+        // Triggered on update() call, fetch updated user details
+        const updatedUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: {
+            username: true,
+            image: true,
+            id: true,
+            email:true
+          },
+        });   
+             
+        if (updatedUser) {
+          token = {
+            ...token,
+            username: updatedUser.username,
+            name: updatedUser.username,
+            image: updatedUser.image,
+            picture: updatedUser.image,
+            email: updatedUser.email,
+            id: updatedUser.id,
+          };          
+        }
+      } else {
         token.user = user;
       }
       return token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token, trigger }) => {
       session.user = {
         ...session.user,
         // @ts-expect-error
         id: token.sub,
-        // @ts-expect-error
-        username: token?.user?.username,
       };
+      
       return session;
-    }
-  },
+    },
+  }
 };

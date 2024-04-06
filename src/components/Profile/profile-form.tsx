@@ -5,8 +5,10 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Input } from "../ui/input"
-import  SubmitButton from "../ui/submit-button"
-import { useRouter } from "next/router"
+import SubmitButton from "../ui/submit-button"
+import { useSession } from "next-auth/react";
+import ProfileAvatar from "@/components/Profile/profile-avatar";
+import { Title } from "../PageComponents";
 
 type Props = {
     session: any
@@ -21,8 +23,7 @@ const EditUserProfileSchema = z.object({
 export default function ProfileForm({ session, onUpdate }: Props) {
     const [isLoading, setIsLoading] = useState(false)
     const { user } = session;
-    //WIP: reload when data is updated
-    // const router = useRouter()
+    const { update } = useSession()
 
     const form = useForm<z.infer<typeof EditUserProfileSchema>>({
         mode: "onChange",
@@ -38,8 +39,10 @@ export default function ProfileForm({ session, onUpdate }: Props) {
     ) => {
         setIsLoading(true)
         await onUpdate(values.name)
+        await update()
         setIsLoading(false)
-        // router.reload()
+        console.log("Updated user details", user);
+        window.location.reload();                
     }
 
     useEffect(() => {
@@ -48,7 +51,25 @@ export default function ProfileForm({ session, onUpdate }: Props) {
 
     return (
         <Form {...form}>
+            <div className="flex felx-row w-full justify-between" >
+                <div className="">
+                <Title>User Settings</Title>
+                <p className="text-gray-300 text-base ">Add or update your information</p>
+                </div>
+                <div className="w-32">
+                <SubmitButton
+                onClick={form.handleSubmit(handleSubmit)}
+                loading={isLoading}
+                className="text-sm"
+            >
+                Save Settings
+            </SubmitButton>
+                </div>
+
+            </div>
+            <ProfileAvatar user={user} />
             <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(handleSubmit)}>
+
                 <FormField
                     disabled={isLoading}
                     control={form.control}
@@ -84,15 +105,6 @@ export default function ProfileForm({ session, onUpdate }: Props) {
                         </FormItem>
                     )}
                 />
-
-                <SubmitButton
-                    onClick={form.handleSubmit(handleSubmit)}
-                    loading={isLoading}
-                    className="text-sm"
-                >
-                    Save Settings
-                </SubmitButton>
-                
             </form>
         </Form>
     )
