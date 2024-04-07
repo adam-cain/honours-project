@@ -2,7 +2,7 @@ import { OpenAI } from "openai";
 import { createAI, getMutableAIState, render } from "ai/rsc";
 import { z } from "zod";
 import { AIChat } from "@/components/ChatBot/components/chat-bubbles";
-import { runCode } from "../../lib/actions/plugin";
+import { runCode } from "../../lib/actions/plugin/plugin";
 import { CodeBlock } from "@/components/ChatBot/components/codeBlock";
 import  LoadingChat from "./components/loading-chat";
 import { Config, ConfigSchema } from "./type/config";

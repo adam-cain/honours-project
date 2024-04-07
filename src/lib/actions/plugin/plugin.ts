@@ -92,3 +92,29 @@ async function addFetch(context: ivm.Context) {
     }
   } ], { arguments: { reference: true } });
 }
+
+
+import ts from 'typescript';
+
+function extractImports(sourceCode: string): string[] {
+  const sourceFile = ts.createSourceFile(
+    'userCode.ts', // Filename is arbitrary
+    sourceCode,
+    ts.ScriptTarget.ESNext, // Adjust based on your needs
+    true // Set to true to enable parenthetical parsing
+  );
+
+  const imports: string[] = [];
+
+  function visit(node: ts.Node) {
+    if (ts.isImportDeclaration(node) && node.moduleSpecifier) {
+      const moduleName = node.moduleSpecifier.getText(sourceFile).replace(/['"`]/g, '');
+      imports.push(moduleName);
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  ts.forEachChild(sourceFile, visit);
+
+  return imports;
+}
