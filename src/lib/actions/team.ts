@@ -73,9 +73,90 @@ export const getUserTeams = async () => {
                 },
             },
         },
+        select: {
+            name: true,
+            logo: true,
+            description: true,
+        },
     });
 
     return teams;
+}
+
+export const getTeamInvites = async () => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
+
+    const invites = await prisma.teamInvitation.findMany({
+        where: {
+            invitedUserId: session.user.id,
+        },
+        include: {
+            team: {
+                select: {
+                    name: true,
+                    logo: true,
+                    description: true,
+                },
+            },
+        },
+    });
+
+    return invites;
+}
+
+export const acceptTeamInvite = async (teamId: string) => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
+
+    prisma.$transaction(async () => {
+        await prisma.teamInvitation.deleteMany({
+            where: {
+                teamId: teamId,
+                invitedUserId: session.user.id,
+            },
+        });
+
+        await prisma.teamMember.create({
+            data: {
+                team: {
+                    connect: {
+                        id: teamId,
+                    },
+                },
+                user: {
+                    connect: {
+                        id: session.user.id,
+                    },
+                },
+                role: "MEMBER",
+            },
+        });
+    });
+}
+
+export const deleteTeamInvite = async (teamId: string) => {
+    const session = await getSession();
+    if (!session) {
+        return {
+            error: "Not authenticated",
+        };
+    }
+
+    await prisma.teamInvitation.deleteMany({
+        where: {
+            teamId: teamId,
+            invitedUserId: session.user.id,
+        },
+    });
 }
 
 export const getTeam = async (teamName: string) => {
@@ -160,10 +241,10 @@ export const teamAccessRequest = async (teamName: string) => {
             error: "Not authenticated",
         };
     }
-    
+
     teamName = decodeURIComponent(teamName);
 
-    try{
+    try {
         const request = await prisma.teamAccessRequest.create({
             data: {
                 team: {

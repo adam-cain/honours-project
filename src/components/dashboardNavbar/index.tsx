@@ -30,7 +30,7 @@ const navConfig: NavConfig = {
                 { title: 'Chatbots', href: '/team/[team]/chat', icon: <BotIcon className="h-4 w-4" />, },
                 { title: 'Analytics', href: '/team/[team]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
                 { title: 'Members', href: '/team/[team]/members', icon: <UserIcon className="h-4 w-4" />, },
-                { title: 'Settings', href: '/team/[team]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
+                { title: 'Team Settings', href: '/team/[team]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
             ],
             showOn: /\/team\/.*/,
             dynamic: true,

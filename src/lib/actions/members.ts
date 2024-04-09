@@ -51,7 +51,7 @@ export const getTeamMembers = async (teamName: string) => {
 }
 
 export const updateTeamMemberRole =
-withTeamAuth(Role.ADMIN,
+    withTeamAuth(Role.ADMIN,
         async (team, formData) => {
             const userId = formData?.get('userId') as string;
             const role = formData?.get('role') as string;
@@ -116,7 +116,60 @@ export const getRequestForAccess = async (teamName: string) => {
     }
 }
 
-export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {    
+export const inviteUserToTeam = withTeamAuth(Role.ADMIN, async (team, formData) => {
+    const username = formData?.get('username') as string;
+    const email = formData?.get('email') as string;
+    const role = formData?.get('role') as Role;
+    if (!username || !email) {
+        throw new Error("Missing username or email");
+    }
+    try {
+        prisma.$transaction(async () => {
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    {
+                        username: username,
+                    },
+                    {
+                        email: email,
+                    },
+                ],
+            },
+            select: {
+                id: true,
+            },
+        });
+        
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        await prisma.teamInvitation.create({
+            data: {
+                team: {
+                    connect: {
+                        id: team.id,
+                    },
+                },
+                invitedUser: {
+                    connect: {
+                        id: user.id,
+                    },
+                },
+                role: role || "MEMBER",
+            },
+        });
+    
+    })
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to invite user to team:", error);
+        return { error: "Failed to invite user to team" };
+    }
+})
+
+export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {
     const requestId = formData?.get('id') as string;
     if (!requestId) {
         throw new Error("Missing requestId");
@@ -146,7 +199,7 @@ export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, fo
         });
         return { success: true };
     } catch (error) {
-    console.error("Failed to approve team access request:", error);
-    return { error: "Failed to approve team access request" };
-}
+        console.error("Failed to approve team access request:", error);
+        return { error: "Failed to approve team access request" };
+    }
 });

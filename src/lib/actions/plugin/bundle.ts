@@ -82,12 +82,9 @@ export default async function bundleUserCode(code: string, isTypeScript: boolean
         });
         // Need a way of saving current file made by user before deleting it
         fs.unlinkSync(inFile);
-        uploadFunction(outFile, nanoid());
-
         // Clean up the input file after bundling
         //WIP: Upload the file to a cloud storage
-        const result = 
-
+        const result = uploadFunction(outFile, nanoid());
 
         return result;
     } catch (error) {

@@ -146,20 +146,14 @@ enum RequestStatus {
 }
 
 model TeamInvitation {
-  id              String        @id @default(cuid())
-  team            Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  teamId          String
-  invitedUser     User          @relation(fields: [invitedUserId], references: [id])
-  invitedUserId   String
-  email           String?
-  username        String?
-  invitedByUserId String
-  status          RequestStatus @default(PENDING)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@unique([teamId, email])
-  @@unique([teamId, username])
+  id            String   @id @default(cuid())
+  team          Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  teamId        String
+  invitedUser   User     @relation(fields: [invitedUserId], references: [id])
+  invitedUserId String
+  role          Role     @default(MEMBER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model TeamAccessRequest {
