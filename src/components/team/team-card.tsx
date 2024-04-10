@@ -18,7 +18,7 @@ export default function TeamCard({ name, description, imageUrl }: TeamProps) {
 function VisitTeamButton(name: string) {
     const router = useRouter();
     return (
-        <div className="border hover:bg-white hover:border-white hover:text-black rounded w-10 h-10 size-10 flex">
+        <div className="border hover:bg-white hover:border-white hover:text-black rounded  size-10 flex my-auto">
             <ChevronRight 
             className="m-auto"
             onClick={() => router.push(`/team/${name}`)}/>

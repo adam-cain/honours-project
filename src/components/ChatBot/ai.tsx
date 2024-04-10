@@ -2,7 +2,7 @@ import { OpenAI } from "openai";
 import { createAI, getMutableAIState, render } from "ai/rsc";
 import { z } from "zod";
 import { AIChat } from "@/components/ChatBot/components/chat-bubbles";
-import { runCode } from "../../lib/actions/plugin/plugin";
+// import { runCode } from "../../lib/actions/plugin/plugin";
 import { CodeBlock } from "@/components/ChatBot/components/codeBlock";
 import  LoadingChat from "./components/loading-chat";
 import { Config, ConfigSchema } from "./type/config";
@@ -74,35 +74,35 @@ export function createConfiguredAI(config: Config) {
       },
       tools: {
         ...tools,
-        code_execution: {
-          description: 'Execute javascript arrow functions',
-          parameters: z.object({
-            code: z.string().describe('A string representation of a JavaScript arrow function to be executed. You must follow the syntax and structure of arrow functions. The function `fetch(url: string)` can be used to fetch data from an external API. You must include the return statement to return data from code execution.'),
-          }).required()
-          ,
-          render: async function* ({ code }) {
-            // Show a spinner on the client while we wait for the response.
-            yield <LoadingChat color="#FFF" />
-            console.log("Code: ", code);
+        // code_execution: {
+        //   description: 'Execute javascript arrow functions',
+        //   parameters: z.object({
+        //     code: z.string().describe('A string representation of a JavaScript arrow function to be executed. You must follow the syntax and structure of arrow functions. The function `fetch(url: string)` can be used to fetch data from an external API. You must include the return statement to return data from code execution.'),
+        //   }).required()
+        //   ,
+        //   render: async function* ({ code }) {
+        //     // Show a spinner on the client while we wait for the response.
+        //     yield <LoadingChat color="#FFF" />
+        //     console.log("Code: ", code);
 
-            // Execute the code.
-            const result = await runCode(code);
+        //     // Execute the code.
+        //     const result = await runCode(code);
   
-            // Update the final AI state.
-            aiState.done([
-              ...aiState.get(),
-              {
-                role: "function",
-                name: "code_execution",
-                // Content can be any string to provide context to the LLM in the rest of the conversation.
-                content: code + "\n\nResult: " + JSON.stringify(result),
-              }
-            ]);
-            <CodeBlock code={code} language={""} />
-            // Return the result to the client.
-            return <AIChat content={result} />
-          }
-        },
+        //     // Update the final AI state.
+        //     aiState.done([
+        //       ...aiState.get(),
+        //       {
+        //         role: "function",
+        //         name: "code_execution",
+        //         // Content can be any string to provide context to the LLM in the rest of the conversation.
+        //         content: code + "\n\nResult: " + JSON.stringify(result),
+        //       }
+        //     ]);
+        //     <CodeBlock code={code} language={""} />
+        //     // Return the result to the client.
+        //     return <AIChat content={result} />
+        //   }
+        // },
       } as {
         [x: string]: {
           description?: string;

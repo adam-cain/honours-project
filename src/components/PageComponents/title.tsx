@@ -1,7 +1,12 @@
 import { ReactNode } from "react";
 
-export default function Title({ children }: { children: ReactNode }) {
+interface TitleProps {
+    children: ReactNode;
+    className?: string;
+}
+
+export default function Title({ children, className }: TitleProps) {
     return (
-        <h1 className="text-2xl font-semibold">{children}</h1>
-    )
+        <h1 className={`text-2xl font-semibold ${className}`}>{children}</h1>
+    );
 }

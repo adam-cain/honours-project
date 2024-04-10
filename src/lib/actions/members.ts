@@ -4,18 +4,26 @@ import { getSession } from "../auth";
 import { withTeamAuth } from "./middleware";
 import prisma from "../prisma";
 
-export const getTeamMembers = async (teamName: string) => {
+export interface Member {
+    role: string;
+    username: string;
+    image: string;
+    userId: string;
+    email: string;
+}
+
+export const getTeamMembers = async (teamName: string): Promise<Member[] | { error: string }> => {
     const session = await getSession();
     if (!session) {
         return {
             error: "Not authenticated",
         };
     }
-    teamName = decodeURIComponent(teamName);
+    const decodedTeamName = decodeURIComponent(teamName);
     try {
-        const members = await prisma.team.findFirst({
+        const team  = await prisma.team.findFirst({
             where: {
-                name: teamName,
+                name: decodedTeamName,
             },
             select: {
                 members: {
@@ -26,22 +34,21 @@ export const getTeamMembers = async (teamName: string) => {
                                 username: true,
                                 image: true,
                                 id: true,
+                                email: true,
                             },
                         },
                     },
                 },
             },
         });
-        console.log(members);
-        if (members) {
-            const restructure = members.members.map((member: { role: any; user: { username: any; image: any; id: any }; }) => ({
-                role: member.role,
-                username: member.user.username,
-                image: member.user.image,
-                userId: member.user.id,
-            }));
-            return restructure;
-        }
+
+        return team?.members.map(({ role, user }: { role: string, user: any }) => ({
+            role,
+            username: user.username,
+            image: user.image,
+            userId: user.id,
+            email: user.email,
+        })) || [];
     } catch (error) {
         console.error("Failed to get team members:", error);
         return {
@@ -118,23 +125,18 @@ export const getRequestForAccess = async (teamName: string) => {
 
 export const inviteUserToTeam = withTeamAuth(Role.ADMIN, async (team, formData) => {
     const username = formData?.get('username') as string;
-    const email = formData?.get('email') as string;
+    const email = formData?.get('email') as string;    
     const role = formData?.get('role') as Role;
-    if (!username || !email) {
+    if (!username && !email) {
         throw new Error("Missing username or email");
     }
     try {
+        const query = username ? { username: username } : { email: email };
+
         prisma.$transaction(async () => {
         const user = await prisma.user.findFirst({
             where: {
-                OR: [
-                    {
-                        username: username,
-                    },
-                    {
-                        email: email,
-                    },
-                ],
+                ...query,
             },
             select: {
                 id: true,
@@ -142,10 +144,10 @@ export const inviteUserToTeam = withTeamAuth(Role.ADMIN, async (team, formData) 
         });
         
         if (!user) {
-            throw new Error("User not found");
+            return { error: "No user found with that email or username" };
         }
 
-        await prisma.teamInvitation.create({
+        const result = await prisma.teamInvitation.create({
             data: {
                 team: {
                     connect: {
@@ -160,6 +162,8 @@ export const inviteUserToTeam = withTeamAuth(Role.ADMIN, async (team, formData) 
                 role: role || "MEMBER",
             },
         });
+        console.log(result);
+        
     
     })
         return { success: true };

@@ -213,8 +213,7 @@ export const getTeamChats = async (teamName: string) => {
                 name: teamName,
             },
         },
-    });
-
+    });    
     return chats;
 }
 

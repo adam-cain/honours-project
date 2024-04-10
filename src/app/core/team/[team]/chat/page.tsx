@@ -5,11 +5,13 @@ import { NewChatButton, ChatCard } from "@/components/chat";
 import React, { Suspense } from "react";
 import { Plus } from "lucide-react";
 import { NotFound } from "@/components/PageComponents"
+import DeployableCard from "@/components/PageComponents/card"
+import  VisitChatButton  from "./visit-chat-button";
 
 export default async function Page({ params }: { params: { team: string } }) {
     const { team } = params;
     const chats: Chat[] = await getTeamChats(team);
-
+    
     return (<>
         <div className="flex flex-row justify-between">
             <Title>Your Teams Chatbots</Title>
@@ -22,8 +24,13 @@ export default async function Page({ params }: { params: { team: string } }) {
                 <p className="flex flex-row">Click the <Plus className=" size-4 self-center" /> above to create a new chatbot</p>
             </div>
             ) :
-            chats.map((chat, key) => <ChatCard key={key} title={chat.name} active={chat.deployed} team={team} />)}
+            chats.map((chat, key) => 
+            <>
+            <DeployableCard name={chat.name} description={chat.description} button={<VisitChatButton teamName={team} chatName={chat.name}/>} published={chat.deployed}/>
+            </>
+            )}
         </Suspense>
     </>
     )
 }
+

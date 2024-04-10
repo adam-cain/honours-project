@@ -42,8 +42,9 @@ model Team {
   teamInvitation    TeamInvitation[]
   teamAccessRequest TeamAccessRequest[]
 
-  chat  Chat[]
-  flows Flow[]
+  chat   Chat[]
+  flows  Flow[]
+  Script Script[]
 }
 
 model TeamMember {
@@ -112,6 +113,26 @@ model Chat {
   name        String
   description String?  @db.Text
   publish     Boolean? @default(false)
+
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deployed  Boolean  @default(false)
+
+  @@unique([name, teamId])
+}
+
+model Script {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  publish     Boolean? @default(false)
+  isJavascript Boolean 
+
+  rawCode         String? @db.Text
+  devCompiledURL  String?
+  prodCompiledURL String?
 
   team      Team     @relation(fields: [teamId], references: [id])
   teamId    String

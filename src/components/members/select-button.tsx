@@ -31,7 +31,6 @@ export const SelectButton = ({ member, hasPerm }: { member: TeamMember, hasPerm:
                 formData.append("userId", member.userId);
                 formData.append("role", newRole);
                 const result = await updateTeamMemberRole(team,formData, null);
-                
                 toast.dismiss();
                 router.refresh();
                 if(result.error){

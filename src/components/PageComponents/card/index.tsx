@@ -1,36 +1,25 @@
 import React, { FC } from 'react';
-import Image from 'next/image';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Building } from 'lucide-react';
+import { Dot } from 'lucide-react';
 
-interface TeamProps {
+
+interface DeployableProps {
   name: string;
   description: string;
-  imageUrl: string;
   button: React.ReactNode;
+  published: boolean;
 }
 
-const TeamCardBase: FC<TeamProps> = ({ name, description, imageUrl, button }) => {
+const DeployableCard: FC<DeployableProps> = ({ name, description, button, published }) => {
   return (
     <Card className=''>
       <CardHeader className='flex-inline flex-row p-3 items-center justify-between max-w-full space-y-0'>
         <div className='flex flex-row'>
-          <div>
-            {imageUrl ?
-              <div className='size-10 rounded flex'>
-                <Image className='rounded' height={42} width={42} src={imageUrl} alt={'Team Image'} />
-              </div>
-              :
-              <div className='size-10 rounded border flex'>
-                <Building className='m-auto' />
-              </div>
-            }
-          </div>
           <div className='flex flex-col ml-2 justify-center'>
             <CardTitle>{name}</CardTitle>
             {description ? 
@@ -38,7 +27,11 @@ const TeamCardBase: FC<TeamProps> = ({ name, description, imageUrl, button }) =>
             : null}
           </div>
         </div>
+        
         <div className='flex flex-row m-0'>
+        <div className='size-10 flex'>
+                <Dot className={`m-auto size-8 ${published ? "text-red-400": "text-green-400"}`} />
+          </div>
           {button}
         </div>
       </CardHeader>
@@ -46,4 +39,4 @@ const TeamCardBase: FC<TeamProps> = ({ name, description, imageUrl, button }) =>
   );
 };
 
-export default TeamCardBase;
+export default DeployableCard;
