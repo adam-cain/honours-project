@@ -124,16 +124,17 @@ model Chat {
 }
 
 model Script {
-  id          String   @id @default(cuid())
-  name        String
-  description String?  @db.Text
-  publish     Boolean? @default(false)
-  isJavascript Boolean 
+  id           String   @id @default(cuid())
+  name         String
+  description  String?  @db.Text
+  publish      Boolean? @default(false)
+  isJavascript Boolean
 
   rawCode         String? @db.Text
   devCompiledURL  String?
   prodCompiledURL String?
-
+  params          String?
+  envVars         String?
   team      Team     @relation(fields: [teamId], references: [id])
   teamId    String
   createdAt DateTime @default(now())

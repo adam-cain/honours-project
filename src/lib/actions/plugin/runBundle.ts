@@ -1,12 +1,17 @@
 "use server"
 import ivm, { Isolate } from 'isolated-vm';
-import fs from 'fs';
 
-export async function executeInIsolatedVm(bundlePath: string, args: any[] = []) {
-    //WIP: Download the file from cloud storage
+export default async function runBundle(bundleURL: string, args: any[] = [], envVariables: { [key: string]: any } = {}) {
 
-    const bundleCode = fs.readFileSync(bundlePath, 'utf8');
+    const bundleCode = await fetch(bundleURL).then(async (res) => {
+      return await res.text();
+    })
 
+    if (!bundleCode) {
+      return { success: false, message: "Failed to download the file from cloud storage" };
+    }else{
+    console.log('Running the bundle');
+      
     const isolate = new Isolate({ memoryLimit: 128 });
     const context = await isolate.createContext();
     const global = context.global;
@@ -14,6 +19,7 @@ export async function executeInIsolatedVm(bundlePath: string, args: any[] = []) 
     await global.set('global', global.derefInto());
     await addLogging(context);
     await addFetch(context);
+    await setEnvironmentVariables(context, envVariables); // Set environment variables
 
     // Load the bundled code into the isolate
     const script = await isolate.compileScript(bundleCode);
@@ -27,6 +33,15 @@ export async function executeInIsolatedVm(bundlePath: string, args: any[] = []) 
 
     console.log(result);
     return result;
+  }
+}
+
+async function setEnvironmentVariables(context: ivm.Context, envVariables: { [key: string]: any }) {
+  const env = context.global.deref().getSync('env', { reference: true }) ?? await context.global.set('env', new ivm.Reference({}));
+
+  for (const key in envVariables) {
+      await env.set(key, new ivm.ExternalCopy(envVariables[key]).copyInto());
+  }
 }
 
 async function addLogging(context: ivm.Context) {
