@@ -1,5 +1,5 @@
 "use client"
-import { BotIcon, HomeIcon, LineChartIcon, LucideArrowLeft, LucideArrowRight, SettingsIcon, UserIcon } from 'lucide-react';
+import { BotIcon, HomeIcon, LineChartIcon, SettingsIcon, UserIcon, Code2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import React, { ReactNode, useMemo, useState } from 'react';
@@ -28,6 +28,7 @@ const navConfig: NavConfig = {
             navItems: [
                 { title: 'Overview', href: '/team/[team]', icon: <HomeIcon className="h-4 w-4" /> },
                 { title: 'Chatbots', href: '/team/[team]/chat', icon: <BotIcon className="h-4 w-4" />, },
+                { title: 'Scripts', href: '/team/[team]/script', icon: <Code2 className="h-4 w-4" />, },
                 { title: 'Analytics', href: '/team/[team]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
                 { title: 'Members', href: '/team/[team]/members', icon: <UserIcon className="h-4 w-4" />, },
                 { title: 'Team Settings', href: '/team/[team]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
@@ -122,7 +123,8 @@ export default function NavBar({ userData, children }: { userData: User, childre
                                                 ""}
 
                                         {group.navItems.map((item, itemIndex) => (
-                                            <NavItem key={itemIndex} navData={item} active={item.href === path} isNavCollapsed={isNavCollapsed} hideText={hideText} />
+                                            
+                                            <NavItem key={itemIndex} navData={item} active={decodeURIComponent(item.href) === decodeURIComponent(path)} isNavCollapsed={isNavCollapsed} hideText={hideText} />
                                         ))}
                                     </div>
                                 ))}

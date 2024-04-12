@@ -2,6 +2,7 @@ import Link from "next/link";
 import { NavItem } from "./types";
 
 export default function NavItem({ navData, active, isNavCollapsed, hideText }: { navData: NavItem, active: boolean, isNavCollapsed: boolean, hideText: boolean }) {
+    if(active) console.log(navData.title);
     return (
         <Link className={`${active ? " border border-white" : ""} 
         h-10 flex items-center gap-3 rounded-lg px-3 py-2 transition-all text-gray-300 hover:text-gray-50 hover:bg-stone-900`} 

@@ -114,6 +114,7 @@ export default async function bundleUserCode(scriptId:string, code: string, isJa
 
     const parameters = extractDefaultExportParameters(code); 
     const envVariables = extractEnvVariables(code);
+    console.log(envVariables);
     
     try {
         await esbuild.build({
@@ -133,7 +134,6 @@ export default async function bundleUserCode(scriptId:string, code: string, isJa
         fs.unlinkSync(inFile);
 
         const bundleURL = await uploadFunction(outFile);
-
         fs.unlinkSync(outFile);
 
         if(bundleURL.success){
