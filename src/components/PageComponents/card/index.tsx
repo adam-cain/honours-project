@@ -12,7 +12,7 @@ interface DeployableProps {
   name: string;
   description: string;
   button: React.ReactNode;
-  published: boolean;
+  published?: boolean;
 }
 
 const DeployableCard: FC<DeployableProps> = ({ name, description, button, published }) => {
@@ -22,16 +22,18 @@ const DeployableCard: FC<DeployableProps> = ({ name, description, button, publis
         <div className='flex flex-row'>
           <div className='flex flex-col ml-2 justify-center'>
             <CardTitle>{name}</CardTitle>
-            {description ? 
-            <CardDescription><p className=' truncate'>{description}</p></CardDescription> 
-            : null}
+            {description ?
+              <CardDescription><p className=' truncate'>{description}</p></CardDescription>
+              : null}
           </div>
         </div>
-        
+
         <div className='flex flex-row m-0'>
-        <div className='size-10 flex'>
-                <Dot className={`m-auto size-8 ${published ? "text-red-400": "text-green-400"}`} />
+          {published ? 
+          <div className='size-10 flex'>
+            <Dot className={`m-auto size-8 ${published ? "text-red-400" : "text-green-400"}`} />
           </div>
+          : null}
           {button}
         </div>
       </CardHeader>

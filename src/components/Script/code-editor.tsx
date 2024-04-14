@@ -26,6 +26,17 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Input } from "../ui/input";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+} from "@/components/ui/table"
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+  } from '@/components/ui/resizable'
 
 interface CodeEditorProps {
     params: {
@@ -38,10 +49,13 @@ interface CodeEditorProps {
     script: Script
 }
 
-interface KeyValue {
+export interface KeyValue {
     key: string;
-    value: string;
-    type: string; // New property for datatype
+    value: any;
+}
+
+export interface KeyValueWithDataType extends KeyValue {
+    type: string;
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({
@@ -57,17 +71,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     const [isTestingVisible, setIsTestingVisible] = useState(true);
     const contentRef = useRef<HTMLDivElement>(null);
     const [code, setCode] = useState<string | undefined>(defaultValue);
-    const [output, setOutPut] = useState<string>("");
-
-    const [paramValues, setParamValues] = useState<KeyValue[]>(() =>
+    const [output, setOutPut] = useState<KeyValue[]>([]);
+    const [paramValues, setParamValues] = useState<KeyValueWithDataType[]>(() =>
         script.params ? script.params.split(",").map((param: string) => ({ key: param, value: "", type: "string" })) : []
     );
     const dataTypes = ["string", "number", "boolean", "object"];
 
-    const handleParamChange = (index: number, field: keyof KeyValue, value: string) => {
+    const handleParamChange = (index: number, field: keyof KeyValueWithDataType, value: string) => {
         const updatedParams = [...paramValues];
         updatedParams[index][field] = value;
         setParamValues(updatedParams);
+        console.log(updatedParams);
     };
 
     const [envVarValues, setEnvVarValues] = useState<KeyValue[]>(() =>
@@ -120,14 +134,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 
         // Define the minimum and maximum width constraints (for example, between 300px and 800px)
         const minWidth = 250;
-        const maxWidth = contentRef.current.offsetWidth - 250; // assuming 100px is reserved for other content
+        const maxWidth = contentRef.current.offsetWidth - 200; // assuming 100px is reserved for other content
 
         // Apply constraints
         if (newWidth < minWidth) {
             newWidth = minWidth;
         } else if (newWidth > maxWidth) {
-            newWidth = maxWidth;
+            // newWidth = maxWidth;
         }
+        console.log(newWidth, maxWidth);
 
         setEditorWidth(`${newWidth}px`);
     };
@@ -167,8 +182,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                     })) : [];
                     return newEnvVars;
                 });
-                console.log(updatedData);
-
                 toast.dismiss();
                 toast.success("Script saved and compiled successfully");
             } else {
@@ -180,12 +193,22 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     };
 
     const onRunTest = async () => {
+        toast.loading("Running Test");
         if (script.devCompiledURL) {
-            console.log(script.devCompiledURL);
-
-            const result = await runBundle(script.devCompiledURL, paramValues.flatMap(param => param.value));
+            const result = await runBundle(script.devCompiledURL, paramValues, envVarValues);
             console.log(result);
-            setOutPut(result);
+            if (result.success) {
+                setOutPut(result.message as KeyValue[]);
+                toast.dismiss();
+                toast.success("Test ran successfully");
+            } else {
+                toast.dismiss();
+                toast.error("Failed to run test: " + result.message);
+                console.log(result.message);
+            }
+        } else {
+            toast.dismiss();
+            toast.error("Failed to run test: Script not compiled");
         }
     }
 
@@ -215,7 +238,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                     </Button>
                 </div>
             </div>
-            <div className="flex flex-row w-full h-full max-h-fit overflow-hidden border rounded-lg">
+            <div className="flex flex-row w-full h-full overflow-hidden max-h-[85vh] border rounded-lg">
                 <Editor
                     height={editorHeight}
                     width={isTestingVisible ? editorWidth : "100%"} defaultLanguage={language}
@@ -239,72 +262,83 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                     <Dot className="text-gray-50 -translate-x-1/3 -translate-y-8" />
                 </div>
 
-                <div className={`flex-1 p-4 transition-all duration-500 ease-in-out ${isTestingVisible ? 'max-h-full' : 'max-w-0 overflow-hidden hidden'}`}>
-                    {isTestingVisible && (
-                        <>
-                            {script.devCompiledURL ? (
-                                <div className="gap-8">
-                                    <Title>Testing</Title>
-                                    {script.params ?
-                                        <>
-                                            <Title className="text-lg">Parameters:</Title>
-                                            {paramValues.map((param, index) => (
-                                                <div key={index} className="flex flex-row gap-2 my-2 items-center justify-between w-full h-8">
-                                                    <label>{`${param.key}:`}</label>
-                                                    <div className="flex flex-row">
-                                                        <Input
-                                                            type="text"
-                                                            value={param.value}
-                                                            placeholder={param.key}
-                                                            onChange={(e) => handleParamChange(index, 'value', e.target.value)}
-                                                            className="rounded-r-none"
-                                                        />
-                                                        <Select value={param.type} onValueChange={(value) => handleParamChange(index, 'type', value)}>
-                                                            <SelectTrigger className="w-[150px] rounded-l-none">
-                                                                <SelectValue placeholder="Datatype" />
-                                                            </SelectTrigger>
-                                                            <SelectContent>
-                                                                <SelectGroup>
-                                                                    <SelectLabel>Datatypes</SelectLabel>
-                                                                    {dataTypes.map(type => (
-                                                                        <SelectItem key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</SelectItem>
-                                                                    ))}
-                                                                </SelectGroup>
-                                                            </SelectContent>
-                                                        </Select>
-                                                    </div>
+                <div className={`flex flex-col flex-shrink p-4 w-full max-h-[85vh] max-w-[90vh] transition-all duration-500 ease-in-out ${isTestingVisible ? '' : 'max-w-0 overflow-hidden hidden'}`}>
+                    {isTestingVisible && (<>
+                        {script.devCompiledURL ? (
+                            <>
+                                {paramValues.length !== 0 ?
+                                    <div className="gap-2 flex flex-col mb-2">
+                                        <Title className="text-lg">Parameters:</Title>
+                                        {paramValues.map((param, index) => (
+                                            <div key={index} className="flex flex-row gap-2 my-2 items-center justify-between w-full h-8">
+                                                <label>{`${param.key}:`}</label>
+                                                <div className="flex flex-row">
+                                                    <Input
+                                                        type="text"
+                                                        value={param.value}
+                                                        placeholder={param.key}
+                                                        onChange={(e) => handleParamChange(index, 'value', e.target.value)}
+                                                        className="rounded-r-none"
+                                                    />
+                                                    <Select value={param.type} onValueChange={(value) => handleParamChange(index, 'type', value)}>
+                                                        <SelectTrigger className="w-[190px] rounded-l-none">
+                                                            <SelectValue placeholder="Datatype" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectLabel>Datatypes</SelectLabel>
+                                                                {dataTypes.map(type => (
+                                                                    <SelectItem key={type} value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</SelectItem>
+                                                                ))}
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
                                                 </div>
-                                            ))}</> : null
-                                    }
-                                    {script.envVars ?
-                                        <>
+                                            </div>
+                                        ))}</div> : null
+                                }
+                                {envVarValues.length !== 0 ?
+                                    <>
+                                        <div className="gap-2 flex flex-col mb-2">
                                             <Title className="text-lg">Environment Variables:</Title>
                                             {envVarValues.map((envVar, index) => (
                                                 <div key={index} className="flex flex-row gap-2 my-2 items-center justify-between w-full">
-                                                    <label>{envVar.key+":"}</label>
+                                                    <label>{envVar.key + ":"}</label>
                                                     <Input
                                                         type="text"
                                                         value={envVar.value}
                                                         placeholder={envVar.key}
                                                         onChange={(e) => handleEnvVarChange(index, e.target.value)}
                                                         className="rounded-r-none"
-                                                        />
+                                                    />
                                                 </div>
-                                            ))}</> : null
-                                    }
-                                    <Button onClick={onRunTest} className='gap-1 w-full'>Run Test<ServerCogIcon className='size-5' /></Button>
-                                    <Title className="text-xl">Output</Title>
-                                    {output ? <p>{output}</p> : null}
-                                </div>
-                            ) : (
-                                <div className="size-full flex items-center justify-center flex-col gap-2 border rounded text-center">
-                                    <Title>Unable to Test</Title>
-                                    <p>You need to save your script to test</p>
-                                    <Savebutton onClick={onSave} />
-                                </div>
-                            )}
-                        </>
-                    )}
+                                            ))}</div></> : null
+                                }
+                                <Button onClick={onRunTest} className='gap-1 w-full '>Run Test<ServerCogIcon className='size-5' /></Button>
+
+                                {output ?
+                                    <>
+                                        <Title className="text-xl my-2">Output</Title>
+                                        <Table className="overflow-y-scroll flex-shrink overflow-x-hidden">
+                                            <TableBody className="overflow-y-scroll flex-shrink overflow-x-hidden">
+                                                {output.map((row, index) => (
+                                                    <TableRow key={index}>
+                                                        <TableCell className="max-w-fit">{<OutputSymbol value={row.key} />}</TableCell>
+                                                        <TableCell className="pl-6">{row.value}</TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </>
+                                    : null}
+                            </>
+                        ) : (
+                            <div className="size-full flex items-center justify-center flex-col gap-2 border rounded text-center">
+                                <Title>Unable to Test</Title>
+                                <p>You need to save your script to test</p>
+                                <Savebutton onClick={onSave} />
+                            </div>
+                        )}</>)}
                 </div>
             </div>
         </div>
@@ -312,6 +346,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
 };
 
 export default CodeEditor;
+
+function OutputSymbol({ value }: { value: string }) {
+    switch (value) {
+        case "error":
+            return <Info className='size-5 text-red-500' />;
+        case "log":
+            return <Info className='size-5 text-orange-300' />;
+        default:
+            return <Info className='size-5' />;
+    }
+}
 
 interface SaveButtonProps {
     onClick: MouseEventHandler<HTMLButtonElement>;

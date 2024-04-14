@@ -6,7 +6,7 @@ import React, { Suspense } from "react";
 import { Plus } from "lucide-react";
 import { NotFound } from "@/components/PageComponents"
 import DeployableCard from "@/components/PageComponents/card"
-import VisitScriptButton from "./visit-script-button";
+import VisitScriptButton from "../../../../../components/Script/visit-script-button";
 import { Badge } from "@/components/ui/badge";
 
 export default async function Page({ params }: { params: { team: string } }) {

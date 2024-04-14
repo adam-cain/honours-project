@@ -24,14 +24,15 @@ export default function main(name) {
     // Write your code here
     return \`Hello \${name}\`
 }
-` : `// default export is the entry point
+` 
+: 
+`// default export is the entry point
 // Environment variables can be accessed through as env.ENV_VAR
 export default function main(name: string) {
     // Write your code here
     return \`Hello \${name}\`
 }
-`
-    );
+`);
 
     return (
         <CodeEditor

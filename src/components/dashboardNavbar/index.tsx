@@ -90,7 +90,7 @@ export default function NavBar({ userData, children }: { userData: User, childre
     };
 
     return (<>
-        <div className=' h-screen p-[5px]'>
+        <div className=' h-screen w-screen py-[1vh] px-[1vw]'>
             <div className="grid rounded-lg border-stone-800 border h-full w-auto overflow-hidden grid-animate" style={{ gridTemplateColumns: isNavCollapsed ? '72px 1fr' : '220px 1fr' }}>
                 {/* Wrapper */}
                 <div className=" border-r border-stone-800 h-full block bg-secondary relative">
@@ -99,21 +99,21 @@ export default function NavBar({ userData, children }: { userData: User, childre
                         {isNavCollapsed ? <RightNavIcon className="w-6 h-6 hover:scale-110" /> : <LeftNavIcon className="w-6 h-6 hover:scale-110" />}
                     </div>
                     {/* Side Nav */}
-                    <div className="flex flex-col justify-between h-full overflow-clip">
+                    <div className="flex flex-col justify-between h-full overflow-hidden">
                         {/* Top Title */}
                         <div className="flex h-[50px] overflow-hidden items-center justify-center px-6">
                             <Link className="flex items-center justify-center mx-auto  h-full gap-2 font-semibold" href="/">
-                                <span className={`whitespace-nowrap text-collapse-transition ${hideText ? '' : 'hidden'}`} style={{ opacity: isNavCollapsed ? 1 : 0 }}>                            
+                                <span className={`whitespace-nowrap text-collapse-transition ${hideText ? '' : 'hidden'}`} style={{ opacity: isNavCollapsed ? 1 : 0 }}>
                                     <AudioWaveform className="w-6 h-6 text-[#FFD700]" />
                                 </span>
                                 <Logo style={{ opacity: isNavCollapsed ? 0 : 1 }} className={`whitespace-nowrap 
                                
-                                ${hideText ? 'hidden' : ''}`}  />
+                                ${hideText ? 'hidden' : ''}`} />
                             </Link>
                         </div>
                         <div className=" mx-2 border-t border-stone-700" />
                         {/* Nav Links */}
-                        <div className="flex-grow overflow-auto overflow-x-hidden">
+                        <div className="flex-grow overflow-y-auto overflow-x-hidden">
                             <nav className=" flex-col gap-2 px-4 py-2 text-sm font-medium">
                                 {dynamicNavConfig.map((group, groupIndex) => (
                                     <div className="flex flex-col gap-1" key={groupIndex}>
@@ -123,7 +123,7 @@ export default function NavBar({ userData, children }: { userData: User, childre
                                                 ""}
 
                                         {group.navItems.map((item, itemIndex) => (
-                                            
+
                                             <NavItem key={itemIndex} navData={item} active={decodeURIComponent(item.href) === decodeURIComponent(path)} isNavCollapsed={isNavCollapsed} hideText={hideText} />
                                         ))}
                                     </div>
@@ -137,11 +137,9 @@ export default function NavBar({ userData, children }: { userData: User, childre
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col h-full">
-                    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 overflow-y-auto">
-                        {children}
-                    </main>
-                </div>
+                <main className="flex flex-col gap-4 p-4 md:gap-8 md:p-6 overflow-y-screen overflow-x-hidden max-h-screen w-full ">
+                    {children}
+                </main>
             </div>
         </div>
     </>
