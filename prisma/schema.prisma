@@ -133,8 +133,9 @@ model Script {
   rawCode         String? @db.Text
   devCompiledURL  String?
   prodCompiledURL String?
-  params          String?
-  envVars         String?
+  params          Json?
+  envVars         String[]
+  returnType      String?
   team      Team     @relation(fields: [teamId], references: [id])
   teamId    String
   createdAt DateTime @default(now())

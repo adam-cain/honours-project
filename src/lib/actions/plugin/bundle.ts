@@ -13,6 +13,76 @@ import * as ts from 'typescript';
 
 const execAsync = promisify(exec);
 
+interface TypeInfo {
+    parameters: { name: string; type: string | undefined }[];
+    returnType: string | undefined;
+    envVariables: string[];
+}
+
+async function analyzeTSFile(filePath: string): Promise<TypeInfo | undefined> {
+    const program = ts.createProgram([filePath], {
+        target: ts.ScriptTarget.ES5,
+        module: ts.ModuleKind.CommonJS
+    });
+
+    const sourceFile = program.getSourceFile(filePath);
+    if (!sourceFile) {
+        console.error('File not found:', filePath);
+        return undefined;
+    }
+
+    let typeInfo: TypeInfo | undefined = undefined;
+    let envVariables: string[] = extractEnvVariables(sourceFile.getFullText());
+
+    ts.forEachChild(sourceFile, node => {
+        if (ts.isExportAssignment(node) && node.isExportEquals === false) {
+            const symbol = program.getTypeChecker().getSymbolAtLocation(node.expression);
+            if (symbol && symbol.valueDeclaration) {
+                const type = program.getTypeChecker().getTypeAtLocation(symbol.valueDeclaration);
+                const callSignatures = type.getCallSignatures();
+
+                if (callSignatures.length > 0) {
+                    const signature = callSignatures[0];
+                    const parameters = signature.parameters.map(param => {
+                        const paramDecl = param.valueDeclaration as ts.ParameterDeclaration;
+                        return {
+                            name: param.name,
+                            type: program.getTypeChecker().typeToString(program.getTypeChecker().getTypeAtLocation(paramDecl))
+                        };
+                    });
+
+                    const returnType = program.getTypeChecker().typeToString(signature.getReturnType());
+
+                    typeInfo = {
+                        parameters: parameters,
+                        returnType: returnType,
+                        envVariables: envVariables
+                    };
+                }
+            }
+        }
+    });
+    console.log('Type Info:', typeInfo)
+    return typeInfo;
+}
+
+function extractEnvVariables(sourceCode: string): string[] {
+    const sourceFile = ts.createSourceFile('temp.ts', sourceCode, ts.ScriptTarget.Latest, true);
+    const envVariables: string[] = [];
+
+    function visit(node: ts.Node) {
+        if (ts.isPropertyAccessExpression(node)) {
+            if (node.expression.kind === ts.SyntaxKind.Identifier && node.expression.getText() === 'env') {
+                envVariables.push(node.name.getText());
+            }
+        }
+        ts.forEachChild(node, visit);
+    }
+
+    ts.forEachChild(sourceFile, visit);
+    return envVariables;
+}
+
 async function installDependencies(dependencies: string[]): Promise<void> {
     if (dependencies.length === 0) return;
     const packagesString = dependencies.join(' ');
@@ -75,46 +145,39 @@ function extractDefaultExportParameters(sourceCode: string): string[] | undefine
     return parameters;
 }
 
-function extractEnvVariables(sourceCode: string): string[] {
-    const sourceFile = ts.createSourceFile('temp.ts', sourceCode, ts.ScriptTarget.Latest, true);
-    const envVariables: string[] = [];
-
-    function visit(node: ts.Node) {
-        if (ts.isPropertyAccessExpression(node)) {
-            // Check if the left side of the property access is an identifier named 'env'
-            if (node.expression.kind === ts.SyntaxKind.Identifier && node.expression.getText() === 'env') {
-                envVariables.push(node.name.getText());
-            }
-        }
-        ts.forEachChild(node, visit);
-    }
-
-    ts.forEachChild(sourceFile, visit);
-    return envVariables;
-}
-
 export default async function bundleUserCode(scriptId:string, code: string, isJavaScript: boolean = false) {
     if (!fs.existsSync(tempDir)) {
         await fs.mkdirSync(tempDir);
-        console.log('\n\n\n\n\n\n\nCreated temp directory', tempDir);
-    }
-    console.log(tempDir);
-    
+    }    
 
-    const dependencies = await extractDependencies(code, isJavaScript);
-    console.log('Dependencies:', dependencies);
-    
-    await installDependencies(dependencies);
-
-    const ranString = Math.random().toString(36).substring(7);
+    const ranString = nanoid();
     const inFile = path.join(tempDir, `entry-${ranString}${isJavaScript ? '.js' : '.ts'}`);
     const outFile = path.join(tempDir, `output-${ranString}.js`);
 
     await fs.writeFileSync(inFile, code)
 
-    const parameters = extractDefaultExportParameters(code); 
-    const envVariables = extractEnvVariables(code);
-    console.log(envVariables);
+    const dependencies = await extractDependencies(code, isJavaScript);
+    await installDependencies(dependencies);
+
+    var codeInfo: TypeInfo = {
+        parameters: [],
+        returnType: undefined,
+        envVariables: []
+    }
+
+    if(isJavaScript == true){
+        const parameters = extractDefaultExportParameters(code); 
+        const envVariables = extractEnvVariables(code);
+        codeInfo.parameters = parameters?.map(param => ({ name: param, type: undefined })) || [];  
+        codeInfo.envVariables = envVariables;
+    }else{
+        const result = await analyzeTSFile(inFile);
+        if(result){
+            codeInfo = result;
+        }else{
+            throw new Error('Failed to analyze the code');
+        }
+    }
     
     try {
         await esbuild.build({
@@ -144,8 +207,9 @@ export default async function bundleUserCode(scriptId:string, code: string, isJa
             data: {
                 rawCode: code,
                 devCompiledURL: bundleURL.message as string,
-                params: parameters?.join(','),
-                envVars: envVariables.join(',')
+                params: codeInfo.parameters,
+                envVars: codeInfo.envVariables,
+                returnType: codeInfo.returnType
             }
         });
         return {success: true, message: result};

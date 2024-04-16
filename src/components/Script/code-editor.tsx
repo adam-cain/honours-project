@@ -71,7 +71,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     const [code, setCode] = useState<string | undefined>(defaultValue);
     const [output, setOutPut] = useState<KeyValue[]>([]);
     const [paramValues, setParamValues] = useState<KeyValueWithDataType[]>(() =>
-        script.params ? script.params.split(",").map((param: string) => ({ key: param, value: "", type: "string" })) : []
+        script.params ? script.params.map((param: { name: string; type: string | undefined }) => ({ key: param.name, value: "", type: param.type || "string" })) : []
     );
 
     const dataTypes = ["string", "number", "boolean", "object"];
@@ -84,7 +84,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
     };
 
     const [envVarValues, setEnvVarValues] = useState<KeyValue[]>(() =>
-        script.envVars ? script.envVars.split(",").map((envVar: string) => ({ key: envVar, value: "" })) : []
+        script.envVars ? script.envVars.map((envVar: string) => ({ key: envVar, value: "" })) : []
     );
 
     const handleEnvVarChange = (index: number, value: string) => {
@@ -136,7 +136,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                 script.devCompiledURL = updatedData.devCompiledURL
 
                 setParamValues(prevParams => {
-                    const newParams = updatedData.params ? updatedData.params.split(",").map((param: string) => ({
+                    const newParams = updatedData.params ? updatedData.params.map((param: string) => ({
                         key: param,
                         value: prevParams.find(p => p.key === param)?.value || ""
                     })) : [];

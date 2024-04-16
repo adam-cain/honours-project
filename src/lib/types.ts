@@ -3,9 +3,8 @@ import { ReactNode } from "react";
 export type EditorCanvasTypes =
   | 'Condition'
   | 'AI'
-  | 'Custom Webhook'
-  | 'Trigger'
-  | 'Action'
+  | 'Input'
+  | 'Output'
   | 'Wait'
   | 'Script'
 

@@ -58,16 +58,18 @@ const FlowInstance = ({ children, edges, nodes, flowId }: Props) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className={`flex justify-evenly ${isFlow.length < 1 && " cursor-not-allowed"}`}>
+      <div className={`flex justify-evenly`}>
         <Button
           onClick={onFlowAutomation}
           disabled={isFlow.length < 1}
+          className='disabled:pointer-events-auto'
         >
           Save <Save className='size-4 ml-1'/>
         </Button>
         <Button
           disabled={isFlow.length < 1}
           onClick={onPublishWorkflow}
+          className='disabled:pointer-events-auto'
         >
           Publish <UploadCloud className='size-4 ml-1'/>
         </Button>

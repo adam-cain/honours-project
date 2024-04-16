@@ -29,6 +29,8 @@ import 'reactflow/dist/style.css';
 import { Title } from '@/components/PageComponents';
 import CustomNodeComponent from './custom-node';
 import EditorSideBar from './editor-sidebar';
+import {InputNode} from "./nodes"
+import { EditorCanvasDefaultCardTypes } from '@/lib/consts';
 
 // const initialNodes = [
 //   { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
@@ -40,7 +42,7 @@ const initialNodes: EditorNodeType[] = []
 
 const initialEdges: { id: string; source: string; target: string }[] = []
 
-export default function FlowEditor(flow: FlowType) {
+export default function Editor(flow: FlowType) {
   flow = flow.flow
   const { dispatch, state } = useEditor()
   const [isFlowLoading, setIsFlowLoading] = useState(false)
@@ -88,8 +90,7 @@ export default function FlowEditor(flow: FlowType) {
         position,
         data: {
           title: type,
-          // description: EditorCanvasDefaultCardTypes[type].description,
-          description: "Node description",
+          description: (EditorCanvasDefaultCardTypes as Record<string, { description: string; type: string; }>)[type].description,
           completed: false,
           current: false,
           metadata: {},
@@ -128,11 +129,11 @@ export default function FlowEditor(flow: FlowType) {
             description: '',
             metadata: {},
             title: '',
-            type: 'Trigger',
+            type: 'Input',
           },
           id: '',
           position: { x: 0, y: 0 },
-          type: 'Trigger',
+          type: 'Input',
         },
       },
     })
@@ -148,7 +149,9 @@ export default function FlowEditor(flow: FlowType) {
     Wait: CustomNodeComponent,
     Script: CustomNodeComponent,
     AI: CustomNodeComponent,
-    Condition: CustomNodeComponent
+    Condition: CustomNodeComponent,
+    Input: InputNode,
+    Output: CustomNodeComponent,
   }), []);
 
   const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
@@ -162,7 +165,6 @@ export default function FlowEditor(flow: FlowType) {
         <ReactFlow
           nodes={state.editor.elements}
           edges={edges}
-          fitView
           snapToGrid
           onInit={setReactFlowInstance}
           onNodesChange={handleNodeChange}

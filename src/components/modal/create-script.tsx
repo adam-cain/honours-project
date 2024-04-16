@@ -116,7 +116,6 @@ export default function CreateScriptModal({ team, script }: { team: string, scri
                         Choose a language
                     </label>
                     <Select value={data.isJS} onValueChange={(e) => {
-                        console.log(e);
                         setData({ ...data, isJS: e })
                     }}>
                         <SelectTrigger className="w-[180px]">

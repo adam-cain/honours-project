@@ -5,27 +5,30 @@ import { EditorCanvasDefaultCardTypes } from "@/lib/consts"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 type Props = {
-    nodes: any
+  nodes: any
 }
 
 export default function EditorSideBar({ nodes }: Props) {
-    const { state } = useEditor()
-    return (
-        <aside>
-            <Tabs defaultValue="actions" className="h-full">
-                <TabsList className=" align-middle w-full">
-                    <TabsTrigger value="actions">Actions</TabsTrigger>
-                    <TabsTrigger value="settings">Settings</TabsTrigger>
-                </TabsList>
-                <TabsContent 
-                    value="actions"
-                    className="flex flex-col gap-4 pr-2 overflow-y-scroll max-h-[65svh]"
-                >
-{Object.entries(EditorCanvasDefaultCardTypes)
+  const { state } = useEditor()
+  return (
+    <aside>
+      <Tabs defaultValue="nodes" className="h-full">
+        <TabsList className=" rounded-b-none ml-1">
+          <TabsTrigger value="nodes">Nodes</TabsTrigger>
+          <TabsTrigger value="test">Test</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+        <div className="w-full border-t"/>
+        <TabsContent
+          value="nodes"
+          className="flex flex-col gap-4 pr-2 overflow-y-scroll max-h-[65svh] h-full"
+        >
+          {Object.entries(EditorCanvasDefaultCardTypes)
             .filter(
               ([_, cardType]) =>
-                (!nodes.length && cardType.type === 'Trigger') ||
-                (nodes.length && cardType.type === 'Action')
+                (!nodes.length && cardType.type === 'Input') ||
+                (nodes.length && cardType.type === 'Process') ||
+                (nodes.length && cardType.type === 'Output' && !nodes.some((node: any) => node.type === 'Output'))
             )
             .map(([cardKey, cardValue]) => (
               <Card
@@ -44,17 +47,23 @@ export default function EditorSideBar({ nodes }: Props) {
                   </CardTitle>
                 </CardHeader>
               </Card>
-            ))}                </TabsContent>
-                <TabsContent value="settings">Change your password here.</TabsContent>
-            </Tabs>
-        </aside>
-    )
+            ))}
+        </TabsContent>
+        <TabsContent value="test">
+          Test your flow here.
+        </TabsContent>
+        <TabsContent value="settings">
+          Change your flow settings here.
+        </TabsContent>
+      </Tabs>
+    </aside>
+  )
 }
 
 export const onDragStart = (
-    event: any,
-    nodeType: EditorCanvasCardType['type']
-  ) => {
-    event.dataTransfer.setData('application/reactflow', nodeType)
-    event.dataTransfer.effectAllowed = 'move'
-  }
+  event: any,
+  nodeType: EditorCanvasCardType['type']
+) => {
+  event.dataTransfer.setData('application/reactflow', nodeType)
+  event.dataTransfer.effectAllowed = 'move'
+}
