@@ -152,8 +152,13 @@ model Flow {
   nodes String?
   edges String?
 
+  flowPath          String?
+  cronPath          String?
+
+  publish           Boolean? @default(false)
   team      Team     @relation(fields: [teamId], references: [id])
   teamId    String
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deployed  Boolean  @default(false)

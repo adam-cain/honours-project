@@ -1,15 +1,17 @@
 import { getFlow } from "@/lib/actions/flow";
-import Flow from "./flow";
+import FlowEditor from "./flow";
+import EditorProvider from "./editor-provider";
+import type { Flow as FlowType } from "@prisma/client";
 
-export default async function Page({ params }: { params: { team: string, flow: string }}) {
-    const teamName = decodeURIComponent(params.team);
-    const flowName = decodeURIComponent(params.flow);
-    const flow = await getFlow(teamName, flowName);
-    console.log(flow)
-    return (
-        <div className="overflow-hidden h-full max-h-[90vh]">
-            {/* <p>{JSON.stringify(flow)}</p> */}
-            <Flow />
-        </div>
-    );
+export default async function Page({params}: {params: { team: string, flow: string } }) {
+        const teamName = decodeURIComponent(params.team);
+        const flowName = decodeURIComponent(params.flow);        
+        const flow: FlowType = await getFlow(teamName, flowName);
+        return (
+            <div className='h-full border rounded-lg'>
+                <EditorProvider>
+                <FlowEditor flow={flow}/>
+                </EditorProvider>
+            </div>
+        )
 }

@@ -1,5 +1,6 @@
 "use server"
 
+import { Flow } from "@prisma/client";
 import prisma from "../prisma";
 
 export const getFlow = async (team: string, flow: string) => {
@@ -15,8 +16,8 @@ export const getFlow = async (team: string, flow: string) => {
             name: flow
         }
     });
-    
-    return flowData
+
+    return flowData as Flow
     //     return { success: true, message: flowData };
     // } catch (e) {
     //     return { success: false, message: e };
@@ -49,4 +50,31 @@ export const createFlow = async (team: string, name: string, description: string
         }
     });
     return flowData
+}
+
+export const publishFlow = async (flowId: string, publish: boolean) => {
+    const flowData = await prisma.flow.update({
+        where: {
+            id: flowId
+        },
+        data: {
+            publish: publish
+        }
+    });
+    return flowData
+}
+
+export const createNodesEdges = async (flowId: string, nodes: string, edges: string, flowPath: string) => {
+    const flow = await prisma.flow.update({
+        where: {
+          id: flowId,
+        },
+        data: {
+          nodes,
+          edges,
+          flowPath: flowPath,
+        },
+      })
+    
+      if (flow) return { message: 'flow saved' }
 }
