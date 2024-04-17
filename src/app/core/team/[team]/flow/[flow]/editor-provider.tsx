@@ -113,6 +113,17 @@ const editorReducer = (
           selectedNode: action.payload.element,
         },
       }
+    case 'UPDATE_METADATA':
+      const updatedElements = state.editor.elements.map((el) => {
+        if (el.id === action.payload.nodeId) {
+          return { ...el, data: { ...el.data, metadata: action.payload.metadata } };
+        }
+        return el;
+      });
+      return {
+        ...state,
+        editor: { ...state.editor, elements: updatedElements }
+      };
     default:
       return state
   }

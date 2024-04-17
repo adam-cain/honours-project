@@ -12,8 +12,7 @@ export const EditorCanvasDefaultCardTypes = {
         type: 'Process',
     },
     AI: {
-        description:
-            'Use the power of AI to summarize, respond, create and much more.',
+        description:'Use the power of AI to summarize, respond, create and much more.',
         type: 'Process',
     },
     Condition: {
@@ -24,9 +23,4 @@ export const EditorCanvasDefaultCardTypes = {
         description: 'Delay the next action step by using the wait timer.',
         type: 'Process',
     },
-        // 'Google Drive': {
-    //     description:
-    //         'Connect with Google drive to trigger actions or to create files and folders.',
-    //     type: 'Input',
-    // },
 }

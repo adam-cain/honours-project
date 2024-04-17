@@ -42,6 +42,13 @@ export type EditorActions =
     }
   }
   | {
+    type: 'UPDATE_METADATA'
+    payload: {
+      nodeId: string
+      metadata: any
+    }
+  }
+  | {
     type: 'UPDATE_NODE'
     payload: {
       elements: EditorNode[]
@@ -57,7 +64,7 @@ export type EditorActions =
   }
 
 export type LayoutProps = {
-    children: ReactNode;
+  children: ReactNode;
 };
 
 export type DomainVerificationStatusProps =

@@ -11,6 +11,7 @@ export const CustomHandle = (props: Props) => {
     <Handle
       {...props}
       isValidConnection={(e) => {
+        console.log(e)
         const sourcesFromHandleInState = state.editor.edges.filter(
           (edge) => edge.source === e.source
         ).length

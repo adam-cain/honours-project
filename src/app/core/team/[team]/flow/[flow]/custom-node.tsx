@@ -11,8 +11,6 @@ import {
 } from '@/components/ui/card'
 import clsx from 'clsx'
 
-// Define a context for managing node data across the app
-
 export default function CustomNodeComponent({ data }: { data: EditorCanvasCardType }): JSX.Element {
   const { dispatch, state } = useEditor()
   const nodeId = useNodeId()
@@ -30,6 +28,7 @@ export default function CustomNodeComponent({ data }: { data: EditorCanvasCardTy
         onClick={(e) => {
           e.stopPropagation()
           const val = state.editor.elements.find((n) => n.id === nodeId)
+          
           if (val)
             dispatch({
               type: 'SELECTED_ELEMENT',

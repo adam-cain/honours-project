@@ -53,12 +53,10 @@ export default function Editor(flow: FlowType) {
 
   const handleNodeChange = (e: NodeChange[]) => {
     onNodesChange(e);
-    console.log(nodes);
   }
 
   const handleEdgeChange = (e: EdgeChange[]) => {
     onEdgesChange(e);
-    console.log(edges);
   }
 
   const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
@@ -141,6 +139,7 @@ export default function Editor(flow: FlowType) {
 
   useEffect(() => {
     dispatch({ type: 'LOAD_DATA', payload: { edges, elements: nodes as EditorNodeType[] } })
+    
   }, [nodes, edges])
 
   const nodeTypes = useMemo(() => ({
