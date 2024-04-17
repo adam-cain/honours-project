@@ -27,15 +27,12 @@ export default function CustomNodeComponent({ data }: { data: EditorCanvasCardTy
       <Card
         onClick={(e) => {
           e.stopPropagation()
-          const val = state.editor.elements.find((n) => n.id === nodeId)
-          
-          if (val)
-            dispatch({
-              type: 'SELECTED_ELEMENT',
-              payload: {
-                element: val,
-              },
-            })
+          dispatch({
+            type: 'SELECTED_ELEMENT',
+            payload: {
+              nodeId: nodeId as string,
+            },
+          })
         }}
         className="relative w-[300px] dark:border-muted-foreground/70"
       >

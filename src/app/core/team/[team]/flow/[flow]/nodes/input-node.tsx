@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import { Position, useNodeId, Handle } from 'reactflow';
 import { useEditor } from '../editor-provider'
@@ -20,53 +21,46 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Plus, Trash2 } from 'lucide-react';
-import { forEach } from 'lodash';
 
 export default function InputNode({ data }: { data: EditorCanvasCardType }): JSX.Element {
     const { dispatch, state } = useEditor()
     const nodeId = useNodeId()
-    const [selectedInputType, setSelectedInputType] = useState<string>('');
-    const [parameters, setParameters] = useState<any[]>([])
+    // const [selectedInputType, setSelectedInputType] = useState<string>('');
+    // const [parameters, setParameters] = useState<any[]>([])
 
-    const addParameter = () => {
-        setParameters([...parameters, { name: '', type: 'string' }])
-    }
+    // const addParameter = () => {
+    //     setParameters([...parameters, { name: '', type: 'string' }])
+    // }
 
-    const removeParameter = (index: number) => {
-        const newParams = [...parameters];
-        newParams.splice(index, 1);
-        setParameters(newParams);
-    }
+    // const removeParameter = (index: number) => {
+    //     const newParams = [...parameters];
+    //     newParams.splice(index, 1);
+    //     setParameters(newParams);
+    // }
 
-    useEffect(() => {
-        if (nodeId) {
-            dispatch({
-                type: 'UPDATE_METADATA',
-                payload: {
-                    nodeId: nodeId,
-                    metadata: { parameters: parameters }
-                },
-            });
-        }
-    }, [parameters, nodeId]);
+    // useEffect(() => {
+    //     if (nodeId) {
+    //         dispatch({
+    //             type: 'UPDATE_METADATA',
+    //             payload: {
+    //                 nodeId: nodeId,
+    //                 metadata: { parameters: parameters }
+    //             },
+    //         });
+    //     }
+    // }, [parameters, nodeId]);
 
     return (
         <>
             <Card
                 onClick={(e) => {
                     e.stopPropagation()
-
-                    const val = state.editor.elements.find((n) => n.id === nodeId)
-                    if (val)
-                        console.log(val);
-
-                        dispatch({
-                            type: 'SELECTED_ELEMENT',
-                            payload: {
-                                element: val as EditorNodeType,
-                            },
-                        })
-                        console.log(state.editor)
+                    dispatch({
+                        type: 'SELECTED_ELEMENT',
+                        payload: {
+                            nodeId: nodeId as string,
+                        },
+                    })
                 }}
                 className={`${state.editor.selectedNode.id === nodeId && "border-white"} relative w-[250px] dark:border-muted-foreground/70`}
             >
@@ -81,7 +75,7 @@ export default function InputNode({ data }: { data: EditorCanvasCardType }): JSX
                             <p>{data.description}</p>
                         </CardDescription>
                         <CardContent className='p-0 mt-1 gap-y-1 flex flex-col'>
-                            <Select
+                            {/* <Select
                                 value={selectedInputType}
                                 onValueChange={(e) => {
                                     setSelectedInputType(e);
@@ -165,7 +159,7 @@ export default function InputNode({ data }: { data: EditorCanvasCardType }): JSX
 
                             {selectedInputType === 'cron' && (
                                 <div className="">{selectedInputType}</div>
-                            )}
+                            )} */}
                         </CardContent>
                     </div>
                 </CardHeader>
@@ -173,7 +167,7 @@ export default function InputNode({ data }: { data: EditorCanvasCardType }): JSX
                     variant="secondary"
                     className="absolute right-2 top-2"
                 >
-                    {data.type}
+                    {data.type + " : " + JSON.stringify((state.editor.elements.filter((n) => n.id === nodeId))[0].data.metadata)}
                 </Badge>
                 {/* <div
                     className={clsx('absolute left-3 top-4 h-2 w-2 rounded-full', {

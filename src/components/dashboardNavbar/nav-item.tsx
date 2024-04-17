@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { NavItem } from "./types";
+import { NavItem as NavItemType } from "./types";
 
-export default function NavItem({ navData, active, isNavCollapsed, hideText }: { navData: NavItem, active: boolean, isNavCollapsed: boolean, hideText: boolean }) {
+export default function NavItem({ navData, active, isNavCollapsed, hideText }: { navData: NavItemType, active: boolean, isNavCollapsed: boolean, hideText: boolean }) {
     if(active) console.log(navData.title);
     return (
         <Link className={`${active ? " border border-white" : ""} 

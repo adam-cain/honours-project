@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 import React from "react";
 import { useRouter } from "next/navigation";
 
-export default async function VisitFlowButton({teamName, flowName}:{teamName: string, flowName: string}) {
+export default function VisitFlowButton({teamName, flowName}:{teamName: string, flowName: string}) {
     const router = useRouter();
     return (
         <div className="border hover:bg-white hover:border-white hover:text-black rounded  size-10 flex my-auto">

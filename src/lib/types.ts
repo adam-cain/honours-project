@@ -6,16 +6,68 @@ export type EditorCanvasTypes =
   | 'Input'
   | 'Output'
   | 'Wait'
-  | 'Script'
+  | 'Script';
 
-export type EditorCanvasCardType = {
-  title: string
-  description: string
-  completed: boolean
-  current: boolean
-  metadata: any
-  type: EditorCanvasTypes
-}
+type MetaDataTypes = 'string' | 'number' | 'boolean' | 'object';
+
+type InputMetaData = | {
+  eventType: 'tool'
+  parameters: {
+    name: string
+    description: string
+    type: MetaDataTypes
+  }[]
+} | {
+  eventType: 'webhook'
+  parameters: {
+    name: string
+    type: MetaDataTypes
+  }[]
+} | {
+  eventType: 'cron'
+  cronString: string
+};
+
+type ConditionMetaData = {
+  expression: string;
+};
+
+type AIMetaData = {
+  model: string;
+  parameters: {
+    name: string;
+    type: MetaDataTypes;
+  }[];
+};
+
+type OutputMetaData = {
+  target: string;
+  format: string;
+};
+
+type WaitMetaData = {
+  duration: number; // Duration in milliseconds
+};
+
+type ScriptMetaData = {
+  script: string;
+};
+
+type EditorCanvasCardBase = {
+  title: string;
+  description: string;
+  completed: boolean;
+  current: boolean;
+};
+
+export type EditorCanvasCardType = EditorCanvasCardBase & (
+  | { type: 'Input', metadata: InputMetaData }
+  | { type: 'Condition', metadata: ConditionMetaData }
+  | { type: 'AI', metadata: AIMetaData }
+  | { type: 'Output', metadata: OutputMetaData }
+  | { type: 'Wait', metadata: WaitMetaData }
+  | { type: 'Script', metadata: ScriptMetaData }
+);
 
 export type EditorNodeType = {
   id: string
@@ -59,7 +111,7 @@ export type EditorActions =
   | {
     type: 'SELECTED_ELEMENT'
     payload: {
-      element: EditorNode
+      nodeId: string
     }
   }
 

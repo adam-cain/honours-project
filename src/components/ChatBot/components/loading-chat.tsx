@@ -1,9 +1,8 @@
 import LoadingDots from "@/components/icons/loading-dots";
 import React from "react";
 
-// Define an interface for the component props
 interface LoadingChatProps {
-  color?: string; // The '?' marks the color prop as optional
+  color?: string;
 }
 
 // Define the component with default props

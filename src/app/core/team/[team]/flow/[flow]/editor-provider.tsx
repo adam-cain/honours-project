@@ -12,7 +12,7 @@ import {
 export type EditorNode = EditorNodeType
 
 export type Editor = {
-  elements: EditorNode[]
+  elements: EditorNodeType[]
   edges: {
     id: string
     source: string
@@ -38,7 +38,10 @@ const initialEditorState: EditorState['editor'] = {
       completed: false,
       current: false,
       description: '',
-      metadata: {},
+      metadata: {
+        eventType: 'webhook',
+        parameters: []
+      },
       title: '',
       type: 'Input',
     },
@@ -106,24 +109,62 @@ const editorReducer = (
         },
       }
     case 'SELECTED_ELEMENT':
+      if (action.payload.nodeId === '') return state
+      const val = state.editor.elements.find((n) => n.id === action.payload.nodeId)
+      if(!val) return state
       return {
         ...state,
         editor: {
           ...state.editor,
-          selectedNode: action.payload.element,
+          selectedNode: val,
         },
       }
-    case 'UPDATE_METADATA':
+    case 'UPDATE_METADATA': {
+      let updatedSelectedNode = null;
       const updatedElements = state.editor.elements.map((el) => {
         if (el.id === action.payload.nodeId) {
-          return { ...el, data: { ...el.data, metadata: action.payload.metadata } };
+          const updatedElement = {
+            ...el,
+            data: {
+              ...el.data,
+              metadata: {
+                ...el.data.metadata,
+                ...action.payload.metadata,
+              },
+            },
+          };
+          if (state.editor.selectedNode.id === el.id) {
+            updatedSelectedNode = updatedElement;
+          }
+          return updatedElement;
         }
         return el;
       });
-      return {
-        ...state,
-        editor: { ...state.editor, elements: updatedElements }
-      };
+
+      // Create a new editor state with the updated elements
+      if (updatedSelectedNode) {
+        const newEditorState = {
+          ...state.editor,
+          elements: updatedElements,
+          selectedNode: updatedSelectedNode,
+        };
+
+        // Add this new editor state to the history
+        const newHistory = [...state.history.history];
+        newHistory.push(newEditorState);  // This could be managed more sophisticatedly to avoid infinite history growth
+
+        return {
+          ...state,
+          editor: newEditorState,
+          history: {
+            ...state.history,
+            history: newHistory,
+            currentIndex: newHistory.length - 1,  // Update the current index to point to the latest state
+          },
+        };
+      }
+      return state;
+    }
     default:
       return state
   }

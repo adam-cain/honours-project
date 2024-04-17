@@ -29,7 +29,7 @@ import 'reactflow/dist/style.css';
 import { Title } from '@/components/PageComponents';
 import CustomNodeComponent from './custom-node';
 import EditorSideBar from './editor-sidebar';
-import {InputNode} from "./nodes"
+import { InputNode } from "./nodes"
 import { EditorCanvasDefaultCardTypes } from '@/lib/consts';
 
 // const initialNodes = [
@@ -64,24 +64,15 @@ export default function Editor(flow: FlowType) {
   const onDrop = useCallback(
     (event: any) => {
       event.preventDefault();
-
       const type = event.dataTransfer.getData('application/reactflow');
-
-      // check if the dropped element is valid
       if (typeof type === 'undefined' || !type) {
         return;
       }
-
-      // reactFlowInstance.project was renamed to reactFlowInstance.screenToFlowPosition
-      // and you don't need to subtract the reactFlowBounds.left/top anymore
-      // details: https://reactflow.dev/whats-new/2023-11-10
-      if (!reactFlowInstance) return console.error('reactFlowInstance is not defined')
-
+      if (!reactFlowInstance) return console.error('reactFlowInstance is not defined');
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
-
       const newNode = {
         id: nanoid(),
         type,
@@ -94,53 +85,38 @@ export default function Editor(flow: FlowType) {
           metadata: {},
           type: type,
         },
-      }
+      };
       //@ts-ignore
-      setNodes((nds) => nds.concat(newNode))
+      setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, state],
+    [reactFlowInstance, setNodes]  // Added setNodes here
   );
 
-  const getFlow = async () => {
-    setIsFlowLoading(true)
-    if (flow.nodes && flow.edges) {
-      setEdges(JSON.parse(flow.edges))
-      setNodes(JSON.parse(flow.nodes))
-      setIsFlowLoading(false)
-      return;
-    }
-    setIsFlowLoading(false)
-  }
-
   useEffect(() => {
-    getFlow()
-  }, [])
+    const getFlow = async () => {
+      setIsFlowLoading(true);
+      if (flow.nodes && flow.edges) {
+        setEdges(JSON.parse(flow.edges));
+        setNodes(JSON.parse(flow.nodes));
+      }
+      setIsFlowLoading(false);
+    };
+    getFlow();
+  }, [flow, setEdges, setNodes]);
+
 
   const handleClickCanvas = () => {
     dispatch({
       type: 'SELECTED_ELEMENT',
       payload: {
-        element: {
-          data: {
-            completed: false,
-            current: false,
-            description: '',
-            metadata: {},
-            title: '',
-            type: 'Input',
-          },
-          id: '',
-          position: { x: 0, y: 0 },
-          type: 'Input',
-        },
+        nodeId: '',
       },
     })
   }
 
   useEffect(() => {
-    dispatch({ type: 'LOAD_DATA', payload: { edges, elements: nodes as EditorNodeType[] } })
-    
-  }, [nodes, edges])
+    dispatch({ type: 'LOAD_DATA', payload: { edges, elements: nodes as EditorNodeType[] } });
+  }, [nodes, edges, dispatch]);
 
   const nodeTypes = useMemo(() => ({
     Action: CustomNodeComponent,
@@ -179,13 +155,13 @@ export default function Editor(flow: FlowType) {
             }
           }
         >
-          <MiniMap
+          {/* <MiniMap
             position="bottom-right"
             className="!bg-background"
             zoomable
             pannable
-          />
-          <Controls color='#000000'/>
+          /> */}
+          <Controls color='#000000' />
           <Background
             //@ts-ignore
             variant="dots"
