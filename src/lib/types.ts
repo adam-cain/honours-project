@@ -8,9 +8,9 @@ export type EditorCanvasTypes =
   | 'Wait'
   | 'Script';
 
-type MetaDataTypes = 'string' | 'number' | 'boolean' | 'object';
+export type MetaDataTypes = 'string' | 'number' | 'boolean' | 'object';
 
-type InputMetaData = | {
+export type InputMetaData = | {
   eventType: 'tool'
   parameters: {
     name: string
@@ -28,11 +28,11 @@ type InputMetaData = | {
   cronString: string
 };
 
-type ConditionMetaData = {
+export type ConditionMetaData = {
   expression: string;
 };
 
-type AIMetaData = {
+export type AIMetaData = {
   model: string;
   parameters: {
     name: string;
@@ -40,20 +40,20 @@ type AIMetaData = {
   }[];
 };
 
-type OutputMetaData = {
+export type OutputMetaData = {
   target: string;
   format: string;
 };
 
-type WaitMetaData = {
+export type WaitMetaData = {
   duration: number; // Duration in milliseconds
 };
 
-type ScriptMetaData = {
+export type ScriptMetaData = {
   script: string;
 };
 
-type EditorCanvasCardBase = {
+export type EditorCanvasCardBase = {
   title: string;
   description: string;
   completed: boolean;
@@ -100,18 +100,25 @@ export type EditorActions =
       metadata: any
     }
   }
-  | {
-    type: 'UPDATE_NODE'
-    payload: {
-      elements: EditorNode[]
-    }
-  }
+  // | {
+  //   type: 'UPDATE_NODE'
+  //   payload: {
+  //     elements: EditorNode[]
+  //   }
+  // }
   | { type: 'REDO' }
   | { type: 'UNDO' }
   | {
     type: 'SELECTED_ELEMENT'
     payload: {
       nodeId: string
+    }
+  }
+  | {
+    type: 'UPDATE_NODE'
+    payload: {
+      nodeId: string
+      newData: Partial<EditorNodeType['data']>
     }
   }
 

@@ -12,7 +12,7 @@ export const EditorCanvasDefaultCardTypes = {
         type: 'Process',
     },
     AI: {
-        description:'Use the power of AI to summarize, respond, create and much more.',
+        description:'Use AI to summarize, respond, create and more.',
         type: 'Process',
     },
     Condition: {

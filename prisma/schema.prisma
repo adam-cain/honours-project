@@ -120,6 +120,8 @@ model Chat {
   updatedAt DateTime @updatedAt
   deployed  Boolean  @default(false)
 
+  flows Flow[] @relation()
+
   @@unique([name, teamId])
 }
 
@@ -130,17 +132,17 @@ model Script {
   publish      Boolean? @default(false)
   isJavascript Boolean
 
-  rawCode         String? @db.Text
+  rawCode         String?  @db.Text
   devCompiledURL  String?
   prodCompiledURL String?
   params          Json?
   envVars         String[]
   returnType      String?
-  team      Team     @relation(fields: [teamId], references: [id])
-  teamId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deployed  Boolean  @default(false)
+  team            Team     @relation(fields: [teamId], references: [id])
+  teamId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  deployed        Boolean  @default(false)
 
   @@unique([name, teamId])
 }
@@ -153,16 +155,17 @@ model Flow {
   nodes String?
   edges String?
 
-  flowPath          String?
-  cronPath          String?
+  flowPath String?
+  cronPath String?
 
-  publish           Boolean? @default(false)
-  team      Team     @relation(fields: [teamId], references: [id])
-  teamId    String
-  
+  publish Boolean? @default(false)
+  team    Team     @relation(fields: [teamId], references: [id])
+  teamId  String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deployed  Boolean  @default(false)
+  flowsChat Chat[]
 
   @@unique([name, teamId])
 }

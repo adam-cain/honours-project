@@ -1,11 +1,11 @@
 "use client"
-import { EditorCanvasCardType, EditorCanvasTypes, EditorNodeType } from "@/lib/types"
+import { EditorCanvasCardType, EditorCanvasTypes, EditorNodeType, InputMetaData } from "@/lib/types"
 import { useEditor } from "./editor-provider"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { EditorCanvasDefaultCardTypes } from "@/lib/consts"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Title } from "@/components/PageComponents"
-
+import EditorTest from "./editor-test"
 
 const onDragStart = (
   event: any,
@@ -25,7 +25,6 @@ export default function EditorSideBar({ nodes }: Props) {
   
   useEffect(() => {
     setSelectedNode(state.editor.selectedNode);
-    console.log("Clicked node: ", state.editor.selectedNode.id);
   }, [state.editor.selectedNode]);
 
   return (
@@ -67,7 +66,7 @@ export default function EditorSideBar({ nodes }: Props) {
             ))}
         </TabsContent>
         <TabsContent value="test">
-          Test your flow here.
+          <EditorTest />
         </TabsContent>
         <TabsContent value="settings">
           {(selectedNode && selectedNode.id !== "") ? (
@@ -99,7 +98,7 @@ function NodeSettings({ selectedNode }: { selectedNode: EditorNodeType }) {
       case 'Input':
         return (
           <div>
-            <InputNodeSettings selectedNode={selectedNode} />
+            <InputNodeSettings/>
           </div>
         );
       case 'Output':
@@ -152,26 +151,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
+import { Edit } from "lucide-react"
 
-function InputNodeSettings({ selectedNode }: { selectedNode: EditorNodeType }) {
-  const { dispatch } = useEditor()
-
+function InputNodeSettings() {
+  const { state, dispatch } = useEditor()
+  const { selectedNode } = state.editor;
+  
   const handleTypeChange = (newEventType: "tool" | "webhook" | "cron") => {
     if (newEventType !== undefined && selectedNode.type === "Input") {
+
       dispatch({
-        type: 'UPDATE_METADATA',
+        type: 'UPDATE_NODE',
         payload: {
           nodeId: selectedNode.id,
-          metadata: { eventType: newEventType }
+          newData: {
+            metadata: { eventType: newEventType } as InputMetaData,
+            title: newEventType
+          }
         }
-      });
+      })
     }
   }
-
-  useEffect(() => {
-    console.log("Selected node: ", selectedNode);
-  })
 
   const renderInputNodeSettings = () => {
     if (!selectedNode.data.metadata) {
@@ -203,6 +204,7 @@ function InputNodeSettings({ selectedNode }: { selectedNode: EditorNodeType }) {
 
   return (
     <div className="">
+      {selectedNode.data.metadata && 'eventType' in selectedNode.data.metadata ? selectedNode.data.metadata.eventType : ''}
       <Select
         value={selectedNode.data.metadata && 'eventType' in selectedNode.data.metadata ? selectedNode.data.metadata.eventType : ''}
         onValueChange={handleTypeChange}>

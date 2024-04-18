@@ -34,7 +34,7 @@ export default function CustomNodeComponent({ data }: { data: EditorCanvasCardTy
             },
           })
         }}
-        className="relative w-[300px] dark:border-muted-foreground/70"
+        className="relative w-[250px] dark:border-muted-foreground/70"
       >
         <CardHeader className="flex flex-row items-center gap-4">
           <div>
@@ -54,13 +54,6 @@ export default function CustomNodeComponent({ data }: { data: EditorCanvasCardTy
         >
           {data.type}
         </Badge>
-        <div
-          className={clsx('absolute left-3 top-4 h-2 w-2 rounded-full', {
-            'bg-green-500': Math.random() < 0.6,
-            'bg-orange-500': Math.random() >= 0.6 && Math.random() < 0.8,
-            'bg-red-500': Math.random() >= 0.8,
-          })}
-        ></div>
       </Card>
       <CustomHandle
         type="source"

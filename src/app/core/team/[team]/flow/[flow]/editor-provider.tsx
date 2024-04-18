@@ -5,7 +5,6 @@ import {
   Dispatch,
   createContext,
   useContext,
-  useEffect,
   useReducer,
 } from 'react'
 
@@ -107,16 +106,24 @@ const editorReducer = (
           elements: action.payload.elements || initialEditorState.elements,
           edges: action.payload.edges,
         },
-      }
+      } 
     case 'SELECTED_ELEMENT':
-      if (action.payload.nodeId === '') return state
-      const val = state.editor.elements.find((n) => n.id === action.payload.nodeId)
-      if(!val) return state
+      if (action.payload.nodeId === '') {
+        return {
+          ...state,
+          editor: {
+            ...state.editor,
+            selectedNode: initialEditorState.selectedNode,
+          },
+        }
+      }
+
+      let val = state.editor.elements.find((n) => n.id === action.payload.nodeId)
       return {
         ...state,
         editor: {
           ...state.editor,
-          selectedNode: val,
+          selectedNode: val || initialEditorState.selectedNode,
         },
       }
     case 'UPDATE_METADATA': {
@@ -164,6 +171,38 @@ const editorReducer = (
         };
       }
       return state;
+    }
+    case 'UPDATE_NODE': {
+      let updatedSelectedNode = null;
+
+      const updatedElements = state.editor.elements.map((node) => {
+        if (node.id === action.payload.nodeId) {
+          updatedSelectedNode = {
+            ...node,
+            data: {
+              ...node.data,
+              ...action.payload.newData,
+            },
+          };
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              ...action.payload.newData,
+            },
+          };
+        }
+        return node;
+      });
+    
+      return {
+        ...state,
+        editor: {
+          ...state.editor,
+          selectedNode: updatedSelectedNode || state.editor.selectedNode,
+          elements: updatedElements as EditorNodeType[],
+        },
+      };
     }
     default:
       return state

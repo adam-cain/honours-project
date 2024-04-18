@@ -27,10 +27,14 @@ import {
 import { EditorCanvasCardType, EditorNodeType } from '@/lib/types'
 import 'reactflow/dist/style.css';
 import { Title } from '@/components/PageComponents';
-import CustomNodeComponent from './custom-node';
 import EditorSideBar from './editor-sidebar';
-import { InputNode } from "./nodes"
 import { EditorCanvasDefaultCardTypes } from '@/lib/consts';
+import { Redo2, Undo2 } from 'lucide-react';
+
+
+import CustomNodeComponent from './custom-node';
+import { InputNode, OutputNode, ScriptNode, AINode } from './nodes';
+
 
 // const initialNodes = [
 //   { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
@@ -44,6 +48,7 @@ const initialEdges: { id: string; source: string; target: string }[] = []
 
 export default function Editor(flow: FlowType) {
   flow = flow.flow
+  
   const { dispatch, state } = useEditor()
   const [isFlowLoading, setIsFlowLoading] = useState(false)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -105,7 +110,8 @@ export default function Editor(flow: FlowType) {
   }, [flow, setEdges, setNodes]);
 
 
-  const handleClickCanvas = () => {
+  const handleClickCanvas = (e: any) => {
+
     dispatch({
       type: 'SELECTED_ELEMENT',
       payload: {
@@ -116,17 +122,16 @@ export default function Editor(flow: FlowType) {
 
   useEffect(() => {
     dispatch({ type: 'LOAD_DATA', payload: { edges, elements: nodes as EditorNodeType[] } });
-  }, [nodes, edges, dispatch]);
+  }, [nodes, edges]);
 
   const nodeTypes = useMemo(() => ({
-    Action: CustomNodeComponent,
-    Trigger: CustomNodeComponent,
-    Wait: CustomNodeComponent,
-    Script: CustomNodeComponent,
-    AI: CustomNodeComponent,
-    Condition: CustomNodeComponent,
+    Script: ScriptNode,
+    AI: AINode,
     Input: InputNode,
-    Output: CustomNodeComponent,
+    Output: OutputNode,
+
+    Wait: CustomNodeComponent,
+    Condition: CustomNodeComponent,
   }), []);
 
   const onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) => {
@@ -161,7 +166,20 @@ export default function Editor(flow: FlowType) {
             zoomable
             pannable
           /> */}
-          <Controls color='#000000' />
+          <Controls>
+            <div className='text-black bg-white '>
+              <div
+                onClick={() => dispatch({ type: 'UNDO' })}
+                className=' flex justify-center cursor-pointer align-middle aspect-square border-b border-[#eee] hover:bg-[#f4f4f4]'>
+                <Undo2 className=' size-4 m-auto' />
+              </div>
+              <div
+                onClick={() => dispatch({ type: 'REDO' })}
+                className=' flex justify-center cursor-pointer align-middle aspect-square border-b border-[#eee] hover:bg-[#f4f4f4]'>
+                <Redo2 className=' size-4 m-auto' />
+              </div>
+            </div>
+          </Controls>
           <Background
             //@ts-ignore
             variant="dots"
@@ -178,7 +196,6 @@ export default function Editor(flow: FlowType) {
           <Title className='text-base font-light'>{flow.description}</Title>
         </div>
         <FlowInstance edges={edges} nodes={nodes} flowId={flow.id}>
-          {/* <EditorSideBar nodes={nodes} /> */}
           <EditorSideBar nodes={nodes} />
         </FlowInstance>
       </ResizablePanel>

@@ -18,10 +18,6 @@ export default function CreateFlowModal({ team, flow }: { team: string, flow?: s
         description: "",
     });
 
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         createFlow(team, data.name, data.description).then((res: any) => {

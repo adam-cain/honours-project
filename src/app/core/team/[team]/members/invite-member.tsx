@@ -62,7 +62,6 @@ export function InviteMemberForm({teamName}:{teamName: string}) {
         toast.loading("Inviting user");
         const formData = new FormData();
         formData.append("role", data.role);
-        console.log(data.role);
         
         if(data.use_email) {
             formData.append("email", data.email_or_username);
