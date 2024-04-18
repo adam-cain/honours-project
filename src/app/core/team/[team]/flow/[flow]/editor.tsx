@@ -122,14 +122,13 @@ export default function Editor(flow: FlowType) {
 
   useEffect(() => {
     dispatch({ type: 'LOAD_DATA', payload: { edges, elements: nodes as EditorNodeType[] } });
-  }, [nodes, edges]);
+  }, [nodes, edges, dispatch]);
 
   const nodeTypes = useMemo(() => ({
     Script: ScriptNode,
     AI: AINode,
     Input: InputNode,
     Output: OutputNode,
-
     Wait: CustomNodeComponent,
     Condition: CustomNodeComponent,
   }), []);

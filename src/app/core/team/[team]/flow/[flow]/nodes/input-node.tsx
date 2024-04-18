@@ -68,7 +68,7 @@ export default function InputNode({ data }: { data: EditorCanvasCardType }): JSX
                 },
             });
         }
-    }, [parameters, nodeId]);
+    }, [parameters, nodeId,dispatch]);
 
     return (
         <BaseNode data={data}>

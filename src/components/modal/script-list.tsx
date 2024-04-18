@@ -20,7 +20,7 @@ export default function ScriptList(props: Props) {
             setscripts(await getTeamScripts(props.team))
         }
         fetchData();
-    }, []);
+    });
     
     return (
         <div className="relative flex flex-col space-y-4 p-5 md:p-10 border border-neutral-700 bg-neutral-900 rounded-lg w-[80vw] h-[80vh]">

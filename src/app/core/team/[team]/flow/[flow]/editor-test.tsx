@@ -19,14 +19,13 @@ export default function EditorTest() {
         <div>
             {hasInput ?
                 <div className="flex flex-col gap-y-3">
-                    {params.map(param => (
-                        <div className="w-full">
+                    {params.map((param,key) => (
+                        <div key={key} className="w-full">
                             <div>{param.name}:</div>
                             <div className="flex flex-row">
                                 <input type="text" placeholder={param.name} className="rounded-l-md border px-2 py-1 text-sm placeholder:text-stone-400 w-full focus:outline-none border-stone-600 bg-black text-white placeholder-stone-700 focus:ring-white" />
                                 <div className="rounded-r-md border-y border-r px-2 py-1 text-sm right-0 bg-stone-700 border-stone-600">{param.type}</div>
                             </div>
-
                         </div>
                     ))}
                     <Button onClick={() => setshowOutput(true)} className='gap-1 w-full '>Run Test<ServerCogIcon className='size-5' /></Button>
