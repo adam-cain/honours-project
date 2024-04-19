@@ -25,13 +25,13 @@ const initialUIState: {
   display: React.ReactNode;
 }[] = [];
 
-export function createConfiguredAI(config: Config) {
-  if (!ConfigSchema.safeParse(config).success) {
-    throw new Error("Invalid configuration provided");
-  }
+export function createConfiguredAI(config: Config | undefined) {
+  // if (!ConfigSchema.safeParse(config).success) {
+  //   throw new Error("Invalid configuration provided");
+  // }
 
   // Modify your initial tools setup to use the config's tools
-  const tools = config.tools;
+  // const tools = config.tools;
 
   async function submitUserMessage(userInput: string) {
     'use server';
@@ -52,7 +52,8 @@ export function createConfiguredAI(config: Config) {
       model: 'gpt-4-0125-preview',
       provider: openai,
       messages: [
-        { role: 'system', content: config.systemPrompt },
+        // { role: 'system', content: config.systemPrompt },
+        { role: 'system', content: "You are an AI assitant" },
         { role: 'user', content: userInput }
       ],
       // `text` is called when an AI returns a text response (as opposed to a tool call).
@@ -72,44 +73,44 @@ export function createConfiguredAI(config: Config) {
   
         return <AIChat content={content} />
       },
-      tools: {
-        ...tools,
-        // code_execution: {
-        //   description: 'Execute javascript arrow functions',
-        //   parameters: z.object({
-        //     code: z.string().describe('A string representation of a JavaScript arrow function to be executed. You must follow the syntax and structure of arrow functions. The function `fetch(url: string)` can be used to fetch data from an external API. You must include the return statement to return data from code execution.'),
-        //   }).required()
-        //   ,
-        //   render: async function* ({ code }) {
-        //     // Show a spinner on the client while we wait for the response.
-        //     yield <LoadingChat color="#FFF" />
-        //     console.log("Code: ", code);
+      // tools: {
+      //   ...tools,
+      //   code_execution: {
+      //     description: 'Execute javascript arrow functions',
+      //     parameters: z.object({
+      //       code: z.string().describe('A string representation of a JavaScript arrow function to be executed. You must follow the syntax and structure of arrow functions. The function `fetch(url: string)` can be used to fetch data from an external API. You must include the return statement to return data from code execution.'),
+      //     }).required()
+      //     ,
+      //     render: async function* ({ code }) {
+      //       // Show a spinner on the client while we wait for the response.
+      //       yield <LoadingChat color="#FFF" />
+      //       console.log("Code: ", code);
 
-        //     // Execute the code.
-        //     const result = await runCode(code);
+      //       // Execute the code.
+      //       const result = await runCode(code);
   
-        //     // Update the final AI state.
-        //     aiState.done([
-        //       ...aiState.get(),
-        //       {
-        //         role: "function",
-        //         name: "code_execution",
-        //         // Content can be any string to provide context to the LLM in the rest of the conversation.
-        //         content: code + "\n\nResult: " + JSON.stringify(result),
-        //       }
-        //     ]);
-        //     <CodeBlock code={code} language={""} />
-        //     // Return the result to the client.
-        //     return <AIChat content={result} />
-        //   }
-        // },
-      } as {
-        [x: string]: {
-          description?: string;
-          parameters: any;
-          render: (args_0: any, ...args_1: unknown[]) => any;
-        };
-      }
+      //       // Update the final AI state.
+      //       aiState.done([
+      //         ...aiState.get(),
+      //         {
+      //           role: "function",
+      //           name: "code_execution",
+      //           // Content can be any string to provide context to the LLM in the rest of the conversation.
+      //           content: code + "\n\nResult: " + JSON.stringify(result),
+      //         }
+      //       ]);
+      //       <CodeBlock code={code} language={""} />
+      //       // Return the result to the client.
+      //       return <AIChat content={result} />
+      //     }
+      //   },
+      // } as {
+      //   [x: string]: {
+      //     description?: string;
+      //     parameters: any;
+      //     render: (args_0: any, ...args_1: unknown[]) => any;
+      //   };
+      // }
     })
   
   
