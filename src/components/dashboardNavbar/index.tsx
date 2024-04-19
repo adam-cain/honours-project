@@ -1,5 +1,5 @@
 "use client"
-import { BotIcon, HomeIcon, LineChartIcon, SettingsIcon, UserIcon, Code2 } from 'lucide-react';
+import { BotIcon, HomeIcon, LineChartIcon, SettingsIcon, UserIcon, Code2, AudioWaveform } from 'lucide-react';
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import React, { ReactNode, useMemo, useState } from 'react';
@@ -12,7 +12,6 @@ import Profile from './profile-button';
 import { NavConfig } from './types';
 import { LeftNavIcon, RightNavIcon } from '../icons/NavArrow';
 import { Logo } from "@/components/PageComponents";
-import { AudioWaveform } from 'lucide-react';
 
 const navConfig: NavConfig = {
     navGroup: [
@@ -29,6 +28,7 @@ const navConfig: NavConfig = {
                 { title: 'Overview', href: '/team/[team]', icon: <HomeIcon className="h-4 w-4" /> },
                 { title: 'Chatbots', href: '/team/[team]/chat', icon: <BotIcon className="h-4 w-4" />, },
                 { title: 'Scripts', href: '/team/[team]/script', icon: <Code2 className="h-4 w-4" />, },
+                { title: 'Flows', href: '/team/[team]/flow', icon: <AudioWaveform className="h-4 w-4" />, },
                 { title: 'Analytics', href: '/team/[team]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
                 { title: 'Members', href: '/team/[team]/members', icon: <UserIcon className="h-4 w-4" />, },
                 { title: 'Team Settings', href: '/team/[team]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
