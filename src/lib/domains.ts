@@ -19,10 +19,6 @@ export const addDomainToVercel = async (domain: string) => {
       },
       body: JSON.stringify({
         name: domain,
-        // Optional: Redirect www. to root domain
-        // ...(domain.startsWith("www.") && {
-        //   redirect: domain.replace("www.", ""),
-        // }),
       }),
     },
   ).then((res) => res.json());
@@ -129,14 +125,13 @@ export const getApexDomain = (url: string) => {
   }
   const parts = domain.split(".");
   if (parts.length > 2) {
-    // if it's a subdomain (e.g. dub.vercel.app), return the last 2 parts
+    // if it's a subdomain (e.g. sub.example.com), return the last 2 parts
     return parts.slice(-2).join(".");
   }
-  // if it's a normal domain (e.g. dub.sh), we return the domain
+  // if it's a normal domain (e.g. example.com), we return the domain
   return domain;
 };
 
-// courtesy of ChatGPT: https://sharegpt.com/c/pUYXtRs
 export const validDomainRegex = new RegExp(
   /^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/,
 );

@@ -7,10 +7,10 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 
 const nextConfig = {
   experimental: {
-    urlImports: ["https://cdn.skypack.dev","https://umgn7lure7vaypuk.public.blob.vercel-storage.com"],
+    urlImports: ["https://cdn.skypack.dev", "https://umgn7lure7vaypuk.public.blob.vercel-storage.com"],
     serverActions: {
       serverActions: true,
-      allowedOrigins: ["localhost:3000"],
+      allowedOrigins: ["localhost:3000", process.env.NEXTAUTH_URL],
     },
   },
   images: {
@@ -39,10 +39,10 @@ const nextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
-        config.externals = [...config.externals, 'isolated-vm', 'esbuild'];
+      config.externals = [...config.externals, 'isolated-vm', 'esbuild'];
     }
     return config;
-},
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);

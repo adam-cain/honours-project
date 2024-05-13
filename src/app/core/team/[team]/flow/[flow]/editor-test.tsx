@@ -1,9 +1,12 @@
 const params = [
-    { name: "word", type: "String" },
-    { name: "repeat", type: "Number" }
+    { name: "city", type: "string" },
+    { name: "date", type: "string" }
 ]
 
-const output = "Hello World"
+const output = `{"date":"2024-04-19 5:40","city":"London","country":"United Kingdom","condition":"Overcast","temp_c":10,"precip_mm":0.13}`
+
+//London
+//2023-01-01
 
 import { Title } from "@/components/PageComponents";
 import { useEditor } from "./editor-provider";
