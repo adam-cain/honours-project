@@ -119,7 +119,6 @@ export function createConfiguredAI(config: Config | undefined) {
     };
   }
 
-  // Now `AI` creation can also take into account the passed configuration
   const AI = createAI({
     actions: {
       submitUserMessage,

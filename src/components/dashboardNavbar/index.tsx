@@ -39,10 +39,8 @@ const navConfig: NavConfig = {
         },
         {
             navItems: [
-                { title: 'Overview', href: '/team/[team]/chat/[chat]', icon: <HomeIcon className="h-4 w-4" /> },
-                { title: 'Analytics', href: '/team/[team]/chat/[chat]/analytics', icon: <LineChartIcon className="h-4 w-4" />, },
+                { title: 'Preview', href: '/team/[team]/chat/[chat]/preview', icon: <BotIcon className="h-4 w-4" />, },
                 { title: 'Settings', href: '/team/[team]/chat/[chat]/settings', icon: <SettingsIcon className="h-4 w-4" />, },
-                { title: 'Preview', href: '/team/[team]/chat/[chat]/preview', icon: <BotIcon className="h-4 w-4" />, }
             ],
             showOn: /\/team\/.*\/chat\/.*/,
             dynamic: true,

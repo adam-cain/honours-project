@@ -144,7 +144,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                 });
 
                 setEnvVarValues(prevEnvVars => {
-                    const newEnvVars = updatedData.envVars ? updatedData.envVars.split(",").map((envVar: string) => ({
+                    const newEnvVars = updatedData.envVars ? updatedData.envVars.map((envVar: string) => ({
                         key: envVar,
                         value: prevEnvVars.find(e => e.key === envVar)?.value || ""
                     })) : [];
@@ -164,15 +164,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
         toast.loading("Running Test");
         if (script.devCompiledURL) {
             const result = await runBundle(script.devCompiledURL, paramValues, envVarValues);
-            console.log(result);
             if (result.success) {
+                
                 setOutPut(result.message as KeyValue[]);
+
                 toast.dismiss();
                 toast.success("Test ran successfully");
             } else {
                 toast.dismiss();
                 toast.error("Failed to run test: " + result.message);
-                console.log(result.message);
+                console.log(JSON.stringify(result.message));
             }
         } else {
             toast.dismiss();
@@ -238,12 +239,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
                                                 <Title className="text-lg">Parameters:</Title>
                                                 {paramValues.map((param, index) => (
                                                     <div key={index} className="flex flex-row gap-2 my-2 items-center justify-between w-full h-8">
-                                                        <label>{`${param.key}:`}</label>
+                                                        {/* @ts-ignore */}
+                                                        <label>{`${param.key.name}:`}</label>
                                                         <div className="flex flex-row">
                                                             <Input
                                                                 type="text"
                                                                 value={param.value}
-                                                                placeholder={param.key}
+                                                                //@ts-ignore
+                                                                placeholder={param.key.name}
                                                                 onChange={(e) => handleParamChange(index, 'value', e.target.value)}
                                                                 className="rounded-r-none"
                                                             />

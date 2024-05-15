@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@babel/standalone": "^7.24.3",
     "@hookform/resolvers": "^3.3.4",
     "@monaco-editor/react": "^4.6.0",
     "@next-auth/prisma-adapter": "^1.0.7",
@@ -24,7 +23,6 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
     "@types/d3": "^7.4.3",
-    "@types/lodash": "^4.17.0",
     "@vercel/blob": "^0.19.0",
     "@vercel/postgres": "^0.5.1",
     "ai": "^3.0.13",
@@ -38,7 +36,6 @@
     "focus-trap-react": "^10.2.3",
     "framer-motion": "^11.0.24",
     "isolated-vm": "^4.7.2",
-    "lodash": "^4.17.21",
     "lucide-react": "^0.314.0",
     "monaco-editor": "^0.47.0",
     "next": "14.1.0",
@@ -61,7 +58,6 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^14.1.4",
-    "@types/babel__standalone": "^7.1.7",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.12.7",
     "@types/react": "^18",

@@ -19,13 +19,13 @@ const processArgs = (args: KeyValueWithDataType[]) => {
   });
 }
 
-export default async function runBundle(bundleURL: string, args: KeyValueWithDataType[] = [], envVariables: KeyValue[] = []) {
+export default async function runBundle(bundleURL: string, args: KeyValueWithDataType[] = [], envVariables: KeyValue[] = []): Promise<{ success: boolean, message: KeyValue[] }>{
   const bundleCode = await fetch(bundleURL).then(async (res) => {
     return await res.text();
   })
 
   if (!bundleCode) {
-    return { success: false, message: "Failed to download the file from cloud storage" };
+    return { success: false, message: [{key:"error",value:"Failed to download the file from cloud storage" }]};
   }
   const processedArgs = processArgs(args);
 
