@@ -32,6 +32,7 @@ export default async function middleware(req: NextRequest) {
 
   // For root domain only
   if (hostname == process.env.NEXT_PUBLIC_ROOT_DOMAIN) {
+    // Authentication middleware
     const session = await getToken({ req });
     if (session) {
       return coreRedirect(req, path);
@@ -41,6 +42,7 @@ export default async function middleware(req: NextRequest) {
       }
       return NextResponse.next();
     }
+    //
   } else {
     const subdomain = hostname.split(".")[0];    
     return NextResponse.rewrite(new URL(`/external/${subdomain}${path}`, req.url));

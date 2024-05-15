@@ -168,7 +168,7 @@ export default async function bundleUserCode(scriptId:string, code: string, isJa
     if(isJavaScript == true){
         const parameters = extractDefaultExportParameters(code); 
         const envVariables = extractEnvVariables(code);
-        codeInfo.parameters = parameters?.map(param => ({ name: param, type: undefined })) || [];  
+        codeInfo.parameters = parameters?.map(param => ({ name: param, type: undefined })) || [];
         codeInfo.envVariables = envVariables;
     }else{
         const result = await analyzeTSFile(inFile);
@@ -182,7 +182,7 @@ export default async function bundleUserCode(scriptId:string, code: string, isJa
     try {
         await esbuild.build({
             entryPoints: [inFile],
-            minify: true,//Set to true for production
+            minify: true,
             bundle: true,
             platform: 'node',
             format: 'iife',
