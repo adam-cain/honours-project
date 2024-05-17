@@ -127,7 +127,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user, trigger }:{token:JWT, user:User | AdapterUser, trigger?:"signIn" | "update" | "signUp" | undefined}) => {
+    jwt: async ({ token, user, trigger }:{token: JWT, user: User | AdapterUser, trigger?:"signIn" | "update" | "signUp" | undefined}) => {
       
       if (trigger === "update") {
         // Triggered on update() call, fetch updated user details

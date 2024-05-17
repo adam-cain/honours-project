@@ -24,7 +24,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from '@/components/ui/resizable'
-import { EditorCanvasCardType, EditorNodeType } from '@/lib/types'
+import { EditorNodeType } from '@/lib/types'
 import 'reactflow/dist/style.css';
 import { Title } from '@/components/PageComponents';
 import EditorSideBar from './editor-sidebar';

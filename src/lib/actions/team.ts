@@ -1,5 +1,5 @@
 "use server"
-import { Role } from "@prisma/client";
+import { Role, TeamInvitation } from "@prisma/client";
 import { getSession } from "../auth";
 import prisma from "@/lib/prisma";
 import { withTeamAuth } from "./middleware";
@@ -117,11 +117,23 @@ export const acceptTeamInvite = async (teamId: string) => {
         };
     }
 
+    const invitation: TeamInvitation = await prisma.teamInvitation.findFirst({
+        where: {
+            teamId: teamId,
+            invitedUserId: session.user.id,
+        },
+    });
+
+    if (!invitation) {
+        return {
+            error: "Invitation not found",
+        };
+    }
+
     prisma.$transaction(async () => {
-        await prisma.teamInvitation.deleteMany({
+        await prisma.teamInvitation.delete({
             where: {
-                teamId: teamId,
-                invitedUserId: session.user.id,
+                id: invitation.id,
             },
         });
 
@@ -137,7 +149,7 @@ export const acceptTeamInvite = async (teamId: string) => {
                         id: session.user.id,
                     },
                 },
-                role: "MEMBER",
+                role: invitation.role,
             },
         });
     });
