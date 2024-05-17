@@ -29,9 +29,6 @@ export default async function runBundle(bundleURL: string, args: KeyValueWithDat
   }
   const processedArgs = processArgs(args);
 
-
-  console.log('Running the bundle');
-
   const isolate = new Isolate({ memoryLimit: 128 });
   const context = await isolate.createContext();
   const global = context.global;
@@ -52,8 +49,7 @@ export default async function runBundle(bundleURL: string, args: KeyValueWithDat
       [processedArgs],
       { arguments: { copy: true }, result: { promise: true, copy: true } }
     );
-    console.log(typeof result, result)
-    loggedDataStore.push({ key: 'result', value: JSON.stringify(result)});
+    loggedDataStore.push({ key: 'result', value: result });
     return { success: true, message: loggedDataStore };
   } catch (error) {
     loggedDataStore.push({ key: 'error', value: error });
@@ -99,7 +95,7 @@ interface FetchOptions {
   method?: string;
   headers?: Record<string, string>;
   body?: string;
-  timeout?: number; // Add timeout to the options
+  timeout?: number;
 }
 
 async function addFetch(context: ivm.Context) {

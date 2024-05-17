@@ -49,7 +49,7 @@ export function createConfiguredAI(config: Config | undefined) {
   
     // The `render()` creates a generated, streamable UI.
     const ui = render({
-      model: 'gpt-4-0125-preview',
+      model: 'gpt-4-turbo',
       provider: openai,
       messages: [
         // { role: 'system', content: config.systemPrompt },
@@ -70,7 +70,6 @@ export function createConfiguredAI(config: Config | undefined) {
             }
           ]);
         }
-  
         return <AIChat content={content} />
       },
       // tools: {
