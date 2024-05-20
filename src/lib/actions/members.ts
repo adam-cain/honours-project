@@ -87,41 +87,41 @@ export const updateTeamMemberRole =
         }
     )
 
-export const getRequestForAccess = async (teamName: string) => {
-    const session = await getSession();
-    if (!session) {
-        return {
-            error: "Not authenticated",
-        };
-    }
-    try {
+// export const getRequestForAccess = async (teamName: string) => {
+//     const session = await getSession();
+//     if (!session) {
+//         return {
+//             error: "Not authenticated",
+//         };
+//     }
+//     try {
 
-        const requests = await prisma.teamAccessRequest.findMany({
-            where: {
-                team: {
-                    name: teamName,
-                }
-            },
-            select: {
-                id: true,
-                requestedByUser: {
-                    select: {
-                        username: true,
-                        image: true,
-                        id: true,
-                    },
-                },
-            },
-        });
+//         const requests = await prisma.teamAccessRequest.findMany({
+//             where: {
+//                 team: {
+//                     name: teamName,
+//                 }
+//             },
+//             select: {
+//                 id: true,
+//                 requestedByUser: {
+//                     select: {
+//                         username: true,
+//                         image: true,
+//                         id: true,
+//                     },
+//                 },
+//             },
+//         });
 
-        return requests;
-    } catch (error) {
-        console.error("Failed to get team access requests:", error);
-        return {
-            error: "Failed to get team access requests",
-        };
-    }
-}
+//         return requests;
+//     } catch (error) {
+//         console.error("Failed to get team access requests:", error);
+//         return {
+//             error: "Failed to get team access requests",
+//         };
+//     }
+// }
 
 export const inviteUserToTeam = withTeamAuth(Role.ADMIN, async (team, formData) => {
     const username = formData?.get('username') as string;
@@ -173,37 +173,37 @@ export const inviteUserToTeam = withTeamAuth(Role.ADMIN, async (team, formData) 
     }
 })
 
-export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {
-    const requestId = formData?.get('id') as string;
-    if (!requestId) {
-        throw new Error("Missing requestId");
-    }
-    try {
-        prisma.$transaction(async () => {
-            await prisma.teamAccessRequest.delete({
-                where: {
-                    id: requestId,
-                },
-            })
-            await prisma.teamMember.create({
-                data: {
-                    team: {
-                        connect: {
-                            id: team.id,
-                        },
-                    },
-                    user: {
-                        connect: {
-                            id: team.id,
-                        },
-                    },
-                    role: "MEMBER",
-                },
-            })
-        });
-        return { success: true };
-    } catch (error) {
-        console.error("Failed to approve team access request:", error);
-        return { error: "Failed to approve team access request" };
-    }
-});
+// export const approveTeamAccessRequest = withTeamAuth(Role.ADMIN, async (team, formData) => {
+//     const requestId = formData?.get('id') as string;
+//     if (!requestId) {
+//         throw new Error("Missing requestId");
+//     }
+//     try {
+//         prisma.$transaction(async () => {
+//             await prisma.teamAccessRequest.delete({
+//                 where: {
+//                     id: requestId,
+//                 },
+//             })
+//             await prisma.teamMember.create({
+//                 data: {
+//                     team: {
+//                         connect: {
+//                             id: team.id,
+//                         },
+//                     },
+//                     user: {
+//                         connect: {
+//                             id: team.id,
+//                         },
+//                     },
+//                     role: "MEMBER",
+//                 },
+//             })
+//         });
+//         return { success: true };
+//     } catch (error) {
+//         console.error("Failed to approve team access request:", error);
+//         return { error: "Failed to approve team access request" };
+//     }
+// });

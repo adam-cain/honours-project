@@ -10,7 +10,7 @@ const processArgs = (args: KeyValueWithDataType[]) => {
     } else if (arg.type === 'boolean') {
       return arg.value === 'true';
     }
-    else if(arg.type === 'object'){
+    else if (arg.type === 'object') {
       return JSON.parse(arg.value);
     }
     else {
@@ -19,13 +19,13 @@ const processArgs = (args: KeyValueWithDataType[]) => {
   });
 }
 
-export default async function runBundle(bundleURL: string, args: KeyValueWithDataType[] = [], envVariables: KeyValue[] = []): Promise<{ success: boolean, message: KeyValue[] }>{
+export default async function runBundle(bundleURL: string, args: KeyValueWithDataType[] = [], envVariables: KeyValue[] = []): Promise<{ success: boolean, message: KeyValue[] }> {
   const bundleCode = await fetch(bundleURL).then(async (res) => {
     return await res.text();
   })
 
   if (!bundleCode) {
-    return { success: false, message: [{key:"error",value:"Failed to download the file from cloud storage" }]};
+    return { success: false, message: [{ key: "error", value: "Failed to download the file from cloud storage" }] };
   }
   const processedArgs = processArgs(args);
 
@@ -36,14 +36,14 @@ export default async function runBundle(bundleURL: string, args: KeyValueWithDat
   await global.set('global', global.derefInto());
   const loggedDataStore: KeyValue[] = [];
 
-  await addLogging(context,loggedDataStore);
+  await addLogging(context, loggedDataStore);
   await addFetch(context);
   await setEnvironmentVariables(context, envVariables);
 
-  try{
+  try {
     const script = await isolate.compileScript(bundleCode);
     await script.run(context);
-  
+
     const result = await context.evalClosure(
       `return global.func.default(...$0)`,
       [processedArgs],
@@ -98,18 +98,38 @@ interface FetchOptions {
   timeout?: number;
 }
 
-async function addFetch(context: ivm.Context) {
+type DomainOptions = BlackListedURL | WhitelistedURL | {};
+
+type BlackListedURL = {
+  type: 'blacklist';
+  domains: string[];
+}
+
+type WhitelistedURL = {
+  type: 'whitelist';
+  domains: string[];
+}
+
+async function addFetch(context: ivm.Context, domainOptions: DomainOptions = {}) {
   await context.evalClosure(`
     globalThis.fetch = async function(url, options = {}) {
         // Pass options including method, headers, and body to the external fetch function
         return $0.apply(undefined, [url, options], { arguments: { copy: true }, result: { promise: true, copy: true } });
     };
   `, [async function (url: string, options: FetchOptions) {
-    // Enhanced URL validation to ensure it's a URL you're willing to fetch from
-    const allowedDomains = ['https://example.com', 'https://api.example.org', 'http://api.weatherapi.com'];
     const urlObject = new URL(url);
-    if (!allowedDomains.some(domain => urlObject.origin === domain)) {
-      throw new Error('URL is not allowed');
+
+    // Check if the URL is allowed based on the domainOptions
+    if ('type' in domainOptions) {
+      if (domainOptions.type === 'whitelist') {
+        if (!domainOptions.domains.some(domain => urlObject.origin.includes(domain))) {
+          throw new Error('URL is not allowed by whitelist');
+        }
+      } else if (domainOptions.type === 'blacklist') {
+        if (domainOptions.domains.some(domain => urlObject.origin.includes(domain))) {
+          throw new Error('URL is not allowed by blacklist');
+        }
+      }
     }
 
     // Enforce a default method if none is provided
@@ -120,7 +140,7 @@ async function addFetch(context: ivm.Context) {
       method: options.method,
       headers: options.headers,
       body: options.body,
-      signal: null, // This will be set below with the AbortController
+      signal: null,
     };
 
     // Fetch data with a configurable timeout to prevent abuse

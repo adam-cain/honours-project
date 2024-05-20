@@ -4,15 +4,7 @@ import prisma from "@/lib/prisma";
 import { ActionFunction, WithTeamAuthReturnType } from "./types";
   
 
-// type ActionFunction = (team: Team, formData: FormData | null, key: string | null) => Promise<any>;
-// (alias) type Role = "OWNER" | "ADMIN" | "MEMBER" | "VIEW_ONLY"
-// (alias) const Role: {
-//   OWNER: "OWNER";
-//   ADMIN: "ADMIN";
-//   MEMBER: "MEMBER";
-//   VIEW_ONLY: "VIEW_ONLY";
-// }
-// import Role
+
 
 function roleValue(role: Role): number {
     const roleHierarchy = {

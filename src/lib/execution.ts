@@ -48,3 +48,33 @@ export const parallelTopologicalSort = (graph: Graph): LevelGroups => {
 
     return levelGroups;
 };
+
+export type NodeFunction = (inputs: { [key: string]: any }) => any;
+
+export type NodeFunctions = { [node: string]: NodeFunction };
+
+export type NodeResults = { [node: string]: any };
+
+export const executeGraph = (graph: Graph, nodeFunctions: NodeFunctions): NodeResults => {
+    const levelGroups = parallelTopologicalSort(graph);
+    const results: NodeResults = {};
+
+    // Iterate through each level and execute the nodes
+    Object.keys(levelGroups).sort((a, b) => parseInt(a) - parseInt(b)).forEach(level => {
+        levelGroups[parseInt(level)].forEach(node => {
+            const inputs: { [key: string]: any } = {};
+
+            // Collect the results from the nodes that this node depends on
+            graph.edges.forEach(({ source, target }) => {
+                if (target === node) {
+                    inputs[source] = results[source];
+                }
+            });
+
+            // Execute the node function with the collected inputs
+            results[node] = nodeFunctions[node](inputs);
+        });
+    });
+
+    return results;
+};
