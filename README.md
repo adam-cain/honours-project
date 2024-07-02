@@ -1,6 +1,6 @@
 # Auto Flow Platform
 
-Auto Flow is a user-friendly platform designed to streamline the creation and deployment of automation tools using large language models (LLMs). This platform enables users to build complex workflows and interactive chatbots with minimal technical expertise through a node-based editor and integrated development environment.
+Auto Flow is a user-friendly SAAS platform designed to streamline the creation and deployment of automation tools using large language models (LLMs). This platform enables users to build complex workflows and interactive chatbots with minimal technical expertise through a node-based editor and integrated development environment.
 
 ## Table of Contents
 - [Features](#features)
